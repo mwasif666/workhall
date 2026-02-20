@@ -1,42 +1,498 @@
-#root {
+/* IMPORTANT: Vite template overrides ko kill karna */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root{
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+:root{
+  --bg: #e9edf3;
+  --text: #0a2a78;
+  --text2:#0b1f58;
+  --pill: #ffffff;
+  --border: rgba(10, 42, 120, 0.10);
+  --shadow: 0 12px 28px rgba(0,0,0,0.10);
+  --shadow2: 0 18px 40px rgba(0,0,0,0.12);
+
+  --navBlue: #0a2a78;
+  --cyan: #29d3ff;
+  --radiusPill: 16px;
+}
+
+body{
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* Header */
+.cs-header{
+  background: var(--bg);
+  padding: 22px 0 140px;
+  position: relative;
+}
+
+.cs-wrap{
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+/* Brand */
+.cs-brand{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  text-decoration:none;
+  color: var(--navBlue);
+  min-width: 190px;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.cs-mark{
+  width: 34px;
+  height: 34px;
+  display:grid;
+  place-items:center;
+  font-weight: 800;
+  font-size: 26px;
+  border-radius: 10px;
+  color: var(--navBlue);
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.cs-brandText{
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
 }
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
+.cs-tm{
+  font-size: 14px;
+  vertical-align: super;
+  margin-left: 2px;
 }
 
-.read-the-docs {
-  color: #888;
+/* Desktop nav */
+.cs-nav{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  flex: 1;
+  justify-content: center;
+}
+
+.cs-pill{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  background: var(--pill);
+  border: 1px solid var(--border);
+  border-radius: var(--radiusPill);
+  padding: 10px 12px 10px 16px;
+  text-decoration:none;
+  color: var(--text2);
+  font-weight: 700;
+  transition: transform .15s ease, box-shadow .15s ease;
+  white-space: nowrap;
+}
+.cs-pill:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(0,0,0,0.08);
+}
+/* ===== Hover text swap (menu label becomes second text) ===== */
+.cs-pillText{
+  position: relative;
+  display: inline-block;
+  height: 20px;               /* stable height so layout doesn't jump */
+  line-height: 20px;
+  overflow: hidden;
+  padding-right: 2px;
+}
+
+.cs-pillTextA,
+.cs-pillTextB{
+  display: block;
+  transition: transform .22s ease, opacity .22s ease;
+  will-change: transform, opacity;
+}
+
+.cs-pillTextB{
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateY(120%);
+  opacity: 0;
+}
+
+/* on hover OR keyboard focus */
+.cs-pill:hover .cs-pillTextA,
+.cs-pill:focus-visible .cs-pillTextA{
+  transform: translateY(-120%);
+  opacity: 0;
+}
+
+.cs-pill:hover .cs-pillTextB,
+.cs-pill:focus-visible .cs-pillTextB{
+  transform: translateY(0%);
+  opacity: 1;
+}
+
+/* tiny polish: underline glow 느낌 */
+.cs-pill:hover{
+  box-shadow: 0 10px 18px rgba(0,0,0,0.08);
+}
+.cs-pill.isOpen{
+  border-color: rgba(10, 42, 120, 0.18);
+}
+
+.cs-pillIconBox{
+  width: 34px;
+  height: 34px;
+  display:grid;
+  place-items:center;
+  border-radius: 10px;
+  border: 1px solid rgba(10, 42, 120, 0.12);
+  color: var(--navBlue);
+  background: #f3f6fb;
+  font-size: 18px;
+}
+
+/* Right side */
+.cs-right{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.cs-cta{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  background: var(--navBlue);
+  color: #fff;
+  text-decoration:none;
+  border-radius: 16px;
+  padding: 10px 10px 10px 16px;
+  box-shadow: 0 14px 26px rgba(10, 42, 120, 0.25);
+}
+.cs-ctaLabel{ font-weight: 800; }
+
+.cs-ctaIconBox{
+  width: 38px;
+  height: 38px;
+  display:grid;
+  place-items:center;
+  border-radius: 12px;
+  background: var(--cyan);
+  color: #001a48;
+  font-size: 18px;
+}
+
+/* Burger (mobile) */
+.cs-burger{
+  display:none;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--navBlue);
+  font-size: 22px;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Desktop Mega Dropdown */
+.cs-megaSlot{
+  position:absolute;
+  left: 0;
+  right: 0;
+  top: 82px;
+  display:flex;
+  justify-content:center;
+  pointer-events:none;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+.cs-megaSlot.show{
+  pointer-events:auto;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cs-mega{
+  width: min(980px, calc(100% - 36px));
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(10, 42, 120, 0.10);
+  box-shadow: var(--shadow2);
+  padding: 16px;
+}
+
+.cs-grid{
+  display:grid;
+  gap: 14px;
+}
+
+.cs-card{
+  text-decoration:none;
+  color: inherit;
+}
+
+.cs-cardThumb{
+  position: relative;
+  overflow:hidden;
+  border-radius: 14px;
+  border: 2px solid rgba(10, 42, 120, 0.30);
+  background: #0a2a78;
+  height: 120px;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.10);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.cs-cardThumb:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 18px 32px rgba(0,0,0,0.14);
+}
+
+.cs-cardArrow{
+  position:absolute;
+  right: 10px;
+  top: 10px;
+  width: 34px;
+  height: 34px;
+  display:grid;
+  place-items:center;
+  border-radius: 10px;
+  background: var(--cyan);
+  color: #001a48;
+  z-index: 3;
+  font-size: 18px;
+}
+
+/* gradient placeholder like screenshot */
+.cs-cardVisual{
+  position:absolute;
+  inset: 0;
+  background:
+    radial-gradient(120px 80px at 30% 30%, rgba(255,255,255,0.30), transparent 60%),
+    linear-gradient(160deg, rgba(255,255,255,0.00) 0%, rgba(255,255,255,0.22) 55%, rgba(255,255,255,0.04) 100%),
+    linear-gradient(120deg, #0a2a78, #0b3bd1);
+  opacity: 0.95;
+}
+
+.cs-cardLabel{
+  position:absolute;
+  left: 14px;
+  bottom: 12px;
+  color:#fff;
+  font-weight: 800;
+  z-index: 2;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.35);
+}
+
+/* Mobile menu */
+.cs-mobile{
+  display:none;
+  width: 100%;
+  padding: 0 18px 18px;
+}
+.cs-mobileInner{
+  margin: 14px auto 0;
+  max-width: 980px;
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(10, 42, 120, 0.10);
+  box-shadow: var(--shadow);
+  padding: 12px;
+}
+
+.cs-mLink{
+  display:block;
+  padding: 12px 12px;
+  border-radius: 14px;
+  text-decoration:none;
+  color: var(--navBlue);
+  font-weight: 800;
+}
+.cs-mLink:hover{ background: #f3f6fb; }
+
+.cs-mGroup{ margin-top: 6px; }
+
+.cs-mTrigger{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(10, 42, 120, 0.10);
+  background:#fff;
+  font-weight: 900;
+  color: var(--navBlue);
+  cursor:pointer;
+}
+.cs-mTrigger.isOpen{ background:#f3f6fb; }
+
+.cs-mIcon{
+  width: 34px;
+  height: 34px;
+  display:grid;
+  place-items:center;
+  border-radius: 12px;
+  border: 1px solid rgba(10, 42, 120, 0.12);
+  background: #f3f6fb;
+  font-size: 18px;
+}
+
+.cs-mPanel{
+  max-height: 0;
+  overflow:hidden;
+  transition: max-height .22s ease;
+}
+.cs-mPanel.open{ max-height: 700px; }
+
+.cs-mGrid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 10px 2px 2px;
+}
+
+.cs-mCard{
+  text-decoration:none;
+  color: inherit;
+  border-radius: 14px;
+  border: 2px solid rgba(10, 42, 120, 0.22);
+  background: linear-gradient(120deg, #0a2a78, #0b3bd1);
+  padding: 10px 12px 12px;
+  min-height: 76px;
+}
+.cs-mCardTop{ display:flex; justify-content:flex-end; }
+.cs-mCardArrow{
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--cyan);
+  display:grid;
+  place-items:center;
+  color:#001a48;
+  font-size: 18px;
+}
+.cs-mCardLabel{
+  margin-top: 10px;
+  color:#fff;
+  font-weight: 900;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.25);
+}
+
+.cs-mCta{
+  margin-top: 10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  background: var(--navBlue);
+  color:#fff;
+  text-decoration:none;
+  border-radius: 16px;
+  padding: 12px 12px 12px 16px;
+  font-weight: 900;
+}
+.cs-mCtaIcon{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--cyan);
+  color:#001a48;
+  display:grid;
+  place-items:center;
+  font-size: 18px;
+}
+
+/* Page demo (optional) */
+.cs-page{
+  padding: 40px 18px 120px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.cs-heroText h1{
+  font-size: 64px;
+  line-height: 1.05;
+  margin: 0;
+  color: #0a2a78;
+}
+.cs-heroText p{
+  margin-top: 10px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 980px){
+  .cs-nav{ display:none; }
+  .cs-burger{ display:flex; }
+  .cs-megaSlot{ display:none; }
+  .cs-mobile{ display:block; }
+  .cs-header{ padding-bottom: 22px; }
+  .cs-brand{ min-width: auto; }
+  .cs-brandText{ font-size: 24px; }
+  .cs-cta{ display:none; }
+}
+
+@media (max-width: 520px){
+  .cs-mGrid{ grid-template-columns: 1fr; }
+  .cs-heroText h1{ font-size: 40px; }
+}
+
+/* ================================
+   MENU TEXT HOVER SWAP (WORKING)
+   ================================ */
+
+/* container that holds 2 lines but shows 1 */
+.cs-pill .cs-pillTextSwap{
+  position: relative;
+  display: inline-block;
+  height: 20px;              /* fixed so layout doesn't jump */
+  line-height: 20px;
+  overflow: hidden;
+  padding-right: 2px;
+}
+
+/* first + second text */
+.cs-pill .cs-pillTextSwap__a,
+.cs-pill .cs-pillTextSwap__b{
+  display: block;
+  transform: translateY(0);
+  opacity: 1;
+  transition: transform .22s ease, opacity .22s ease;
+  will-change: transform, opacity;
+}
+
+/* second starts below */
+.cs-pill .cs-pillTextSwap__b{
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateY(130%);
+  opacity: 0;
+}
+
+/* on hover + focus */
+.cs-pill:hover .cs-pillTextSwap__a,
+.cs-pill:focus-visible .cs-pillTextSwap__a{
+  transform: translateY(-130%);
+  opacity: 0;
+}
+
+.cs-pill:hover .cs-pillTextSwap__b,
+.cs-pill:focus-visible .cs-pillTextSwap__b{
+  transform: translateY(0%);
+  opacity: 1;
 }
