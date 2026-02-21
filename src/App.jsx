@@ -7,31 +7,10 @@ import "./App.css";
 
 export default function App() {
   return (
-    // <div className="app">
-    //   {/* Navbar stays on top */}
-    //   <Navbar />
-
-    //   {/* Full width banner section (navbar sits above it) */}
-    //   <section className="heroWrap">
-    //     <div className="heroWrap__inner">
-    //       <Hero />
-    //     </div>
-    //   </section>
-    //         <PricingSection />
-
-    // </div>
-
-    <>
-    
-<Navbar/>
-
-<Hero/>
-
-<PricingSection/>
-
- 
-    
-    
-    </>
+    <main className="app">
+      <Navbar />
+      <Hero />
+      <PricingSection />
+    </main>
   );
 }

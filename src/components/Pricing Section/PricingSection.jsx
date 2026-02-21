@@ -190,37 +190,39 @@ export default function PricingSection() {
 
   return (
     <section className="ps-section">
-      <div className="ps-head">
-        <h2 className="ps-h2">Individuals</h2>
-        <h2 className="ps-h2 ps-h2--right">Teams</h2>
-      </div>
-
-      <div className="ps-rowWrap">
-        <button
-          className="ps-rowNav ps-rowNav--left"
-          type="button"
-          aria-label="Previous cards"
-          onClick={() => scrollByCards(-1)}
-        >
-          <HiChevronLeft />
-        </button>
-
-        <div ref={trackRef} className="ps-rowTrack">
-          {items.map((it) => (
-            <div key={it.id} className="ps-rowItem">
-              <Card {...it} />
-            </div>
-          ))}
+      <div className="ps-container">
+        <div className="ps-head">
+          <h2 className="ps-h2">Individuals</h2>
+          <h2 className="ps-h2 ps-h2--right">Teams</h2>
         </div>
 
-        <button
-          className="ps-rowNav ps-rowNav--right"
-          type="button"
-          aria-label="Next cards"
-          onClick={() => scrollByCards(1)}
-        >
-          <HiChevronRight />
-        </button>
+        <div className="ps-rowWrap">
+          <button
+            className="ps-rowNav ps-rowNav--left"
+            type="button"
+            aria-label="Previous cards"
+            onClick={() => scrollByCards(-1)}
+          >
+            <HiChevronLeft />
+          </button>
+
+          <div ref={trackRef} className="ps-rowTrack">
+            {items.map((it) => (
+              <div key={it.id} className="ps-rowItem">
+                <Card {...it} />
+              </div>
+            ))}
+          </div>
+
+          <button
+            className="ps-rowNav ps-rowNav--right"
+            type="button"
+            aria-label="Next cards"
+            onClick={() => scrollByCards(1)}
+          >
+            <HiChevronRight />
+          </button>
+        </div>
       </div>
     </section>
   );

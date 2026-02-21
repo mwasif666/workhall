@@ -1,6 +1,13 @@
 .ps-section{
   width: 100%;
-  padding: 50px 100px;
+  padding: 50px 0;
+  overflow-x: hidden;
+}
+
+.ps-container{
+  width: min(1320px, 100%);
+  margin: 0 auto;
+  padding: 0 clamp(16px, 6vw, 100px);
 }
 
 .ps-head{
@@ -30,11 +37,13 @@
 .ps-rowWrap{
   position: relative;
   padding: 0 18px;
+  overflow: hidden;
 }
 
 .ps-rowTrack{
   display: flex;
   gap: 14px;
+  max-width: 100%;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
@@ -244,6 +253,10 @@
 }
 
 @media (max-width: 640px){
+  .ps-section{
+    padding: 40px 0;
+  }
+
   .ps-h2--right{ display:none; }
   .ps-rowItem{
     flex: 0 0 88%; /* 1 big card on mobile */
