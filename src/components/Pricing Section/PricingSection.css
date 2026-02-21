@@ -1,65 +1,135 @@
-.ps-section{
-  width: 100%;
-  padding: 50px 0;
-  overflow-x: hidden;
-}
-
-.ps-container{
-  width: min(1320px, 100%);
-  margin: 0 auto;
-  padding: 0 clamp(16px, 6vw, 100px);
-}
-
-.ps-head{
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 18px;
-  padding: 0 18px 14px;
-}
-
-.ps-h2{
-  font-size: clamp(28px, 4vw, 44px);
-  line-height: 1;
-  margin: 0;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #111;
-}
-
-.ps-h2--right{
-  text-align: right;
-}
-
 /* =========================
-   ROW: 3 CARDS VISIBLE
+   SECTION WRAPPER
    ========================= */
-.ps-rowWrap{
-  position: relative;
-  padding: 0 18px;
+.ps-section2{
+  width: 100%;
+  padding: 60px 0;
   overflow: hidden;
 }
 
-.ps-rowTrack{
-  display: flex;
-  gap: 14px;
-  max-width: 100%;
+.ps-container2{
+  width: min(1400px, 100%);
+  margin: 0 auto;
+  padding: 0 clamp(14px, 4vw, 60px);
+  position: relative;
+}
+
+/* =========================
+   HORIZONTAL PAGES
+   ========================= */
+.ps-viewport{
+  width: 100%;
   overflow-x: auto;
+  overflow-y: hidden;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding: 8px 0;
+  border-radius: 18px;
 }
-.ps-rowTrack::-webkit-scrollbar{ display:none; }
+.ps-viewport::-webkit-scrollbar{ display:none; }
 
-.ps-rowItem{
-  flex: 0 0 calc((100% - (14px * 2)) / 3); /* ✅ EXACTLY 3 cards visible */
+.ps-track{
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  gap: 0;
+}
+
+/* each page takes full viewport width */
+.ps-page{
   scroll-snap-align: start;
-  min-width: 260px; /* safety */
+  padding: clamp(18px, 3.4vw, 36px);
+  background: #b8c0b1; /* reference vibe */
+  min-height: 520px;
+  position: relative;
 }
 
-/* outer row nav */
-.ps-rowNav{
+/* vertical divider line in the middle */
+.ps-divider{
+  position: absolute;
+  top: 22px;
+  bottom: 22px;
+  left: calc(100% / 2);
+  width: 1px;
+  background: rgba(0,0,0,0.18);
+  transform: translateX(-0.5px);
+  pointer-events: none;
+}
+
+/* =========================
+   PAGE HEAD (BIG TITLE)
+   ========================= */
+.ps-pageHead{
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.ps-eyebrow{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+  text-transform: uppercase;
+}
+
+.ps-dotMini{
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: #ff5a26;
+  display: inline-block;
+}
+
+.ps-bigTitle{
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  font-size: clamp(46px, 6.4vw, 86px);
+  line-height: 0.95;
+  color: rgba(0,0,0,0.75);
+}
+
+.ps-pageFooterText{
+  display: grid;
+  gap: 8px;
+  max-width: 520px;
+}
+
+.ps-pageDesc{
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(0,0,0,0.65);
+}
+
+.ps-pageCta{
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: .03em;
+  color: rgba(0,0,0,0.7);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+/* =========================
+   GRID: 3 CARDS PER PAGE
+   ========================= */
+.ps-grid3{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+/* =========================
+   PAGE NAV (optional)
+   ========================= */
+.ps-pageNav{
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -73,12 +143,14 @@
   place-items: center;
   cursor: pointer;
   box-shadow: 0 12px 22px rgba(0,0,0,0.12);
-  z-index: 5;
+  z-index: 10;
 }
-.ps-rowNav--left{ left: 10px; }
-.ps-rowNav--right{ right: 10px; }
+.ps-pageNav--left{ left: 8px; }
+.ps-pageNav--right{ right: 8px; }
 
-/* CARD */
+/* =========================
+   CARD (same as your style)
+   ========================= */
 .ps-card{
   width: 100%;
   background: #f4f4f4;
@@ -87,9 +159,7 @@
   overflow: hidden;
 }
 
-/* =========================
-   CARD IMAGE SLIDER
-   ========================= */
+/* image slider */
 .ps-media{
   height: 220px;
   background: #bdbdbd;
@@ -97,8 +167,6 @@
   position: relative;
   overflow: hidden;
 }
-
-/* inner faint border (like screenshot) */
 .ps-media::after{
   content:"";
   position:absolute;
@@ -108,158 +176,126 @@
   pointer-events: none;
   z-index: 2;
 }
-
-/* stacked images, only active visible */
-.ps-mediaTrack{
-  position: absolute;
-  inset: 0;
-}
+.ps-mediaTrack{ position:absolute; inset:0; }
 
 .ps-mediaImg{
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
   object-fit: cover;
-  opacity: 0;
+  opacity:0;
   transform: scale(1.02);
   transition: opacity .35s ease, transform .6s ease;
-  user-select: none;
-  pointer-events: none;
+  user-select:none;
+  pointer-events:none;
 }
 .ps-mediaImg.isActive{
-  opacity: 1;
+  opacity:1;
   transform: scale(1);
 }
 
-/* arrow buttons inside image */
 .ps-mediaNav{
-  position: absolute;
-  top: 50%;
+  position:absolute;
+  top:50%;
   transform: translateY(-50%);
-  width: 42px;
-  height: 42px;
+  width:42px;
+  height:42px;
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.35);
   background: rgba(0,0,0,0.25);
   color: rgba(255,255,255,0.90);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
   z-index: 3;
   backdrop-filter: blur(4px);
 }
-.ps-mediaNav--left{ left: 10px; }
-.ps-mediaNav--right{ right: 10px; }
+.ps-mediaNav--left{ left:10px; }
+.ps-mediaNav--right{ right:10px; }
+.ps-mediaNav:hover{ background: rgba(0,0,0,0.35); }
 
-.ps-mediaNav:hover{
-  background: rgba(0,0,0,0.35);
-}
-
-/* dots inside image */
 .ps-dots{
-  position: absolute;
-  left: 50%;
-  bottom: 14px;
+  position:absolute;
+  left:50%;
+  bottom:14px;
   transform: translateX(-50%);
-  display: flex;
-  gap: 6px;
-  z-index: 3;
+  display:flex;
+  gap:6px;
+  z-index:3;
 }
 .ps-dot{
-  width: 6px;
-  height: 6px;
+  width:6px;
+  height:6px;
   border-radius: 99px;
   background: rgba(255,255,255,0.55);
 }
-.ps-dot.isActive{
-  background: rgba(255,255,255,0.95);
-}
+.ps-dot.isActive{ background: rgba(255,255,255,0.95); }
 
 /* body */
-.ps-body{
-  background: #fff;
-  padding: 14px 14px 16px;
-}
+.ps-body{ background:#fff; padding: 14px 14px 16px; }
 
 .ps-top{
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
 }
 
 .ps-title{
-  margin: 0;
+  margin:0;
   font-size: 32px;
-  line-height: 1;
-  font-weight: 800;
+  line-height:1;
+  font-weight: 900;
   letter-spacing: -0.02em;
-  color: #111;
+  color:#111;
 }
 
-.ps-price{
-  text-align: right;
-  color: #111;
-}
-.ps-price__small{
-  font-size: 10px;
-  opacity: 0.65;
-  font-weight: 700;
-}
-.ps-price__big{
-  font-size: 12px;
-  font-weight: 900;
-}
+.ps-price{ text-align:right; color:#111; }
+.ps-price__small{ font-size:10px; opacity:0.65; font-weight:800; }
+.ps-price__big{ font-size:12px; font-weight:900; }
 
 .ps-desc{
-  margin: 10px 0 10px;
-  font-size: 11px;
-  line-height: 1.35;
+  margin:10px 0 10px;
+  font-size:11px;
+  line-height:1.35;
   color: rgba(0,0,0,0.72);
   border-top: 1px solid rgba(0,0,0,0.08);
   padding-top: 10px;
 }
 
 .ps-suited{
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
   flex-wrap: wrap;
 }
-
 .ps-suited__label{
-  font-size: 10px;
+  font-size:10px;
   font-weight: 900;
-  color: #111;
+  color:#111;
 }
-
 .ps-suited__list{
-  margin: 0;
+  margin:0;
   padding-left: 14px;
-  font-size: 10px;
-  font-weight: 700;
+  font-size:10px;
+  font-weight: 800;
   color: rgba(0,0,0,0.72);
-  display: grid;
+  display:grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px 18px;
 }
 
-/* responsive */
-@media (max-width: 980px){
-  .ps-rowItem{
-    flex: 0 0 calc((100% - 14px) / 2); /* 2 cards on tablet */
-  }
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 1100px){
+  .ps-grid3{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 640px){
-  .ps-section{
-    padding: 40px 0;
-  }
-
-  .ps-h2--right{ display:none; }
-  .ps-rowItem{
-    flex: 0 0 88%; /* 1 big card on mobile */
-  }
-  .ps-rowNav{ display:none; } /* mobile: swipe */
+  .ps-section2{ padding: 44px 0; }
+  .ps-grid3{ grid-template-columns: 1fr; }
+  .ps-pageNav{ display:none; }
+  .ps-divider{ display:none; } /* mobile: no split line */
 }

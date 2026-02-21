@@ -78,6 +78,17 @@ export default function Navbar() {
           { title: "Community Board", href: "#" },
         ],
       },
+        {
+        key: "virtual",
+        label: "Virtual Tour",
+        hoverLabel: "Virtual Tour →",
+        cards: [
+          { title: "Login", href: "#" },
+          { title: "Benefits", href: "#" },
+          { title: "Bookings", href: "#" },
+          { title: "Community Board", href: "#" },
+        ],
+      },
     ],
     []
   );
@@ -190,7 +201,7 @@ export default function Navbar() {
           </nav>
 
           <div className="cs-right">
-            <a className="cs-cta" href="#">
+            {/* <a className="cs-cta" href="#">
               <span className="cs-ctaLabel">Let’s talk</span>
               <span className="cs-ctaIconBox cs-iconSwap" aria-hidden="true">
                 <span className="cs-iconSwap__a">
@@ -200,7 +211,7 @@ export default function Navbar() {
                   <HiMiniArrowUpRight />
                 </span>
               </span>
-            </a>
+            </a> */}
 
             {/* Mobile burger */}
             <button

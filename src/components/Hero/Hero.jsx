@@ -100,7 +100,8 @@ export default function Hero() {
               </div>
             </div>
 
-            <div
+            <div 
+            id="loc"
               className={`hDrop ${locOpen ? "open" : ""}`}
               ref={locRef}
               onMouseEnter={openLoc}
