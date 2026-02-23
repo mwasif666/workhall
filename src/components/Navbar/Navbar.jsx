@@ -9,20 +9,25 @@ import {
 import { GoArrowDown, GoArrowUp } from "react-icons/go";
 import "./Navbar.css";
 
+const getSeededCardImage = (menuKey, title) =>
+  `https://picsum.photos/seed/${encodeURIComponent(
+    `workhall-${menuKey}-${title}`,
+  )}/900/560`;
+
 export default function Navbar() {
   const NAV = useMemo(
     () => [
-      {
-        key: "plans",
-        label: "Plans",
-        hoverLabel: "Plans →",
-        cards: [
-          { title: "Day Pass", href: "#" },
-          { title: "Hot Desk", href: "#" },
-          { title: "Dedicated Desk", href: "#" },
-          { title: "Private Office", href: "#" },
-        ],
-      },
+      // {
+      //   key: "plans",
+      //   label: "Plans",
+      //   hoverLabel: "Plans →",
+      //   cards: [
+      //     { title: "Day Pass", href: "#" },
+      //     { title: "Hot Desk", href: "#" },
+      //     { title: "Dedicated Desk", href: "#" },
+      //     { title: "Private Office", href: "#" },
+      //   ],
+      // },
       {
         key: "locations",
         label: "Locations",
@@ -78,7 +83,7 @@ export default function Navbar() {
           { title: "Community Board", href: "#" },
         ],
       },
-        {
+      {
         key: "virtual",
         label: "Virtual Tour",
         hoverLabel: "Virtual Tour →",
@@ -90,14 +95,25 @@ export default function Navbar() {
         ],
       },
     ],
-    []
+    [],
   );
 
   const [openKey, setOpenKey] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileKey, setMobileKey] = useState(null);
+  const [megaLeft, setMegaLeft] = useState(18);
   const closeTimer = useRef(null);
   const rootRef = useRef(null);
+  const wrapRef = useRef(null);
+  const navItemRefs = useRef(new Map());
+
+  const setNavItemRef = (key, el) => {
+    if (!el) {
+      navItemRefs.current.delete(key);
+      return;
+    }
+    navItemRefs.current.set(key, el);
+  };
 
   const closeAll = () => {
     setOpenKey(null);
@@ -129,9 +145,31 @@ export default function Navbar() {
     return () => (document.body.style.overflow = "");
   }, [mobileOpen]);
 
-  const openMenu = (key) => {
+  const positionMega = (key, anchorEl) => {
+    const rootEl = rootRef.current;
+    const wrapEl = wrapRef.current;
+    const targetEl = anchorEl || navItemRefs.current.get(key);
+    if (!rootEl || !wrapEl || !targetEl) return;
+
+    const rootRect = rootEl.getBoundingClientRect();
+    const wrapRect = wrapEl.getBoundingClientRect();
+    const targetRect = targetEl.getBoundingClientRect();
+
+    const slotLeft = wrapRect.left - rootRect.left;
+    const slotWidth = wrapRect.width;
+    const panelWidth = Math.min(920, Math.max(340, slotWidth - 36));
+
+    let nextLeft = targetRect.left - rootRect.left;
+    nextLeft = Math.max(slotLeft + 18, nextLeft);
+    nextLeft = Math.min(nextLeft, slotLeft + slotWidth - panelWidth - 18);
+
+    setMegaLeft(nextLeft);
+  };
+
+  const openMenu = (key, anchorEl) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     setOpenKey(key);
+    if (key) positionMega(key, anchorEl);
   };
 
   const scheduleClose = () => {
@@ -142,10 +180,17 @@ export default function Navbar() {
   const active = NAV.find((x) => x.key === openKey);
   const activeHasCards = !!active?.cards?.length;
 
+  useEffect(() => {
+    if (!openKey) return;
+    const onResize = () => positionMega(openKey);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [openKey]);
+
   return (
     <div ref={rootRef}>
       <header className="cs-header">
-        <div className="cs-wrap">
+        <div className="cs-wrap" ref={wrapRef}>
           <a className="cs-brand" href="#">
             <span className="cs-mark">S</span>
             <span className="cs-brandText">
@@ -162,8 +207,11 @@ export default function Navbar() {
               return (
                 <div
                   key={item.key}
+                  ref={(el) => setNavItemRef(item.key, el)}
                   className="cs-navItemWrap"
-                  onMouseEnter={() => (hasDrop ? openMenu(item.key) : setOpenKey(null))}
+                  onMouseEnter={(e) =>
+                    hasDrop ? openMenu(item.key, e.currentTarget) : setOpenKey(null)
+                  }
                   onMouseLeave={() => (hasDrop ? scheduleClose() : null)}
                 >
                   <a
@@ -172,7 +220,11 @@ export default function Navbar() {
                     onClick={(e) => {
                       if (hasDrop) e.preventDefault();
                     }}
-                    onFocus={() => (hasDrop ? openMenu(item.key) : setOpenKey(null))}
+                    onFocus={(e) =>
+                      hasDrop
+                        ? openMenu(item.key, e.currentTarget.closest(".cs-navItemWrap"))
+                        : setOpenKey(null)
+                    }
                     onBlur={() => (hasDrop ? scheduleClose() : null)}
                   >
                     {/* TEXT SWAP */}
@@ -185,7 +237,10 @@ export default function Navbar() {
 
                     {/* ICON SWAP (hover + open sync) */}
                     {hasDrop && (
-                      <span className={`cs-pillIconSwap ${isOpen ? "isOpen" : ""}`} aria-hidden="true">
+                      <span
+                        className={`cs-pillIconSwap ${isOpen ? "isOpen" : ""}`}
+                        aria-hidden="true"
+                      >
                         <span className="cs-pillIconSwap__a">
                           <GoArrowDown />
                         </span>
@@ -202,7 +257,7 @@ export default function Navbar() {
 
           <div className="cs-right">
             {/* <a className="cs-cta" href="#">
-              <span className="cs-ctaLabel">Let’s talk</span>
+              <span className="cs-ctaLabel">Let's talk</span>
               <span className="cs-ctaIconBox cs-iconSwap" aria-hidden="true">
                 <span className="cs-iconSwap__a">
                   <HiMiniArrowUpRight />
@@ -232,6 +287,7 @@ export default function Navbar() {
         {/* Desktop Mega Dropdown */}
         <div
           className={`cs-megaSlot ${activeHasCards ? "show" : ""}`}
+          style={activeHasCards ? { paddingLeft: `${megaLeft}px` } : undefined}
           onMouseEnter={() => {
             if (activeHasCards) openMenu(openKey);
           }}
@@ -245,14 +301,19 @@ export default function Navbar() {
                 className="cs-grid"
                 style={{
                   gridTemplateColumns:
-                    active.cards.length <= 4 ? "repeat(4, minmax(0, 1fr))" : "repeat(3, minmax(0, 1fr))",
+                    active.cards.length <= 4
+                      ? "repeat(4, minmax(0, 1fr))"
+                      : "repeat(3, minmax(0, 1fr))",
                 }}
               >
                 {active.cards.map((c) => (
                   <a key={c.title} className="cs-card" href={c.href || "#"}>
                     <div className="cs-cardThumb">
                       {/* arrow fixed top-right */}
-                      <span className="cs-cardArrow cs-iconSwap" aria-hidden="true">
+                      <span
+                        className="cs-cardArrow cs-iconSwap"
+                        aria-hidden="true"
+                      >
                         <span className="cs-iconSwap__a">
                           <HiMiniArrowUpRight />
                         </span>
@@ -261,7 +322,16 @@ export default function Navbar() {
                         </span>
                       </span>
 
-                      <div className="cs-cardVisual" />
+                      <div
+                        className="cs-cardVisual"
+                        style={{
+                          backgroundImage: `
+                            linear-gradient(180deg, rgba(6, 20, 95, 0.15) 0%, rgba(6, 20, 95, 0.78) 100%),
+                            linear-gradient(130deg, rgba(16, 46, 255, 0.82) 0%, rgba(6, 18, 118, 0.78) 58%, rgba(5, 12, 58, 0.92) 100%),
+                            url("${getSeededCardImage(active.key, c.title)}")
+                          `,
+                        }}
+                      />
                       <div className="cs-cardLabel">{c.title}</div>
                     </div>
                   </a>
@@ -324,7 +394,9 @@ export default function Navbar() {
                     <button
                       type="button"
                       className={`cs-mTrigger ${isOpen ? "isOpen" : ""}`}
-                      onClick={() => setMobileKey((k) => (k === item.key ? null : item.key))}
+                      onClick={() =>
+                        setMobileKey((k) => (k === item.key ? null : item.key))
+                      }
                     >
                       <span>{item.label}</span>
                       <span className="cs-mIcon" aria-hidden="true">
@@ -342,7 +414,10 @@ export default function Navbar() {
                             onClick={() => setMobileOpen(false)}
                           >
                             <div className="cs-mCardTop">
-                              <span className="cs-mCardArrow cs-iconSwap" aria-hidden="true">
+                              <span
+                                className="cs-mCardArrow cs-iconSwap"
+                                aria-hidden="true"
+                              >
                                 <span className="cs-iconSwap__a">
                                   <HiMiniArrowUpRight />
                                 </span>
@@ -360,8 +435,12 @@ export default function Navbar() {
                 );
               })}
 
-              <a className="cs-mCta" href="#" onClick={() => setMobileOpen(false)}>
-                <span>Let’s talk</span>
+              <a
+                className="cs-mCta"
+                href="#"
+                onClick={() => setMobileOpen(false)}
+              >
+                <span>Let's talk</span>
                 <span className="cs-mCtaIcon cs-iconSwap" aria-hidden="true">
                   <span className="cs-iconSwap__a">
                     <HiMiniArrowUpRight />

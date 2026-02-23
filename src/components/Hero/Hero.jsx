@@ -7,6 +7,9 @@ import {
 } from "react-icons/hi2";
 import "./Hero.css";
 
+const getSeededLocationImage = (title) =>
+  `https://picsum.photos/seed/${encodeURIComponent(`workhall-location-${title}`)}/900/560`;
+
 export default function Hero() {
   const locations = useMemo(
     () => [
@@ -17,7 +20,7 @@ export default function Hero() {
       { title: "Islamabad", desc: "Blue Area, central" },
       { title: "Lahore", desc: "Gulberg, premium zone" },
     ],
-    []
+    [],
   );
 
   const [friends, setFriends] = useState(3);
@@ -74,7 +77,9 @@ export default function Hero() {
 
               <div className="hPill__txt">
                 <div className="hPill__label">How Many Friends?</div>
-                <div className="hPill__sub">Select number of desks you need</div>
+                <div className="hPill__sub">
+                  Select number of desks you need
+                </div>
               </div>
 
               <div className="hCounter">
@@ -87,7 +92,9 @@ export default function Hero() {
                   <HiMinus />
                 </button>
 
-                <div className="hCounter__val">{String(friends).padStart(2, "0")}</div>
+                <div className="hCounter__val">
+                  {String(friends).padStart(2, "0")}
+                </div>
 
                 <button
                   className="hCounter__btn"
@@ -100,8 +107,8 @@ export default function Hero() {
               </div>
             </div>
 
-            <div 
-            id="loc"
+            <div
+              id="loc"
               className={`hDrop ${locOpen ? "open" : ""}`}
               ref={locRef}
               onMouseEnter={openLoc}
@@ -147,12 +154,22 @@ export default function Hero() {
                         key={l.title}
                         type="button"
                         className="hDropCard"
+                        style={{
+                          backgroundImage: `
+                            linear-gradient(180deg, rgba(6, 20, 95, 0.12) 0%, rgba(6, 20, 95, 0.78) 100%),
+                            linear-gradient(130deg, rgba(16, 46, 255, 0.84) 0%, rgba(6, 18, 118, 0.78) 58%, rgba(5, 12, 58, 0.92) 100%),
+                            url("${getSeededLocationImage(l.title)}")
+                          `,
+                        }}
                         onClick={() => {
                           setLocation(l.title);
                           setLocOpen(false);
                         }}
                       >
-                        <span className="hDropCard__arrow cs-iconSwap" aria-hidden="true">
+                        <span
+                          className="hDropCard__arrow cs-iconSwap"
+                          aria-hidden="true"
+                        >
                           <span className="cs-iconSwap__a">
                             <HiMiniArrowUpRight />
                           </span>
