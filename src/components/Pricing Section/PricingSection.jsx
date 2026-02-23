@@ -20,6 +20,19 @@ const SLIDES = [
   "https://images.unsplash.com/photo-1497366412874-3415097a27e7?auto=format&fit=crop&w=1400&q=80",
 ];
 
+const DESKTOP_CARDS_PER_PAGE = 3;
+
+function chunkItems(items, chunkSize) {
+  const size = Math.max(1, chunkSize);
+  const chunks = [];
+
+  for (let i = 0; i < items.length; i += size) {
+    chunks.push(items.slice(i, i + size));
+  }
+
+  return chunks;
+}
+
 function ImageSlider({ images = SLIDES, interval = 2600 }) {
   const [i, setI] = useState(0);
   const timer = useRef(null);
@@ -131,7 +144,7 @@ function Card({ title, price, desc, suitedFor }) {
 
 export default function PricingSection() {
   // ✅ 2 pages, per page 3 cards
-  const pages = useMemo(
+  const sections = useMemo(
     () => [
       {
         key: "beginners",
@@ -222,12 +235,40 @@ export default function PricingSection() {
     [],
   );
 
+  const sliderPages = useMemo(() => {
+    const flatCards = sections.flatMap((section) =>
+      section.items.map((item) => ({
+        ...item,
+        _sectionTitle: section.title,
+      })),
+    );
+
+    return chunkItems(flatCards, DESKTOP_CARDS_PER_PAGE).map((items, index) => {
+      const sectionTitles = [...new Set(items.map((item) => item._sectionTitle))];
+      const primarySection =
+        sections.find((section) => section.title === sectionTitles[0]) ??
+        sections[0];
+      const isMixedPage = sectionTitles.length > 1;
+
+      return {
+        key: `page-${index}`,
+        eyebrow: "WORKHALL PLANS",
+        title: isMixedPage ? sectionTitles.join(" + ") : primarySection.title,
+        desc: isMixedPage
+          ? "Explore workspace plans for individuals and teams in one continuous slider."
+          : primarySection.desc,
+        cta: isMixedPage ? "EXPLORE PLANS" : primarySection.cta,
+        items,
+      };
+    });
+  }, [sections]);
+
   const viewportRef = useRef(null);
   const sectionRef = useRef(null);
   const containerRef = useRef(null);
   const trackRef = useRef(null);
   const gsapModeRef = useRef(false);
-  const scrollStretchRef = useRef(1.35);
+  const scrollStretchRef = useRef(1);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -246,8 +287,36 @@ export default function PricingSection() {
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 640px)", () => {
-      const getDistance = () =>
-        Math.max(0, track.scrollWidth - viewport.clientWidth);
+      const getOffsetLeftWithin = (node, ancestor) => {
+        let left = 0;
+        let current = node;
+
+        while (current && current !== ancestor) {
+          left += current.offsetLeft || 0;
+          current = current.offsetParent;
+        }
+
+        return current === ancestor ? left : null;
+      };
+
+      const getDistance = () => {
+        const maxTrackDistance = Math.max(0, track.scrollWidth - viewport.clientWidth);
+        const cards = track.querySelectorAll(".ps-card");
+        const lastCard = cards[cards.length - 1];
+
+        if (!lastCard) return maxTrackDistance;
+
+        const lastCardLeft = getOffsetLeftWithin(lastCard, track);
+        if (lastCardLeft == null) return maxTrackDistance;
+
+        const lastCardRight = lastCardLeft + lastCard.offsetWidth;
+        const distanceToLastCard = Math.max(
+          0,
+          Math.ceil(lastCardRight - viewport.clientWidth),
+        );
+
+        return Math.min(maxTrackDistance, distanceToLastCard);
+      };
 
       if (getDistance() <= 0) {
         resetGsapMode();
@@ -311,13 +380,17 @@ export default function PricingSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="ps-section2">
+    <section
+      ref={sectionRef}
+      className="ps-section2"
+      style={{ "--ps-cards-per-page": DESKTOP_CARDS_PER_PAGE }}
+    >
       <div ref={containerRef} className="ps-container2">
         <div className="ps-headSplit">
-          {pages.map((p, idx) => (
+          {sections.map((p, idx) => (
             <div
               key={`${p.key}-split`}
-              className={`ps-headSplitCol ${idx === pages.length - 1 ? "isLast" : ""}`}
+              className={`ps-headSplitCol ${idx === sections.length - 1 ? "isLast" : ""}`}
             >
               <div className="ps-headSplitEyebrow">{p.eyebrow}</div>
               <h2 className="ps-headSplitTitle">{p.title}</h2>
@@ -327,10 +400,16 @@ export default function PricingSection() {
 
         <div ref={viewportRef} className="ps-viewport">
           <div ref={trackRef} className="ps-track">
-            {pages.map((p, idx) => (
+            {sliderPages.map((p, idx) => (
               <div
                 key={p.key}
-                className={`ps-page ${idx === 0 ? "isLeft" : "isRight"}`}
+                className={`ps-page ${
+                  idx === 0
+                    ? "isFirst"
+                    : idx === sliderPages.length - 1
+                      ? "isLast"
+                      : "isMiddle"
+                }`}
               >
                 <header className="ps-pageHead">
                   <div className="ps-eyebrow">
@@ -347,7 +426,12 @@ export default function PricingSection() {
                   </div>
                 </header>
 
-                <div className="ps-grid3">
+                <div
+                  className="ps-grid3"
+                  style={{
+                    "--ps-columns-this-page": DESKTOP_CARDS_PER_PAGE,
+                  }}
+                >
                   {p.items.map((it) => (
                     <Card key={it.id} {...it} />
                   ))}
@@ -356,7 +440,9 @@ export default function PricingSection() {
             ))}
 
             {/* ✅ vertical divider line between pages */}
-            <span className="ps-divider" aria-hidden="true" />
+            {sliderPages.length === 2 ? (
+              <span className="ps-divider" aria-hidden="true" />
+            ) : null}
           </div>
         </div>
 

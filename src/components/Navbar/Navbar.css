@@ -47,7 +47,7 @@ body {
   background: transparent;
   padding: 0 calc(var(--hero-shell-pad-x) + var(--hero-inner-pad-x));
   position: absolute;
-  top: 34px;
+  top: 50px;
   left: 0;
   width: 100%;
   transform: none;

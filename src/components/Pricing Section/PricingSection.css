@@ -2,8 +2,9 @@
    SECTION WRAPPER
    ========================= */
 .ps-section2 {
-  --ps-max: 1400px;
-  --ps-gutter: clamp(14px, 4vw, 60px);
+  --ps-max: 1620px;
+  --ps-gutter: clamp(10px, 2.2vw, 36px);
+  --ps-page-width: 100%;
   width: 100%;
   padding: 72px 0;
   background: #fff;
@@ -95,7 +96,7 @@
   position: relative;
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 100%;
+  grid-auto-columns: var(--ps-page-width);
   gap: 0;
 }
 
@@ -106,7 +107,7 @@
 /* each page takes full viewport width */
 .ps-page {
   scroll-snap-align: start;
-  padding: clamp(18px, 3.4vw, 36px);
+  padding: clamp(12px, 2.2vw, 24px);
   background: #fff;
   min-height: 520px;
   position: relative;
@@ -192,22 +193,30 @@
 }
 
 /* =========================
-   GRID: 3 CARDS PER PAGE
+   GRID: CARDS PER PAGE
    ========================= */
 .ps-grid3 {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(
+    var(--ps-columns-this-page, var(--ps-cards-per-page, 4)),
+    minmax(0, 1fr)
+  );
+  gap: 10px;
   align-items: start;
 }
 
-/* prevent extra page-boundary gap between 3rd and 4th card */
-.ps-page.isLeft {
+/* keep equal gutter at page boundaries for any page count */
+.ps-page.isFirst {
   padding-right: 7px;
 }
 
-.ps-page.isRight {
+.ps-page.isLast {
   padding-left: 7px;
+}
+
+.ps-page.isMiddle {
+  padding-left: 7px;
+  padding-right: 7px;
 }
 
 /* =========================
@@ -246,6 +255,9 @@
   border-radius: 14px;
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  height: 500px;
+  max-height: 100%;
+  background-color: white;
 }
 
 /* image slider */
@@ -349,7 +361,7 @@
 
 .ps-title {
   margin: 0;
-  font-size: 32px;
+  font-size: clamp(34px, 2vw, 40px);
   line-height: 1;
   font-weight: 900;
   letter-spacing: -0.02em;
@@ -361,19 +373,19 @@
   color: #111;
 }
 .ps-price__small {
-  font-size: 10px;
+  font-size: 11px;
   opacity: 0.65;
   font-weight: 800;
 }
 .ps-price__big {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 900;
 }
 
 .ps-desc {
   margin: 10px 0 10px;
-  font-size: 11px;
-  line-height: 1.35;
+  font-size: 13px;
+  line-height: 1.45;
   color: rgba(0, 0, 0, 0.72);
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   padding-top: 10px;
@@ -386,14 +398,14 @@
   flex-wrap: wrap;
 }
 .ps-suited__label {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   color: #111;
 }
 .ps-suited__list {
   margin: 0;
   padding-left: 14px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   color: rgba(0, 0, 0, 0.72);
   display: grid;
@@ -409,14 +421,19 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .ps-page.isLeft,
-  .ps-page.isRight {
+  .ps-page.isFirst,
+  .ps-page.isMiddle,
+  .ps-page.isLast {
     padding-left: clamp(18px, 3.4vw, 36px);
     padding-right: clamp(18px, 3.4vw, 36px);
   }
 }
 
 @media (min-width: 981px) {
+  .ps-section2 {
+    --ps-page-width: 86%;
+  }
+
   .ps-container2 {
     --ps-left-gutter: max(
       var(--ps-gutter),
