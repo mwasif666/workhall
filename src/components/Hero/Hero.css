@@ -32,6 +32,7 @@
   border-radius: 26px;
   min-height: clamp(700px, 92vh, 900px);
   z-index: 2;
+  height: 95vh;
 }
 
 .hero__box {
