@@ -38,7 +38,7 @@ function ImageSlider({ images = SLIDES, interval = 2600 }) {
   const timer = useRef(null);
 
   const go = (next) => {
-    setI((prev) => {
+    setI(() => {
       const n = images.length;
       return ((next % n) + n) % n;
     });
