@@ -192,7 +192,10 @@ export default function Navbar() {
       <header className="cs-header">
         <div className="cs-wrap" ref={wrapRef}>
           <a className="cs-brand" href="#">
+<<<<<<< HEAD
             {/* <span className="cs-mark">S</span> */}
+=======
+>>>>>>> be2e5828d5f7e37a33fee7e4d0d61ac040c3b471
             <span className="cs-brandText">
               Workhall<span className="cs-tm">™</span>
             </span>
@@ -210,7 +213,9 @@ export default function Navbar() {
                   ref={(el) => setNavItemRef(item.key, el)}
                   className="cs-navItemWrap"
                   onMouseEnter={(e) =>
-                    hasDrop ? openMenu(item.key, e.currentTarget) : setOpenKey(null)
+                    hasDrop
+                      ? openMenu(item.key, e.currentTarget)
+                      : setOpenKey(null)
                   }
                   onMouseLeave={() => (hasDrop ? scheduleClose() : null)}
                 >
@@ -222,7 +227,10 @@ export default function Navbar() {
                     }}
                     onFocus={(e) =>
                       hasDrop
-                        ? openMenu(item.key, e.currentTarget.closest(".cs-navItemWrap"))
+                        ? openMenu(
+                            item.key,
+                            e.currentTarget.closest(".cs-navItemWrap"),
+                          )
                         : setOpenKey(null)
                     }
                     onBlur={() => (hasDrop ? scheduleClose() : null)}

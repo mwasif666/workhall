@@ -30,7 +30,7 @@
   background-position: center;
   background-size: cover;
   border-radius: 26px;
-  min-height: clamp(700px, 92vh, 900px);
+  min-height: clamp(700px, 95vh, 900px);
   z-index: 2;
   height: 95vh;
 }
@@ -38,11 +38,8 @@
 .hero__box {
   max-width: 1600px;
   margin: 0 auto;
-  padding:
-    clamp(138px, 17vh, 176px)
-    clamp(24px, 4vw, 46px)
-    clamp(80px, 10vh, 108px)
-    var(--hero-content-start-x);
+  padding: clamp(138px, 17vh, 176px) clamp(24px, 4vw, 46px)
+    clamp(80px, 10vh, 108px) var(--hero-content-start-x);
   box-shadow: none;
   position: relative;
   /* overflow: hidden; */
