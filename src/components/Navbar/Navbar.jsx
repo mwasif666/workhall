@@ -192,10 +192,6 @@ export default function Navbar() {
       <header className="cs-header">
         <div className="cs-wrap" ref={wrapRef}>
           <a className="cs-brand" href="#">
-<<<<<<< HEAD
-            {/* <span className="cs-mark">S</span> */}
-=======
->>>>>>> be2e5828d5f7e37a33fee7e4d0d61ac040c3b471
             <span className="cs-brandText">
               Workhall<span className="cs-tm">™</span>
             </span>
