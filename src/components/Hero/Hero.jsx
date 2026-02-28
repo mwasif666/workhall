@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { gsap } from "gsap";
 import {
   HiChevronDown,
   HiMiniArrowUpRight,
@@ -9,6 +10,13 @@ import "./Hero.css";
 
 const getSeededLocationImage = (title) =>
   `https://picsum.photos/seed/${encodeURIComponent(`workhall-location-${title}`)}/900/560`;
+
+const HERO_KEYWORDS = [
+  "COMPANY OWNER",
+  "TEAM MANAGER",
+  "HR / ADMIN",
+  "TEAM MEMBER",
+];
 
 export default function Hero() {
   const locations = useMemo(
@@ -29,6 +37,7 @@ export default function Hero() {
 
   const locRef = useRef(null);
   const closeTimer = useRef(null);
+  const heroKeywordRef = useRef(null);
 
   const closeLoc = () => setLocOpen(false);
 
@@ -51,6 +60,42 @@ export default function Hero() {
     };
   }, []);
 
+  useEffect(() => {
+    const keywordNode = heroKeywordRef.current;
+    if (!keywordNode || HERO_KEYWORDS.length === 0) return undefined;
+
+    let index = 0;
+    keywordNode.textContent = HERO_KEYWORDS[index];
+
+    const loop = gsap.timeline({
+      repeat: -1,
+      repeatDelay: 2.2,
+    });
+
+    loop
+      .to(keywordNode, {
+        y: -20,
+        opacity: 0,
+        duration: 0.35,
+        ease: "power2.in",
+        onComplete: () => {
+          index = (index + 1) % HERO_KEYWORDS.length;
+          keywordNode.textContent = HERO_KEYWORDS[index];
+          gsap.set(keywordNode, { y: 20 });
+        },
+      })
+      .to(keywordNode, {
+        y: 0,
+        opacity: 1,
+        duration: 0.45,
+        ease: "power3.out",
+      });
+
+    return () => {
+      loop.kill();
+    };
+  }, []);
+
   const openLoc = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     setLocOpen(true);
@@ -66,9 +111,12 @@ export default function Hero() {
       <div className="hero__container">
         <div className="hero__box">
           <h1 className="hero__title">
-            Re-Think Your
-            <br />
-            Workspace.
+            <span className="hero__titleLine">Find Your Ideal Workspace For</span>
+            <span className="hero__titleKeywordWrap">
+              <span ref={heroKeywordRef} className="hero__titleKeyword">
+                {HERO_KEYWORDS[0]}
+              </span>
+            </span>
           </h1>
 
           <div className="hero__controls">

@@ -30,15 +30,15 @@
   background-position: center;
   background-size: cover;
   border-radius: 26px;
-  min-height: clamp(700px, 95vh, 900px);
+  min-height: clamp(620px, 100vh, 780px);
   z-index: 2;
 }
 
 .hero__box {
   max-width: 1600px;
   margin: 0 auto;
-  padding: clamp(138px, 17vh, 176px) clamp(24px, 4vw, 46px)
-    clamp(80px, 10vh, 108px) var(--hero-content-start-x);
+  padding: clamp(122px, 15vh, 158px) clamp(20px, 3vw, 38px)
+    clamp(68px, 8vh, 88px) var(--hero-content-start-x);
   box-shadow: none;
   position: relative;
   /* overflow: hidden; */
@@ -48,23 +48,44 @@
   align-items: flex-start;
   min-height: inherit;
   height: auto;
+  text-align: left;
   /* background-color: red; */
 }
 
 /* Title */
 .hero__title {
   margin: 0;
-  font-size: clamp(48px, 5.5vw, 84px);
-  line-height: 0.92;
-  letter-spacing: -0.03em;
+  display: grid;
+  gap: 8px;
+  line-height: 1;
+  letter-spacing: -0.02em;
   font-weight: 900;
   color: rgba(255, 255, 255, 0.9);
   text-align: left;
+  /* max-width: 13ch; */
+}
+
+.hero__titleLine {
+  display: block;
+  font-size: clamp(32px, 4vw, 54px);
+}
+
+.hero__titleKeywordWrap {
+  display: inline-flex;
+  justify-content: flex-start;
+  min-height: 1.1em;
+  overflow: hidden;
+}
+
+.hero__titleKeyword {
+  display: inline-block;
+  font-size: clamp(34px, 4.2vw, 58px);
+  text-transform: uppercase;
 }
 
 /* Controls row */
 .hero__controls {
-  margin-top: 28px;
+  margin-top: 24px;
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
@@ -419,16 +440,31 @@
   .hero__box {
     padding: 118px 20px 26px;
     min-height: 0;
+    align-items: center;
+    text-align: center;
   }
 
   .hero__title {
-    font-size: clamp(32px, 7vw, 52px);
+    text-align: center;
     max-width: 12ch;
+  }
+
+  .hero__titleKeywordWrap {
+    justify-content: center;
+  }
+
+  .hero__titleLine {
+    font-size: clamp(24px, 6.6vw, 38px);
+  }
+
+  .hero__titleKeyword {
+    font-size: clamp(26px, 7.2vw, 42px);
   }
 
   .hero__controls {
     width: 100%;
     gap: 10px;
+    justify-content: center;
   }
 
   .hPill {

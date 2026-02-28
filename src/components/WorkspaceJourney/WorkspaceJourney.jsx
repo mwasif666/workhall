@@ -1,4 +1,22 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { gsap } from "gsap";
+import {
+  HiMiniCodeBracketSquare,
+  HiMiniPresentationChartLine,
+  HiMiniPaintBrush,
+  HiMiniBugAnt,
+  HiMiniChartBarSquare,
+  HiMiniServerStack,
+  HiMiniBuildingOffice2,
+  HiMiniComputerDesktop,
+  HiMiniUsers,
+  HiMiniUserGroup,
+  HiMiniClock,
+  HiMiniSun,
+  HiMiniMoon,
+  HiMiniCalendarDays,
+  HiMiniCodeBracket,
+} from "react-icons/hi2";
 import "./WorkspaceJourney.css";
 
 const INTRO_BACKGROUND =
@@ -7,38 +25,52 @@ const INTRO_BACKGROUND =
 const STEPS = [
   {
     id: "companyRole",
-    summaryLabel: "Company profile",
+    summaryLabel: "Professional field",
     eyebrow: "Step 1",
-    question: "How are you connected to the company?",
-    helper: "Select your role so we can guide you better.",
+    question: "Which field best describes your work?",
+    helper: "Choose your field so we can match the right workspace setup.",
     image:
       "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=2000&q=80",
     options: [
       {
-        id: "owner",
-        title: "Company Owner",
-        desc: "I make workspace decisions for the company.",
+        id: "software-dev",
+        title: "Software Dev",
+        desc: "Need deep-focus desks and reliable day-long setup.",
         image:
           "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=2000&q=80",
       },
       {
-        id: "manager",
-        title: "Team Manager",
-        desc: "I manage team operations and office needs.",
+        id: "product",
+        title: "Product Manager",
+        desc: "Need planning spaces for collaboration and execution.",
         image:
           "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2000&q=80",
       },
       {
-        id: "hr-admin",
-        title: "HR / Admin",
-        desc: "I arrange workspaces and day-to-day logistics.",
+        id: "uiux",
+        title: "UI/UX Designer",
+        desc: "Need creative zones, review corners, and quiet focus.",
         image:
           "https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&w=2000&q=80",
       },
       {
-        id: "team-member",
-        title: "Team Member",
-        desc: "I am shortlisting options for approval.",
+        id: "qa",
+        title: "QA Engineer",
+        desc: "Need consistent workstations for test and validation cycles.",
+        image:
+          "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=2000&q=80",
+      },
+      {
+        id: "data",
+        title: "Data Analyst",
+        desc: "Need focused seats and meeting access for reporting syncs.",
+        image:
+          "https://images.unsplash.com/photo-1551281044-8a4c06b5f8f3?auto=format&fit=crop&w=2000&q=80",
+      },
+      {
+        id: "devops",
+        title: "DevOps Engineer",
+        desc: "Need stable work setup with extended-time productivity.",
         image:
           "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=2000&q=80",
       },
@@ -202,6 +234,35 @@ const STEPS = [
   },
 ];
 
+const OPTION_ICONS = {
+  "software-dev": HiMiniCodeBracketSquare,
+  product: HiMiniPresentationChartLine,
+  uiux: HiMiniPaintBrush,
+  qa: HiMiniBugAnt,
+  data: HiMiniChartBarSquare,
+  devops: HiMiniServerStack,
+
+  "meeting-room": HiMiniBuildingOffice2,
+  air: HiMiniComputerDesktop,
+  "private-suite": HiMiniBuildingOffice2,
+  x: HiMiniUsers,
+
+  "1-5": HiMiniUserGroup,
+  "6-15": HiMiniUsers,
+  "16-40": HiMiniUsers,
+  "40+": HiMiniUsers,
+
+  "1": HiMiniUserGroup,
+  "2-4": HiMiniUsers,
+  "5-10": HiMiniUsers,
+  "11+": HiMiniUsers,
+
+  morning: HiMiniSun,
+  afternoon: HiMiniClock,
+  evening: HiMiniMoon,
+  "full-day": HiMiniCalendarDays,
+};
+
 function getOptionById(step, optionId) {
   if (!step || !optionId) return null;
   return step.options.find((option) => option.id === optionId) ?? null;
@@ -211,6 +272,12 @@ export default function WorkspaceJourney() {
   const [screen, setScreen] = useState("intro");
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState({});
+  const introKeywordRef = useRef(null);
+
+  const introKeywords = useMemo(() => {
+    const roleStep = STEPS.find((step) => step.id === "companyRole");
+    return roleStep?.options?.map((option) => option.title.toUpperCase()) ?? [];
+  }, []);
 
   const currentStep = STEPS[stepIndex];
   const selectedOption = getOptionById(currentStep, answers[currentStep?.id]);
@@ -282,6 +349,42 @@ export default function WorkspaceJourney() {
     setScreen("intro");
   };
 
+  useEffect(() => {
+    const keywordNode = introKeywordRef.current;
+    if (!keywordNode || introKeywords.length === 0) return undefined;
+
+    let index = 0;
+    keywordNode.textContent = introKeywords[index];
+
+    const loop = gsap.timeline({
+      repeat: -1,
+      repeatDelay: 2.2,
+    });
+
+    loop
+      .to(keywordNode, {
+        y: -22,
+        opacity: 0,
+        duration: 0.34,
+        ease: "power2.in",
+        onComplete: () => {
+          index = (index + 1) % introKeywords.length;
+          keywordNode.textContent = introKeywords[index];
+          gsap.set(keywordNode, { y: 18 });
+        },
+      })
+      .to(keywordNode, {
+        y: 0,
+        opacity: 1,
+        duration: 0.44,
+        ease: "power3.out",
+      });
+
+    return () => {
+      loop.kill();
+    };
+  }, [introKeywords]);
+
   return (
     <section className="wj-section" id="workspace-journey">
       <div
@@ -295,15 +398,28 @@ export default function WorkspaceJourney() {
             <div className="wj-intro">
               <p className="wj-intro__kicker">WORKHALL SPACE MATCH</p>
               <h2 className="wj-intro__title">
-                Find your ideal workspace in minutes.
+                <span className="wj-intro__titleLine">
+                  I am:
+                </span>
+                <span className="wj-intro__keywordWrap">
+                  <span ref={introKeywordRef} className="wj-intro__keyword">
+                    {introKeywords[0] ?? "YOUR TEAM"}
+                  </span>
+                </span>
               </h2>
               <p className="wj-intro__desc">
-                Answer a few quick questions and we will match you with the
-                best setup at Workhall.
+                Tell us your field and we will match desks, meeting rooms, and
+                collaboration spaces that fit your work style.
               </p>
 
-              <button className="wj-btn wj-btn--primary" onClick={startJourney}>
-                Start Questions
+              <button
+                className="wj-btn wj-btn--primary wj-intro__cta"
+                onClick={startJourney}
+              >
+                <span>Start Questions</span>
+                <span className="wj-intro__ctaArrow" aria-hidden="true">
+                  ›
+                </span>
               </button>
             </div>
           ) : null}
@@ -332,6 +448,7 @@ export default function WorkspaceJourney() {
               <div className="wj-grid">
                 {currentStep.options.map((option) => {
                   const isActive = answers[currentStep.id] === option.id;
+                  const Icon = OPTION_ICONS[option.id] ?? HiMiniCodeBracket;
 
                   return (
                     <button
@@ -340,6 +457,9 @@ export default function WorkspaceJourney() {
                       className={`wj-card ${isActive ? "isActive" : ""}`}
                       onClick={() => selectOption(option.id)}
                     >
+                      <span className="wj-card__icon" aria-hidden="true">
+                        <Icon />
+                      </span>
                       <div className="wj-card__title">{option.title}</div>
                       <div className="wj-card__desc">{option.desc}</div>
                     </button>
