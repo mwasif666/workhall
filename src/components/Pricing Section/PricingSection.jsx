@@ -20,18 +20,7 @@ const SLIDES = [
   "https://images.unsplash.com/photo-1497366412874-3415097a27e7?auto=format&fit=crop&w=1400&q=80",
 ];
 
-const DESKTOP_CARDS_PER_PAGE = 3;
-
-function chunkItems(items, chunkSize) {
-  const size = Math.max(1, chunkSize);
-  const chunks = [];
-
-  for (let i = 0; i < items.length; i += size) {
-    chunks.push(items.slice(i, i + size));
-  }
-
-  return chunks;
-}
+const DESKTOP_CARDS_PER_PAGE = 4;
 
 function ImageSlider({ images = SLIDES, interval = 2600 }) {
   const [i, setI] = useState(0);
@@ -50,7 +39,7 @@ function ImageSlider({ images = SLIDES, interval = 2600 }) {
   const start = () => {
     stop();
     timer.current = setInterval(() => {
-      setI((prev) => (prev + 1) % images.length);
+      setI((prevI) => (prevI + 1) % images.length);
     }, interval);
   };
 
@@ -143,18 +132,17 @@ function Card({ title, price, desc, suitedFor }) {
 }
 
 export default function PricingSection() {
-  // ✅ 2 pages, per page 3 cards
   const sections = useMemo(
     () => [
       {
-        key: "beginners",
+        key: "individuals",
         eyebrow: "WORKHALL PLANS",
         title: "Individuals",
         desc: "Flexible plans for freelancers, consultants and solo professionals who need a polished office environment without long-term overhead.",
-        cta: "EXPLORE PLANS",
+        cta: "EXPLORE INDIVIDUAL PLANS",
         items: [
           {
-            id: "b-1",
+            id: "i-1",
             title: "Air",
             price: "PKR 20,000/mo",
             desc: "Access to an open spot in our shared space. You choose a new spot every time you come in. Hook your laptop, pick a desk, and get to work.",
@@ -166,17 +154,17 @@ export default function PricingSection() {
             ],
           },
           {
-            id: "b-2",
+            id: "i-2",
             title: "Desk",
             price: "PKR 35,000/mo",
-            desc: "A dedicated desk that’s yours. Leave your essentials, come back anytime, and work with consistency in a premium shared environment.",
+            desc: "A dedicated desk that's yours. Leave your essentials, come back anytime, and work with consistency in a premium shared environment.",
             suitedFor: ["Creators", "Founders", "Remote Teams", "Consultants"],
           },
           {
-            id: "b-3",
+            id: "i-3",
             title: "Suite",
             price: "PKR 55,000/mo",
-            desc: "Private space for focused work. Extra privacy, more comfort, and a setup that feels like your own office—without the overhead.",
+            desc: "Private space for focused work. Extra privacy, more comfort, and a setup that feels like your own office without the overhead.",
             suitedFor: [
               "Solo Founders",
               "Executives",
@@ -184,17 +172,29 @@ export default function PricingSection() {
               "Designers",
             ],
           },
+          {
+            id: "i-4",
+            title: "Studio",
+            price: "PKR 75,000/mo",
+            desc: "A compact private studio with storage and meeting credits for independent professionals who want a premium base every day.",
+            suitedFor: [
+              "Lawyers",
+              "Architects",
+              "Content Producers",
+              "Analysts",
+            ],
+          },
         ],
       },
       {
-        key: "experts",
+        key: "teams",
         eyebrow: "WORKHALL PLANS",
         title: "Teams",
         desc: "Scalable workspace options for startups and growing teams with dedicated seating, collaboration areas and private office upgrades.",
         cta: "VIEW TEAM PLANS",
         items: [
           {
-            id: "e-1",
+            id: "t-1",
             title: "Air",
             price: "PKR 80,000/mo",
             desc: "Flexible seating for small teams with shared collaboration areas. Great for hybrid teams that need occasional in-person sync.",
@@ -206,7 +206,7 @@ export default function PricingSection() {
             ],
           },
           {
-            id: "e-2",
+            id: "t-2",
             title: "Desk",
             price: "PKR 140,000/mo",
             desc: "Dedicated seats for your team so everyone has a stable base. Perfect for consistent daily operations and deep work.",
@@ -218,7 +218,7 @@ export default function PricingSection() {
             ],
           },
           {
-            id: "e-3",
+            id: "t-3",
             title: "Suite",
             price: "PKR 220,000/mo",
             desc: "Private team room with controlled access. Meeting-friendly, brandable, and ideal for teams that want full privacy.",
@@ -229,94 +229,119 @@ export default function PricingSection() {
               "Studios",
             ],
           },
+          {
+            id: "t-4",
+            title: "Office",
+            price: "PKR 320,000/mo",
+            desc: "A move-in-ready private office cluster for medium teams that need leadership cabins, focused zones, and collaboration tables.",
+            suitedFor: [
+              "Engineering Teams",
+              "Marketing Teams",
+              "Finance Teams",
+              "Service Teams",
+            ],
+          },
+        ],
+      },
+      {
+        key: "enterprises",
+        eyebrow: "WORKHALL PLANS",
+        title: "Enterprises",
+        desc: "Enterprise-grade workplace plans with security controls, custom branding, and scalable footprints for larger organizations.",
+        cta: "CONTACT ENTERPRISE SALES",
+        items: [
+          {
+            id: "en-1",
+            title: "Private Floor",
+            price: "PKR 550,000/mo",
+            desc: "A secured private floor with controlled entry and dedicated support for high-focus enterprise departments.",
+            suitedFor: ["Enterprises", "Banks", "Healthcare", "Public Sector"],
+          },
+          {
+            id: "en-2",
+            title: "Branded HQ",
+            price: "PKR 850,000/mo",
+            desc: "Custom branding, executive meeting suites, and client-facing zones designed around your company's operating model.",
+            suitedFor: ["Corporate HQ", "Regional Offices", "MNC Teams", "PSX Firms"],
+          },
+          {
+            id: "en-3",
+            title: "Multi-City",
+            price: "PKR 1,200,000/mo",
+            desc: "Multi-location workspace access with centralized billing and policy controls for distributed enterprise teams.",
+            suitedFor: [
+              "National Teams",
+              "Field Operations",
+              "Sales Networks",
+              "Global Functions",
+            ],
+          },
+          {
+            id: "en-4",
+            title: "Enterprise Plus",
+            price: "Custom Quote",
+            desc: "Fully tailored enterprise workplace stack with compliance workflows, integrations, and a dedicated account pod.",
+            suitedFor: ["Fortune 500", "Regulated Firms", "Scaleups", "Gov Projects"],
+          },
         ],
       },
     ],
     [],
   );
 
-  const sliderPages = useMemo(() => {
-    const flatCards = sections.flatMap((section) =>
-      section.items.map((item) => ({
-        ...item,
-        _sectionTitle: section.title,
+  const sliderPages = useMemo(
+    () =>
+      sections.map((section) => ({
+        key: section.key,
+        eyebrow: section.eyebrow,
+        title: section.title,
+        desc: section.desc,
+        cta: section.cta,
+        items: section.items,
       })),
-    );
+    [sections],
+  );
 
-    return chunkItems(flatCards, DESKTOP_CARDS_PER_PAGE).map((items, index) => {
-      const sectionTitles = [...new Set(items.map((item) => item._sectionTitle))];
-      const primarySection =
-        sections.find((section) => section.title === sectionTitles[0]) ??
-        sections[0];
-      const isMixedPage = sectionTitles.length > 1;
-
-      return {
-        key: `page-${index}`,
-        eyebrow: "WORKHALL PLANS",
-        title: isMixedPage ? sectionTitles.join(" + ") : primarySection.title,
-        desc: isMixedPage
-          ? "Explore workspace plans for individuals and teams in one continuous slider."
-          : primarySection.desc,
-        cta: isMixedPage ? "EXPLORE PLANS" : primarySection.cta,
-        items,
-      };
-    });
-  }, [sections]);
-
+  const headViewportRef = useRef(null);
+  const headTrackRef = useRef(null);
   const viewportRef = useRef(null);
   const sectionRef = useRef(null);
   const containerRef = useRef(null);
   const trackRef = useRef(null);
   const gsapModeRef = useRef(false);
-  const scrollStretchRef = useRef(1);
+  const scrollStretchRef = useRef(1.2);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const container = containerRef.current;
+    const headViewport = headViewportRef.current;
+    const headTrack = headTrackRef.current;
     const viewport = viewportRef.current;
     const track = trackRef.current;
 
-    if (!section || !container || !viewport || !track) return;
+    if (
+      !section ||
+      !container ||
+      !headViewport ||
+      !headTrack ||
+      !viewport ||
+      !track
+    ) {
+      return;
+    }
 
     const resetGsapMode = () => {
       section.classList.remove("isGsapMode");
-      gsap.set(track, { clearProps: "transform" });
+      gsap.set([headTrack, track], { clearProps: "transform" });
       gsapModeRef.current = false;
     };
 
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 640px)", () => {
-      const getOffsetLeftWithin = (node, ancestor) => {
-        let left = 0;
-        let current = node;
-
-        while (current && current !== ancestor) {
-          left += current.offsetLeft || 0;
-          current = current.offsetParent;
-        }
-
-        return current === ancestor ? left : null;
-      };
-
-      const getDistance = () => {
-        const maxTrackDistance = Math.max(0, track.scrollWidth - viewport.clientWidth);
-        const cards = track.querySelectorAll(".ps-card");
-        const lastCard = cards[cards.length - 1];
-
-        if (!lastCard) return maxTrackDistance;
-
-        const lastCardLeft = getOffsetLeftWithin(lastCard, track);
-        if (lastCardLeft == null) return maxTrackDistance;
-
-        const lastCardRight = lastCardLeft + lastCard.offsetWidth;
-        const distanceToLastCard = Math.max(
-          0,
-          Math.ceil(lastCardRight - viewport.clientWidth),
-        );
-
-        return Math.min(maxTrackDistance, distanceToLastCard);
-      };
+      const getDistance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+      const getHeadDistance = () =>
+        Math.max(0, headTrack.scrollWidth - headViewport.clientWidth);
 
       if (getDistance() <= 0) {
         resetGsapMode();
@@ -326,24 +351,41 @@ export default function PricingSection() {
       section.classList.add("isGsapMode");
       gsapModeRef.current = true;
 
-      const tween = gsap.to(track, {
-        x: () => -getDistance(),
-        ease: "none",
+      const timeline = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           pin: container,
           start: "top top+=12",
           end: () => `+=${getDistance() * scrollStretchRef.current}`,
-          scrub: 1.8,
+          scrub: 0.9,
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });
+
+      timeline.to(
+        headTrack,
+        {
+          x: () => -getHeadDistance(),
+          ease: "none",
+        },
+        0,
+      );
+
+      timeline.to(
+        track,
+        {
+          x: () => -getDistance(),
+          ease: "none",
+        },
+        0,
+      );
+
       ScrollTrigger.refresh();
 
       return () => {
-        tween.scrollTrigger?.kill();
-        tween.kill();
+        timeline.scrollTrigger?.kill();
+        timeline.kill();
         resetGsapMode();
       };
     });
@@ -358,7 +400,7 @@ export default function PricingSection() {
     };
   }, []);
 
-  // ✅ wheel => horizontal (scroll-trigger feel)
+  // wheel -> horizontal (scroll-trigger feel)
   useEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
@@ -386,16 +428,18 @@ export default function PricingSection() {
       style={{ "--ps-cards-per-page": DESKTOP_CARDS_PER_PAGE }}
     >
       <div ref={containerRef} className="ps-container2">
-        <div className="ps-headSplit">
-          {sections.map((p, idx) => (
-            <div
-              key={`${p.key}-split`}
-              className={`ps-headSplitCol ${idx === sections.length - 1 ? "isLast" : ""}`}
-            >
-              <div className="ps-headSplitEyebrow">{p.eyebrow}</div>
-              <h2 className="ps-headSplitTitle">{p.title}</h2>
-            </div>
-          ))}
+        <div ref={headViewportRef} className="ps-headSplit">
+          <div ref={headTrackRef} className="ps-headSplitTrack">
+            {sliderPages.map((p, idx) => (
+              <div
+                key={`${p.key}-split`}
+                className={`ps-headSplitCol ${idx === 0 ? "isFirst" : ""}`}
+              >
+                <div className="ps-headSplitEyebrow">{p.eyebrow}</div>
+                <h2 className="ps-headSplitTitle">{p.title}</h2>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div ref={viewportRef} className="ps-viewport">
@@ -421,7 +465,7 @@ export default function PricingSection() {
                   <div className="ps-pageFooterText">
                     <p className="ps-pageDesc">{p.desc}</p>
                     <a className="ps-pageCta" href="#">
-                      {p.cta} <span aria-hidden="true">›</span>
+                      {p.cta} <span aria-hidden="true">&gt;</span>
                     </a>
                   </div>
                 </header>
@@ -429,7 +473,10 @@ export default function PricingSection() {
                 <div
                   className="ps-grid3"
                   style={{
-                    "--ps-columns-this-page": DESKTOP_CARDS_PER_PAGE,
+                    "--ps-columns-this-page": Math.min(
+                      p.items.length,
+                      DESKTOP_CARDS_PER_PAGE,
+                    ),
                   }}
                 >
                   {p.items.map((it) => (
@@ -438,14 +485,8 @@ export default function PricingSection() {
                 </div>
               </div>
             ))}
-
-            {/* ✅ vertical divider line between pages */}
-            {sliderPages.length === 2 ? (
-              <span className="ps-divider" aria-hidden="true" />
-            ) : null}
           </div>
         </div>
-
       </div>
     </section>
   );
