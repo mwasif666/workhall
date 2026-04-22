@@ -7,12 +7,42 @@ import {
   HiMiniXMark,
 } from "react-icons/hi2";
 import { GoArrowDown, GoArrowUp } from "react-icons/go";
+import {
+  LuCarFront,
+  LuClock3,
+  LuHandHelping,
+  LuLayoutGrid,
+  LuSquareParking,
+} from "react-icons/lu";
 import "./Navbar.css";
 
 const getSeededCardImage = (menuKey, title) =>
   `https://picsum.photos/seed/${encodeURIComponent(
     `workhall-${menuKey}-${title}`,
   )}/900/560`;
+
+const TOP_FEATURES = [
+  {
+    label: "Free Gated Parking At All Locations",
+    Icon: LuSquareParking,
+  },
+  {
+    label: "Open 24/7, 365 Days With Full Access",
+    Icon: LuClock3,
+  },
+  {
+    label: "Custom Office Layouts",
+    Icon: LuLayoutGrid,
+  },
+  {
+    label: "Staff Service at Your Desk",
+    Icon: LuHandHelping,
+  },
+  {
+    label: "Car & Bike Cleaning On-Site",
+    Icon: LuCarFront,
+  },
+];
 
 export default function Navbar() {
   const NAV = useMemo(
@@ -72,17 +102,17 @@ export default function Navbar() {
           { title: "Support", href: "#" },
         ],
       },
-      {
-        key: "members",
-        label: "Members Lounge",
-        hoverLabel: "Members Lounge →",
-        cards: [
-          { title: "Login", href: "#" },
-          { title: "Benefits", href: "#" },
-          { title: "Bookings", href: "#" },
-          { title: "Community Board", href: "#" },
-        ],
-      },
+      // {
+      //   key: "members",
+      //   label: "Members Lounge",
+      //   hoverLabel: "Members Lounge →",
+      //   cards: [
+      //     { title: "Login", href: "#" },
+      //     { title: "Benefits", href: "#" },
+      //     { title: "Bookings", href: "#" },
+      //     { title: "Community Board", href: "#" },
+      //   ],
+      // },
       {
         key: "virtual",
         label: "Virtual Tour",
@@ -98,13 +128,44 @@ export default function Navbar() {
     [],
   );
 
+  const navItems = useMemo(
+    () => [
+      {
+        key: "plans",
+        label: "Plans",
+        hoverLabel: "Plans ->",
+        cards: [
+          { title: "Day Pass", href: "#" },
+          { title: "Hot Desk", href: "#" },
+          { title: "Dedicated Desk", href: "#" },
+          { title: "Private Office", href: "#" },
+        ],
+      },
+      ...NAV,
+    ],
+    [NAV],
+  );
+
+  const desktopNavItems = useMemo(
+    () => navItems.filter((item) => item.key !== "virtual"),
+    [navItems],
+  );
+
+  const virtualTourItem = useMemo(
+    () => navItems.find((item) => item.key === "virtual") ?? null,
+    [navItems],
+  );
+
   const [openKey, setOpenKey] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileKey, setMobileKey] = useState(null);
+  const [compactHeader, setCompactHeader] = useState(false);
   const [megaLeft, setMegaLeft] = useState(18);
   const closeTimer = useRef(null);
   const rootRef = useRef(null);
+  const headerRef = useRef(null);
   const wrapRef = useRef(null);
+  const measureRef = useRef(null);
   const navItemRefs = useRef(new Map());
 
   const setNavItemRef = (key, el) => {
@@ -145,6 +206,54 @@ export default function Navbar() {
     return () => (document.body.style.overflow = "");
   }, [mobileOpen]);
 
+  useEffect(() => {
+    const evaluateHeaderMode = () => {
+      const headerEl = headerRef.current;
+      const measureEl = measureRef.current;
+      if (!headerEl || !measureEl) return;
+
+      if (window.innerWidth <= 980) {
+        setCompactHeader(true);
+        return;
+      }
+
+      const headerStyles = window.getComputedStyle(headerEl);
+      const paddingLeft = parseFloat(headerStyles.paddingLeft) || 0;
+      const paddingRight = parseFloat(headerStyles.paddingRight) || 0;
+      const availableWidth = headerEl.clientWidth - paddingLeft - paddingRight;
+      const requiredWidth = Math.ceil(measureEl.scrollWidth);
+
+      setCompactHeader(requiredWidth > availableWidth);
+    };
+
+    evaluateHeaderMode();
+
+    const resizeObserver = new ResizeObserver(() => {
+      evaluateHeaderMode();
+    });
+
+    if (headerRef.current) resizeObserver.observe(headerRef.current);
+    if (measureRef.current) resizeObserver.observe(measureRef.current);
+    resizeObserver.observe(document.documentElement);
+    window.addEventListener("resize", evaluateHeaderMode);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", evaluateHeaderMode);
+    };
+  }, [navItems]);
+
+  useEffect(() => {
+    if (!compactHeader) return;
+    setOpenKey(null);
+  }, [compactHeader]);
+
+  useEffect(() => {
+    if (compactHeader) return;
+    setMobileOpen(false);
+    setMobileKey(null);
+  }, [compactHeader]);
+
   const positionMega = (key, anchorEl) => {
     const rootEl = rootRef.current;
     const wrapEl = wrapRef.current;
@@ -177,8 +286,8 @@ export default function Navbar() {
     closeTimer.current = setTimeout(() => setOpenKey(null), 120);
   };
 
-  const active = NAV.find((x) => x.key === openKey);
-  const activeHasCards = !!active?.cards?.length;
+  const active = navItems.find((x) => x.key === openKey);
+  const activeHasCards = !!active?.cards?.length && !compactHeader;
 
   useEffect(() => {
     if (!openKey) return;
@@ -189,9 +298,113 @@ export default function Navbar() {
 
   return (
     <div ref={rootRef}>
-      <header className="cs-header">
+      <div className="cs-topStripShell" aria-label="Workspace highlights">
+        <div className="cs-topStripWrap">
+          <div className="cs-topStrip">
+            {[0, 1].map((groupIndex) => (
+              <div
+                key={groupIndex}
+                className="cs-topStripGroup"
+                aria-hidden={groupIndex === 1}
+              >
+                {TOP_FEATURES.map(({ label, Icon }) => (
+                  <div
+                    key={`${groupIndex}-${label}`}
+                    className="cs-topStripItem"
+                  >
+                    <span className="cs-topStripIcon" aria-hidden="true">
+                      <Icon />
+                    </span>
+                    <span className="cs-topStripText">{label}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <header
+        ref={headerRef}
+        className={`cs-header ${compactHeader ? "isCompact" : ""}`}
+      >
+        <div className="cs-measureRow" ref={measureRef} aria-hidden="true">
+          <span className="cs-brand cs-brand--measure">
+            <span className="cs-brandTile" />
+            <span className="cs-brandText">
+              Workhall<span className="cs-tm">â„¢</span>
+            </span>
+          </span>
+
+          <div className="cs-nav cs-nav--measure">
+            {desktopNavItems.map((item) => {
+              const isExternal = item.key === "members";
+              const hasThumb = item.key === "virtual";
+              const hasDrop = !!item.cards?.length && !isExternal && !hasThumb;
+
+              return (
+                <span key={`measure-${item.key}`} className="cs-navItemWrap">
+                  <span className="cs-pill cs-pill--measure">
+                    <span className="cs-pillTextSwap">
+                      <span className="cs-pillTextSwap__a">{item.label}</span>
+                    </span>
+
+                    {hasDrop && (
+                      <span className="cs-pillIconSwap" aria-hidden="true">
+                        <span className="cs-pillIconSwap__a">
+                          <GoArrowDown />
+                        </span>
+                      </span>
+                    )}
+
+                    {isExternal && (
+                      <span
+                        className="cs-pillAction cs-iconSwap"
+                        aria-hidden="true"
+                      >
+                        <span className="cs-iconSwap__a">
+                          <HiMiniArrowUpRight />
+                        </span>
+                      </span>
+                    )}
+
+                    {hasThumb && (
+                      <span
+                        className="cs-pillThumb"
+                        style={{
+                          backgroundImage: `url("${getSeededCardImage("virtual-tour", item.label)}")`,
+                        }}
+                      />
+                    )}
+                  </span>
+                </span>
+              );
+            })}
+          </div>
+
+          {virtualTourItem && (
+            <div className="cs-right cs-right--measure">
+              <span className="cs-pill cs-pill--measure cs-headerAction">
+                <span className="cs-pillTextSwap">
+                  <span className="cs-pillTextSwap__a">
+                    {virtualTourItem.label}
+                  </span>
+                </span>
+
+                <span
+                  className="cs-pillThumb"
+                  style={{
+                    backgroundImage: `url("${getSeededCardImage("virtual-tour", virtualTourItem.label)}")`,
+                  }}
+                />
+              </span>
+            </div>
+          )}
+        </div>
+
         <div className="cs-wrap" ref={wrapRef}>
           <a className="cs-brand" href="#">
+            <span className="cs-brandTile" aria-hidden="true" />
             <span className="cs-brandText">
               Workhall<span className="cs-tm">™</span>
             </span>
@@ -199,8 +412,10 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <nav className="cs-nav" aria-label="Primary">
-            {NAV.map((item) => {
-              const hasDrop = !!item.cards?.length;
+            {desktopNavItems.map((item) => {
+              const isExternal = item.key === "members";
+              const hasThumb = item.key === "virtual";
+              const hasDrop = !!item.cards?.length && !isExternal && !hasThumb;
               const isOpen = openKey === item.key;
 
               return (
@@ -253,6 +468,30 @@ export default function Navbar() {
                         </span>
                       </span>
                     )}
+
+                    {isExternal && (
+                      <span
+                        className="cs-pillAction cs-iconSwap"
+                        aria-hidden="true"
+                      >
+                        <span className="cs-iconSwap__a">
+                          <HiMiniArrowUpRight />
+                        </span>
+                        <span className="cs-iconSwap__b">
+                          <HiMiniArrowUpRight />
+                        </span>
+                      </span>
+                    )}
+
+                    {hasThumb && (
+                      <span
+                        className="cs-pillThumb"
+                        style={{
+                          backgroundImage: `url("${getSeededCardImage("virtual-tour", item.label)}")`,
+                        }}
+                        aria-hidden="true"
+                      />
+                    )}
                   </a>
                 </div>
               );
@@ -260,6 +499,30 @@ export default function Navbar() {
           </nav>
 
           <div className="cs-right">
+            {virtualTourItem && (
+              <a
+                href={virtualTourItem.href || "#"}
+                className="cs-pill cs-headerAction"
+              >
+                <span className="cs-pillTextSwap">
+                  <span className="cs-pillTextSwap__a">
+                    {virtualTourItem.label}
+                  </span>
+                  <span className="cs-pillTextSwap__b">
+                    {`${virtualTourItem.label} ->`}
+                  </span>
+                </span>
+
+                <span
+                  className="cs-pillThumb"
+                  style={{
+                    backgroundImage: `url("${getSeededCardImage("virtual-tour", virtualTourItem.label)}")`,
+                  }}
+                  aria-hidden="true"
+                />
+              </a>
+            )}
+
             {/* <a className="cs-cta" href="#">
               <span className="cs-ctaLabel">Let's talk</span>
               <span className="cs-ctaIconBox cs-iconSwap" aria-hidden="true">
@@ -376,8 +639,11 @@ export default function Navbar() {
             </div>
 
             <div className="cs-drawerContent">
-              {NAV.map((item) => {
-                const hasDrop = !!item.cards?.length;
+              {navItems.map((item) => {
+                const hasDrop =
+                  !!item.cards?.length &&
+                  item.key !== "members" &&
+                  item.key !== "virtual";
                 const isOpen = mobileKey === item.key;
 
                 if (!hasDrop) {

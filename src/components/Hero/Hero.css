@@ -1,10 +1,10 @@
 /* =========================
-   HERO BOX (rounded banner)
+   HERO BOX
    ========================= */
 .hero {
   width: 100%;
   background: transparent;
-  padding: 22px var(--hero-shell-pad-x) 24px;
+  padding: 10px var(--hero-shell-pad-x) 24px;
 }
 
 .hero__container {
@@ -13,293 +13,455 @@
   padding: 0 var(--hero-inner-pad-x);
   position: relative;
   overflow: visible;
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(70, 70, 70, 0.42) 0%,
-      rgba(70, 70, 70, 0.42) 100%
-    ),
-    linear-gradient(
-      115deg,
-      rgba(14, 14, 14, 0.22) 8%,
-      rgba(14, 14, 14, 0.08) 48%,
-      rgba(14, 14, 14, 0.24) 100%
-    ),
-    url("https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  border-radius: 26px;
-  min-height: clamp(620px, 100vh, 780px);
+  background: #2a2a2a;
+  border-radius: 30px;
+  min-height: clamp(640px, 88vh, 820px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 16px 36px rgba(0, 0, 0, 0.08);
   z-index: 2;
 }
 
-.hero__box {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: clamp(122px, 15vh, 158px) clamp(20px, 3vw, 38px)
-    clamp(68px, 8vh, 88px) var(--hero-content-start-x);
-  box-shadow: none;
-  position: relative;
-  /* overflow: hidden; */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: inherit;
-  height: auto;
-  text-align: left;
-  /* background-color: red; */
+/* Background video (coworking / open office) + readability scrim */
+.hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-/* Title */
+.hero__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  transform: scale(1.02);
+}
+
+.hero__mediaScrim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      800px 320px at 22% 18%,
+      rgba(255, 255, 255, 0.12),
+      transparent 58%
+    ),
+    radial-gradient(
+      520px 220px at 86% 88%,
+      rgba(255, 255, 255, 0.07),
+      transparent 60%
+    ),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(20, 22, 28, 0.62) 100%);
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.25);
+}
+
+.hero__box {
+  position: relative;
+  z-index: 1;
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: inherit;
+  padding: clamp(194px, 24vh, 238px) var(--wh-hero-content-pad-r)
+    clamp(40px, 7vh, 58px) var(--wh-hero-content-pad-x);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.hero__copy {
+  width: 100%;
+}
+
 .hero__title {
   margin: 0;
   display: grid;
-  gap: 8px;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  gap: 4px;
+  line-height: 0.92;
+  letter-spacing: -0.045em;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.9);
-  text-align: left;
-  /* max-width: 13ch; */
+  color: rgba(255, 255, 255, 0.97);
 }
 
 .hero__titleLine {
   display: block;
-  font-size: clamp(32px, 4vw, 54px);
+  font-size: clamp(52px, 4.2vw, 90px);
 }
 
-.hero__titleKeywordWrap {
-  display: inline-flex;
-  justify-content: flex-start;
-  min-height: 1.1em;
-  overflow: hidden;
+.hero__titleLine--large {
+  letter-spacing: -0.05em;
 }
 
-.hero__titleKeyword {
-  display: inline-block;
-  font-size: clamp(34px, 4.2vw, 58px);
-  text-transform: uppercase;
+.hero__lede {
+  margin: 28px 0 0;
+  width: 100%;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: clamp(18px, 1vw, 22px);
+  line-height: 1.32;
+  font-weight: 500;
+  text-align: left;
 }
 
-/* Controls row */
 .hero__controls {
-  margin-top: 24px;
+  margin-top: 42px;
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
-  gap: 10px;
-  flex-wrap: wrap;
-  width: min(100%, 1040px);
+  gap: 14px;
+  flex-wrap: nowrap;
+  width: min(100%, 1120px);
+  position: relative;
+  z-index: 8;
+}
+
+.hero__stats {
+  margin-top: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 34px;
+  padding-top: 42px;
+}
+
+.heroStat {
+  display: grid;
+  gap: 3px;
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.heroStat__value {
+  font-size: clamp(24px, 1.9vw, 34px);
+  line-height: 0.9;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.heroStat__label {
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  opacity: 0.92;
 }
 
 /* =========================
-   PILL CONTROL BASE
+   CONTROLS
    ========================= */
 .hPill {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  min-height: 54px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.14);
+  gap: 16px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.34);
-  backdrop-filter: blur(8px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 18px 36px rgba(8, 18, 40, 0.12);
+  backdrop-filter: blur(12px);
 }
 
 .hPill__icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.88);
 }
 
 .hPill__txt {
   display: grid;
-  gap: 2px;
+  gap: 5px;
+  min-width: 0;
+  flex: 1 1 auto;
+  text-align: left;
+  align-content: center;
+  justify-items: start;
 }
 
 .hPill__label {
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.98);
   font-weight: 900;
-  font-size: 11px;
-  line-height: 1.1;
+  font-size: clamp(16px, 1.02vw, 19px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
 }
 
 .hPill__sub {
-  color: rgba(255, 255, 255, 0.75);
-  font-weight: 650;
-  font-size: 9px;
-  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.84);
+  font-weight: 600;
+  font-size: clamp(11px, 0.68vw, 12px);
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Friends pill size */
 .hPill--friends {
-  min-width: 300px;
+  display: flex;
+  gap: 20px;
 }
 
-/* Counter */
+.hPill--friends .hPill__sub {
+  max-width: none;
+}
+
+.hPill--loc .hPill__sub {
+  max-width: none;
+}
+
 .hCounter {
   margin-left: auto;
+  flex: 0 0 auto;
+  align-self: center;
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 10px;
-  padding: 3px 5px;
+  gap: 8px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
 }
 
 .hCounter__btn {
   width: 22px;
   height: 22px;
-  border-radius: 7px;
+  border-radius: 999px;
   border: 0;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.28);
-  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.96);
   display: grid;
   place-items: center;
-  font-size: 12px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  font-size: 16px;
 }
 
 .hCounter__val {
-  min-width: 22px;
   text-align: center;
-  font-weight: 950;
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 11px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.98);
+  font-size: 15px;
 }
 
 /* =========================
-   Location dropdown (grid like navbar)
+   LOCATION DROPDOWN
    ========================= */
 .hDrop {
   position: relative;
   z-index: 5;
-}
-
-.hPill--loc {
-  min-width: 340px;
+  display: flex;
+  gap: 20px;
 }
 
 .hDrop__trigger {
+  width: 100%;
   cursor: pointer;
   text-align: left;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .hPill__endIcon {
   margin-left: auto;
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.18);
-  color: rgba(255, 255, 255, 0.92);
+  flex: 0 0 auto;
+  align-self: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.95);
   display: grid;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 15px;
 }
 
-/* small “Browse →” swap */
 .hPill__swapText {
   position: relative;
-  width: 0; /* hidden on small pills */
+  width: 0;
   height: 0;
   overflow: hidden;
 }
 
-/* Dropdown panel */
 .hDrop__menu {
   position: absolute;
   left: 0;
   top: calc(100% + 12px);
-  width: min(760px, 92vw);
-  background: rgba(255, 255, 255, 0.95);
+  width: min(540px, calc(100vw - 32px));
+  max-height: min(520px, 68vh);
+  overflow: auto;
+  background: rgba(255, 255, 255, 0.98);
   border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 18px;
-  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.16);
-  padding: 14px;
+  border-radius: 20px;
+  box-shadow: 0 26px 64px rgba(0, 0, 0, 0.2);
+  padding: 18px;
   z-index: 120;
   transform-origin: top left;
   animation: hDropMenuIn 0.22s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-.hDrop__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.hDropCard {
-  position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 14px;
-  background-color: #0a2a78;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  padding: 14px 14px 16px;
-  min-height: 154px;
-  cursor: pointer;
-  text-align: left;
-  overflow: hidden;
+.hDrop__top {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  box-shadow: 0 10px 22px rgba(4, 8, 34, 0.14);
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.hDropCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 28px rgba(4, 8, 34, 0.2);
-}
-
-.hDropCard__title {
-  color: #fff;
-  font-weight: 950;
-  margin-top: 0;
-  font-size: 14px;
-  line-height: 1.12;
+.hDrop__searchWrap {
   position: relative;
-  z-index: 1;
+  flex: 1 1 auto;
 }
 
-.hDropCard__desc {
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 650;
-  font-size: 11px;
-  margin-top: 4px;
-  position: relative;
-  z-index: 1;
+.hDrop__searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(12, 22, 44, 0.44);
+  font-size: 16px;
+  pointer-events: none;
 }
 
-.hDropCard__arrow {
-  position: absolute !important;
-  top: 10px;
-  right: 10px;
-  width: 44px;
-  height: 44px;
+.hDrop__search {
+  width: 100%;
+  height: 50px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #f6f7fb;
+  padding: 0 16px 0 42px;
+  color: #15233c;
+  font-size: 16px;
+  font-weight: 700;
+  outline: none;
+}
+
+.hDrop__search::placeholder {
+  color: rgba(34, 54, 82, 0.72);
+}
+
+.hDrop__search:focus {
+  border-color: rgba(16, 46, 255, 0.3);
+  box-shadow: 0 0 0 4px rgba(16, 46, 255, 0.08);
+}
+
+.hDrop__close {
+  width: 42px;
+  height: 42px;
   border-radius: 12px;
-  background: #25d2ff;
-  color: #002578;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  color: #33253a;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  z-index: 2;
-  overflow: hidden;
+  cursor: pointer;
+  font-size: 20px;
+  flex: 0 0 auto;
 }
 
-.hDropCard__arrow svg {
-  width: 18px;
-  height: 18px;
+.hDrop__label {
+  margin-top: 16px;
+  margin-bottom: 14px;
+  color: rgba(19, 19, 19, 0.58);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.hDrop__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.hDropOption {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 88px;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 10px 24px rgba(13, 24, 46, 0.06);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.hDropOption:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px rgba(13, 24, 46, 0.12);
+}
+
+.hDropOption.isActive {
+  border-color: rgba(16, 46, 255, 0.18);
+  background: linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%);
+}
+
+.hDropOption__thumb {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #d8def7;
+  flex: 0 0 auto;
+}
+
+.hDropOption__thumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.hDropOption__txt {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.hDropOption__title {
+  color: #13213b;
+  font-weight: 900;
+  font-size: 14px;
+  line-height: 1.12;
+}
+
+.hDropOption__desc {
+  color: rgba(19, 33, 59, 0.58);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.hDropOption__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: #f3f5fb;
+  color: #233a67;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  flex: 0 0 auto;
+}
+
+.hDrop__empty {
+  padding: 18px 4px 4px;
+  color: rgba(19, 33, 59, 0.58);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 @keyframes hDropMenuIn {
@@ -314,38 +476,37 @@
 }
 
 /* =========================
-   CTA button
+   CTA BUTTON
    ========================= */
 .hCta {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 54px;
-  padding: 8px 8px 8px 14px;
-  border-radius: 12px;
-  text-decoration: none;
-  background: rgba(255, 255, 255, 0.96);
-  color: #111;
-  font-weight: 950;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  font-size: 13px;
-}
-
-.hCta__icon {
-  width: 30px;
-  height: 30px;
+  gap: 8px;
+  flex: 0 0 auto;
+  min-height: 42px;
+  padding: 14px;
   border-radius: 9px;
-  background: rgba(0, 0, 0, 0.08);
-  display: grid;
-  place-items: center;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.98);
+  color: #111111;
+  font-weight: 900;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   font-size: 14px;
 }
 
-/* =========================
-   SAME HOVER SWAP EFFECT (text + icons)
-   ========================= */
+.hCta__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.08);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+}
 
-/* text swap container */
+/* =========================
+   SWAP EFFECTS
+   ========================= */
 .hCta__swap,
 .hSwap {
   position: relative;
@@ -372,21 +533,18 @@
   opacity: 0;
 }
 
-/* on hover */
 .hCta:hover .hSwap__a,
 .hDrop__trigger:hover .hSwap__a {
   transform: translateY(-130%);
   opacity: 0;
 }
+
 .hCta:hover .hSwap__b,
 .hDrop__trigger:hover .hSwap__b {
   transform: translateY(0%);
   opacity: 1;
 }
 
-/* =========================
-   UNIVERSAL ICON SWAP (same as navbar)
-   ========================= */
 .cs-iconSwap {
   position: relative;
   overflow: hidden;
@@ -414,80 +572,82 @@
   opacity: 0;
 }
 
-/* trigger icon swap on hover */
 .hCta:hover .cs-iconSwap__a,
-.hDropCard:hover .cs-iconSwap__a,
 .hDrop__trigger:hover .cs-iconSwap__a {
   transform: translateY(-130%);
   opacity: 0;
 }
 
 .hCta:hover .cs-iconSwap__b,
-.hDropCard:hover .cs-iconSwap__b,
 .hDrop__trigger:hover .cs-iconSwap__b {
   transform: translateY(0%);
   opacity: 1;
 }
 
 /* =========================
-   Responsive
+   RESPONSIVE
    ========================= */
 @media (max-width: 980px) {
   .hero {
     padding: 12px 12px 16px;
   }
 
+  .hero__container {
+    border-radius: 24px;
+    min-height: 620px;
+  }
+
   .hero__box {
-    padding: 118px 20px 26px;
-    min-height: 0;
-    align-items: center;
-    text-align: center;
+    padding: 120px var(--wh-hero-content-pad-r) 28px
+      var(--wh-hero-content-pad-x);
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .hero__copy {
+    max-width: 720px;
+    width: 100%;
   }
 
   .hero__title {
-    text-align: center;
-    max-width: 12ch;
-  }
-
-  .hero__titleKeywordWrap {
-    justify-content: center;
+    justify-items: start;
   }
 
   .hero__titleLine {
-    font-size: clamp(24px, 6.6vw, 38px);
+    font-size: clamp(46px, 8.8vw, 68px);
   }
 
-  .hero__titleKeyword {
-    font-size: clamp(26px, 7.2vw, 42px);
+  .hero__lede {
+    margin-top: 22px;
+    font-size: 18px;
+    max-width: 640px;
   }
 
   .hero__controls {
     width: 100%;
-    gap: 10px;
-    justify-content: center;
+    max-width: 1120px;
+    margin-top: 36px;
+    justify-content: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
   .hPill {
-    gap: 12px;
-    padding: 10px 12px;
-    min-height: 72px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.14);
-    border: 1px solid rgba(255, 255, 255, 0.24);
+    gap: 14px;
+    padding: 14px 16px;
+    min-height: 88px;
+    border-radius: 18px;
   }
 
   .hPill__icon {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
     border-radius: 10px;
   }
 
-  .hPill__txt {
-    gap: 2px;
-  }
-
   .hPill__label {
-    font-size: 12px;
+    font-size: 16px;
   }
 
   .hPill__sub {
@@ -496,31 +656,30 @@
 
   .hCounter {
     gap: 6px;
-    border-radius: 10px;
-    padding: 4px 6px;
   }
 
   .hCounter__btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
     font-size: 14px;
   }
 
   .hCounter__val {
-    min-width: 28px;
-    font-size: 12px;
+    min-width: 30px;
+    font-size: 22px;
   }
 
   .hPill__endIcon {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     font-size: 14px;
   }
 
   .hDrop {
     width: 100%;
+    flex-basis: 100%;
   }
 
   .hPill--friends,
@@ -531,10 +690,10 @@
 
   .hCta {
     width: 100%;
-    min-height: 72px;
-    border-radius: 14px;
-    padding: 10px 10px 10px 16px;
-    font-size: 12px;
+    min-height: 76px;
+    border-radius: 18px;
+    padding: 12px 12px 12px 18px;
+    font-size: 13px;
     justify-content: space-between;
   }
 
@@ -547,25 +706,44 @@
 
   .hDrop__menu {
     width: 100%;
+    max-height: min(460px, 60vh);
   }
 
   .hDrop__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero__stats {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 28px;
+    padding-top: 40px;
   }
 }
 
 @media (max-width: 520px) {
   .hero__container {
     border-radius: 20px;
+    min-height: 560px;
   }
 
   .hero__box {
-    padding: 110px 14px 18px;
+    padding: 108px var(--wh-hero-content-pad-r) 20px
+      var(--wh-hero-content-pad-x);
+  }
+
+  .hero__titleLine {
+    font-size: clamp(40px, 10.4vw, 54px);
+  }
+
+  .hero__lede {
+    margin-top: 18px;
+    font-size: 16px;
   }
 
   .hPill,
   .hCta {
-    min-height: 72px;
+    min-height: 74px;
     border-radius: 14px;
   }
 
@@ -578,11 +756,24 @@
     min-width: 28px;
   }
 
-  .hPill__sub {
-    font-size: 11px;
-  }
-
   .hDrop__grid {
     grid-template-columns: 1fr;
+  }
+
+  .hDrop__menu {
+    left: 0;
+    width: min(100%, calc(100vw - 24px));
+  }
+
+  .hero__stats {
+    gap: 22px;
+  }
+
+  .heroStat__value {
+    font-size: 28px;
+  }
+
+  .heroStat__label {
+    font-size: 11px;
   }
 }

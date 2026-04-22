@@ -7,52 +7,208 @@ import React, {
 } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
+import {
+  HiChevronLeft,
+  HiChevronRight,
+  HiMiniArrowUpRight,
+} from "react-icons/hi2";
 import "./PricingSection.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const SLIDES = [
-  "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80",
-  "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1400&q=80",
-  "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=80",
-  "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=80",
-  "https://images.unsplash.com/photo-1497366412874-3415097a27e7?auto=format&fit=crop&w=1400&q=80",
+const DESKTOP_CARDS_PER_PAGE = 3;
+
+const OFFICE_IMAGES = {
+  individuals: [
+    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1497366412874-3415097a27e7?auto=format&fit=crop&w=1400&q=80",
+  ],
+  teams: [
+    "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1497366412874-3415097a27e7?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80",
+  ],
+  enterprise: [
+    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=80",
+    "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1400&q=80",
+  ],
+};
+
+const PLAN_GROUPS = [
+  {
+    key: "individuals",
+    eyebrow: "Plans",
+    title: "Individuals",
+    desc: "Flexible workspace options for freelancers, consultants, and solo professionals who need a polished environment without the long-term office overhead.",
+    cta: "Explore Individual Plans",
+    items: [
+      {
+        id: "individuals-air",
+        title: "Air",
+        learnMore: "#",
+        desc: "Access to shared seating whenever you need focused work. Plug in, settle down, and get moving without the commitment of a fixed desk.",
+        suitedFor: [
+          "Freelancers",
+          "Consultants",
+          "Students",
+          "Remote Employees",
+        ],
+        images: OFFICE_IMAGES.individuals,
+      },
+      {
+        id: "individuals-desk",
+        title: "Desk",
+        learnMore: "#",
+        desc: "Your own dedicated desk, ready every day. Leave your monitor, keep your setup intact, and work with consistency in a premium shared space.",
+        suitedFor: ["Creators", "Founders", "Analysts", "Solo Operators"],
+        images: [...OFFICE_IMAGES.individuals].reverse(),
+      },
+      {
+        id: "individuals-nox",
+        title: "Nox",
+        learnMore: "#",
+        desc: "Shared or fixed desk access at a reduced rate. Same space, same amenities, same great community, just during the quieter hours of the night.",
+        suitedFor: [
+          "Budget-Conscious Freelancers",
+          "Overseas Client Work",
+          "Part-Time Workers",
+          "Night Owls",
+        ],
+        images: OFFICE_IMAGES.individuals.slice(1),
+      },
+    ],
+  },
+  {
+    key: "teams",
+    eyebrow: "Plans",
+    title: "Teams",
+    desc: "Scalable workspace solutions for startups and growing teams that need dedicated seating, collaboration room, and private office flexibility.",
+    cta: "View Team Plans",
+    items: [
+      {
+        id: "teams-base",
+        title: "Base",
+        learnMore: "#",
+        desc: "Dedicated desks for your whole team in a shared environment. Sit together, collaborate freely, and stay close to the energy of a full community.",
+        suitedFor: [
+          "Startups",
+          "Growing Businesses",
+          "Small Team Pods",
+          "Agencies",
+        ],
+        images: OFFICE_IMAGES.teams,
+      },
+      {
+        id: "teams-box",
+        title: "Box",
+        learnMore: "#",
+        desc: "A private, lockable office that is entirely yours. Confidential, personal, and set up exactly the way your team wants it.",
+        suitedFor: [
+          "Studios",
+          "Founder Teams",
+          "Client-Facing Teams",
+          "Operations",
+        ],
+        images: [...OFFICE_IMAGES.teams].reverse(),
+      },
+      {
+        id: "teams-suite",
+        title: "Suite",
+        learnMore: "#",
+        desc: "A fully private suite with room to grow. Build out leadership cabins, collaboration areas, and custom layouts around your workflow.",
+        suitedFor: [
+          "Product Teams",
+          "Sales Teams",
+          "Support Teams",
+          "Scaling Startups",
+        ],
+        images: OFFICE_IMAGES.teams.slice(1),
+      },
+    ],
+  },
+  {
+    key: "enterprises",
+    eyebrow: "Plans",
+    title: "Enterprises",
+    desc: "Enterprise-grade workplace plans with privacy controls, custom branding, and larger footprints for organizations that need more structure.",
+    cta: "Contact Enterprise Sales",
+    items: [
+      {
+        id: "enterprise-hq",
+        title: "HQ",
+        learnMore: "#",
+        desc: "A branded headquarters environment designed around your workflows with secure access, polished reception, and executive-ready meeting space.",
+        suitedFor: ["Corporate HQ", "Regional Offices", "Leadership Teams", "MNCs"],
+        images: OFFICE_IMAGES.enterprise,
+      },
+      {
+        id: "enterprise-floor",
+        title: "Floor",
+        learnMore: "#",
+        desc: "A private floor with controlled access and dedicated support staff. Ideal for departments that need privacy, scale, and uninterrupted operations.",
+        suitedFor: [
+          "Banks",
+          "Healthcare",
+          "Public Sector",
+          "Compliance-Heavy Teams",
+        ],
+        images: [...OFFICE_IMAGES.enterprise].reverse(),
+      },
+      {
+        id: "enterprise-custom",
+        title: "Custom",
+        learnMore: "#",
+        desc: "Tailored multi-site workspace planning with custom layouts, centralized billing, and operational flexibility for large distributed organizations.",
+        suitedFor: [
+          "National Teams",
+          "Enterprise Sales",
+          "Field Operations",
+          "Global Functions",
+        ],
+        images: OFFICE_IMAGES.enterprise.slice(1),
+      },
+    ],
+  },
 ];
 
-const DESKTOP_CARDS_PER_PAGE = 4;
+function ImageSlider({ images, title, interval = 2800 }) {
+  const [index, setIndex] = useState(0);
+  const timerRef = useRef(null);
+  const frameCount = images.length;
 
-function ImageSlider({ images = SLIDES, interval = 2600 }) {
-  const [i, setI] = useState(0);
-  const timer = useRef(null);
-
-  const go = (next) => {
-    setI(() => {
-      const n = images.length;
-      return ((next % n) + n) % n;
-    });
+  const stop = () => {
+    if (timerRef.current) {
+      window.clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
   };
 
-  const next = () => go(i + 1);
-  const prev = () => go(i - 1);
-
   const start = () => {
+    if (frameCount <= 1) return;
     stop();
-    timer.current = setInterval(() => {
-      setI((prevI) => (prevI + 1) % images.length);
+    timerRef.current = window.setInterval(() => {
+      setIndex((current) => (current + 1) % frameCount);
     }, interval);
   };
 
-  const stop = () => {
-    if (timer.current) clearInterval(timer.current);
-    timer.current = null;
+  const goPrev = () => {
+    setIndex((current) => (current - 1 + frameCount) % frameCount);
+  };
+
+  const goNext = () => {
+    setIndex((current) => (current + 1) % frameCount);
   };
 
   useEffect(() => {
     start();
     return stop;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [images.length, interval]);
+  }, [frameCount, interval]);
 
   return (
     <div
@@ -63,66 +219,73 @@ function ImageSlider({ images = SLIDES, interval = 2600 }) {
       onBlur={start}
     >
       <div className="ps-mediaTrack">
-        {images.map((src, idx) => (
+        {images.map((src, imageIndex) => (
           <img
-            key={src + idx}
-            className={`ps-mediaImg ${idx === i ? "isActive" : ""}`}
+            key={`${title}-${src}-${imageIndex}`}
+            className={`ps-mediaImg ${imageIndex === index ? "isActive" : ""}`}
             src={src}
-            alt=""
+            alt={`${title} workspace`}
             loading="lazy"
             draggable="false"
           />
         ))}
       </div>
 
-      <button
-        className="ps-mediaNav ps-mediaNav--left"
-        type="button"
-        aria-label="Prev"
-        onClick={prev}
-      >
-        <HiChevronLeft />
-      </button>
-      <button
-        className="ps-mediaNav ps-mediaNav--right"
-        type="button"
-        aria-label="Next"
-        onClick={next}
-      >
-        <HiChevronRight />
-      </button>
+      {frameCount > 1 && (
+        <>
+          <button
+            className="ps-mediaNav ps-mediaNav--left"
+            type="button"
+            aria-label={`Previous ${title} image`}
+            onClick={goPrev}
+          >
+            <HiChevronLeft />
+          </button>
+          <button
+            className="ps-mediaNav ps-mediaNav--right"
+            type="button"
+            aria-label={`Next ${title} image`}
+            onClick={goNext}
+          >
+            <HiChevronRight />
+          </button>
 
-      <div className="ps-dots" aria-hidden="true">
-        {images.map((_, idx) => (
-          <span key={idx} className={`ps-dot ${idx === i ? "isActive" : ""}`} />
-        ))}
-      </div>
+          <div className="ps-dots" aria-hidden="true">
+            {images.map((_, imageIndex) => (
+              <span
+                key={`${title}-dot-${imageIndex}`}
+                className={`ps-dot ${imageIndex === index ? "isActive" : ""}`}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
-function Card({ title, price, desc, suitedFor }) {
+function PlanCard({ title, learnMore, desc, suitedFor, images }) {
   return (
     <article className="ps-card">
-      <ImageSlider />
+      <ImageSlider images={images} title={title} />
 
-      <div className="ps-body">
-        <div className="ps-top">
-          <h3 className="ps-title">{title}</h3>
-
-          <div className="ps-price">
-            <div className="ps-price__small">Starting from</div>
-            <div className="ps-price__big">{price}</div>
-          </div>
+      <div className="ps-cardBody">
+        <div className="ps-cardTitleRow">
+          <h3 className="ps-cardTitle">{title}</h3>
+          <span className="ps-cardDivider" aria-hidden="true" />
+          <a className="ps-cardLink" href={learnMore}>
+            Learn More
+            <HiMiniArrowUpRight />
+          </a>
         </div>
 
-        <p className="ps-desc">{desc}</p>
+        <p className="ps-cardDesc">{desc}</p>
 
-        <div className="ps-suited">
-          <div className="ps-suited__label">Best Suited For:</div>
-          <ul className="ps-suited__list">
-            {suitedFor.map((x) => (
-              <li key={x}>{x}</li>
+        <div className="ps-cardSuit">
+          <div className="ps-cardSuitLabel">Best Suited For:</div>
+          <ul className="ps-cardSuitList">
+            {suitedFor.map((item) => (
+              <li key={`${title}-${item}`}>{item}</li>
             ))}
           </ul>
         </div>
@@ -132,175 +295,7 @@ function Card({ title, price, desc, suitedFor }) {
 }
 
 export default function PricingSection() {
-  const sections = useMemo(
-    () => [
-      {
-        key: "individuals",
-        eyebrow: "WORKHALL PLANS",
-        title: "Individuals",
-        desc: "Flexible plans for freelancers, consultants and solo professionals who need a polished office environment without long-term overhead.",
-        cta: "EXPLORE INDIVIDUAL PLANS",
-        items: [
-          {
-            id: "i-1",
-            title: "Air",
-            price: "PKR 20,000/mo",
-            desc: "Access to an open spot in our shared space. You choose a new spot every time you come in. Hook your laptop, pick a desk, and get to work.",
-            suitedFor: [
-              "Freelancers",
-              "Consultants",
-              "Students",
-              "Remote Employees",
-            ],
-          },
-          {
-            id: "i-2",
-            title: "Desk",
-            price: "PKR 35,000/mo",
-            desc: "A dedicated desk that's yours. Leave your essentials, come back anytime, and work with consistency in a premium shared environment.",
-            suitedFor: ["Creators", "Founders", "Remote Teams", "Consultants"],
-          },
-          {
-            id: "i-3",
-            title: "Suite",
-            price: "PKR 55,000/mo",
-            desc: "Private space for focused work. Extra privacy, more comfort, and a setup that feels like your own office without the overhead.",
-            suitedFor: [
-              "Solo Founders",
-              "Executives",
-              "Researchers",
-              "Designers",
-            ],
-          },
-          {
-            id: "i-4",
-            title: "Studio",
-            price: "PKR 75,000/mo",
-            desc: "A compact private studio with storage and meeting credits for independent professionals who want a premium base every day.",
-            suitedFor: [
-              "Lawyers",
-              "Architects",
-              "Content Producers",
-              "Analysts",
-            ],
-          },
-        ],
-      },
-      {
-        key: "teams",
-        eyebrow: "WORKHALL PLANS",
-        title: "Teams",
-        desc: "Scalable workspace options for startups and growing teams with dedicated seating, collaboration areas and private office upgrades.",
-        cta: "VIEW TEAM PLANS",
-        items: [
-          {
-            id: "t-1",
-            title: "Air",
-            price: "PKR 80,000/mo",
-            desc: "Flexible seating for small teams with shared collaboration areas. Great for hybrid teams that need occasional in-person sync.",
-            suitedFor: [
-              "Startups",
-              "Hybrid Teams",
-              "Agencies",
-              "Project Teams",
-            ],
-          },
-          {
-            id: "t-2",
-            title: "Desk",
-            price: "PKR 140,000/mo",
-            desc: "Dedicated seats for your team so everyone has a stable base. Perfect for consistent daily operations and deep work.",
-            suitedFor: [
-              "Growing Teams",
-              "Product Teams",
-              "Support Teams",
-              "Operations",
-            ],
-          },
-          {
-            id: "t-3",
-            title: "Suite",
-            price: "PKR 220,000/mo",
-            desc: "Private team room with controlled access. Meeting-friendly, brandable, and ideal for teams that want full privacy.",
-            suitedFor: [
-              "Sales Teams",
-              "Leadership",
-              "Client-Facing Teams",
-              "Studios",
-            ],
-          },
-          {
-            id: "t-4",
-            title: "Office",
-            price: "PKR 320,000/mo",
-            desc: "A move-in-ready private office cluster for medium teams that need leadership cabins, focused zones, and collaboration tables.",
-            suitedFor: [
-              "Engineering Teams",
-              "Marketing Teams",
-              "Finance Teams",
-              "Service Teams",
-            ],
-          },
-        ],
-      },
-      {
-        key: "enterprises",
-        eyebrow: "WORKHALL PLANS",
-        title: "Enterprises",
-        desc: "Enterprise-grade workplace plans with security controls, custom branding, and scalable footprints for larger organizations.",
-        cta: "CONTACT ENTERPRISE SALES",
-        items: [
-          {
-            id: "en-1",
-            title: "Private Floor",
-            price: "PKR 550,000/mo",
-            desc: "A secured private floor with controlled entry and dedicated support for high-focus enterprise departments.",
-            suitedFor: ["Enterprises", "Banks", "Healthcare", "Public Sector"],
-          },
-          {
-            id: "en-2",
-            title: "Branded HQ",
-            price: "PKR 850,000/mo",
-            desc: "Custom branding, executive meeting suites, and client-facing zones designed around your company's operating model.",
-            suitedFor: ["Corporate HQ", "Regional Offices", "MNC Teams", "PSX Firms"],
-          },
-          {
-            id: "en-3",
-            title: "Multi-City",
-            price: "PKR 1,200,000/mo",
-            desc: "Multi-location workspace access with centralized billing and policy controls for distributed enterprise teams.",
-            suitedFor: [
-              "National Teams",
-              "Field Operations",
-              "Sales Networks",
-              "Global Functions",
-            ],
-          },
-          {
-            id: "en-4",
-            title: "Enterprise Plus",
-            price: "Custom Quote",
-            desc: "Fully tailored enterprise workplace stack with compliance workflows, integrations, and a dedicated account pod.",
-            suitedFor: ["Fortune 500", "Regulated Firms", "Scaleups", "Gov Projects"],
-          },
-        ],
-      },
-    ],
-    [],
-  );
-
-  const sliderPages = useMemo(
-    () =>
-      sections.map((section) => ({
-        key: section.key,
-        eyebrow: section.eyebrow,
-        title: section.title,
-        desc: section.desc,
-        cta: section.cta,
-        items: section.items,
-      })),
-    [sections],
-  );
+  const sliderPages = useMemo(() => PLAN_GROUPS, []);
 
   const headViewportRef = useRef(null);
   const headTrackRef = useRef(null);
@@ -340,8 +335,14 @@ export default function PricingSection() {
 
     mm.add("(min-width: 640px)", () => {
       const getDistance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
-      const getHeadDistance = () =>
-        Math.max(0, headTrack.scrollWidth - headViewport.clientWidth);
+      const getHeadShift = (targetIndex) => {
+        const cols = Array.from(headTrack.children);
+        if (!cols.length || !cols[targetIndex]) return 0;
+
+        const firstOffset = cols[0].offsetLeft;
+        return -(cols[targetIndex].offsetLeft - firstOffset);
+      };
+      const segmentCount = Math.max(1, sliderPages.length - 1);
 
       if (getDistance() <= 0) {
         resetGsapMode();
@@ -355,7 +356,7 @@ export default function PricingSection() {
         scrollTrigger: {
           trigger: section,
           pin: container,
-          start: "top top+=12",
+          start: "top top+=10",
           end: () => `+=${getDistance() * scrollStretchRef.current}`,
           scrub: 0.9,
           anticipatePin: 1,
@@ -363,20 +364,24 @@ export default function PricingSection() {
         },
       });
 
-      timeline.to(
-        headTrack,
-        {
-          x: () => -getHeadDistance(),
-          ease: "none",
-        },
-        0,
-      );
+      for (let index = 1; index < sliderPages.length; index += 1) {
+        timeline.to(
+          headTrack,
+          {
+            x: () => getHeadShift(index),
+            ease: "none",
+            duration: 1,
+          },
+          index - 1,
+        );
+      }
 
       timeline.to(
         track,
         {
           x: () => -getDistance(),
           ease: "none",
+          duration: segmentCount,
         },
         0,
       );
@@ -400,13 +405,11 @@ export default function PricingSection() {
     };
   }, []);
 
-  // wheel -> horizontal (scroll-trigger feel)
   useEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
 
     const onWheel = (e) => {
-      // only convert vertical wheel to horizontal when we can scroll horizontally
       if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
       if (gsapModeRef.current) return;
 
@@ -423,6 +426,7 @@ export default function PricingSection() {
 
   return (
     <section
+      id="plans"
       ref={sectionRef}
       className="ps-section2"
       style={{ "--ps-cards-per-page": DESKTOP_CARDS_PER_PAGE }}
@@ -430,13 +434,13 @@ export default function PricingSection() {
       <div ref={containerRef} className="ps-container2">
         <div ref={headViewportRef} className="ps-headSplit">
           <div ref={headTrackRef} className="ps-headSplitTrack">
-            {sliderPages.map((p, idx) => (
+            {sliderPages.map((page, index) => (
               <div
-                key={`${p.key}-split`}
-                className={`ps-headSplitCol ${idx === 0 ? "isFirst" : ""}`}
+                key={`${page.key}-split`}
+                className={`ps-headSplitCol ${index === 0 ? "isFirst" : ""}`}
               >
-                <div className="ps-headSplitEyebrow">{p.eyebrow}</div>
-                <h2 className="ps-headSplitTitle">{p.title}</h2>
+                <div className="ps-headSplitEyebrow">{page.eyebrow}</div>
+                <h2 className="ps-headSplitTitle">{page.title}</h2>
               </div>
             ))}
           </div>
@@ -444,28 +448,28 @@ export default function PricingSection() {
 
         <div ref={viewportRef} className="ps-viewport">
           <div ref={trackRef} className="ps-track">
-            {sliderPages.map((p, idx) => (
+            {sliderPages.map((page, index) => (
               <div
-                key={p.key}
+                key={page.key}
                 className={`ps-page ${
-                  idx === 0
+                  index === 0
                     ? "isFirst"
-                    : idx === sliderPages.length - 1
+                    : index === sliderPages.length - 1
                       ? "isLast"
                       : "isMiddle"
                 }`}
               >
                 <header className="ps-pageHead">
                   <div className="ps-eyebrow">
-                    <span className="ps-dotMini" />
-                    {p.eyebrow}
+                    <span className="ps-dotMini" aria-hidden="true" />
+                    {page.eyebrow}
                   </div>
-                  <h2 className="ps-bigTitle">{p.title}</h2>
+                  <h2 className="ps-bigTitle">{page.title}</h2>
 
                   <div className="ps-pageFooterText">
-                    <p className="ps-pageDesc">{p.desc}</p>
+                    <p className="ps-pageDesc">{page.desc}</p>
                     <a className="ps-pageCta" href="#">
-                      {p.cta} <span aria-hidden="true">&gt;</span>
+                      {page.cta} <span aria-hidden="true">&gt;</span>
                     </a>
                   </div>
                 </header>
@@ -474,13 +478,13 @@ export default function PricingSection() {
                   className="ps-grid3"
                   style={{
                     "--ps-columns-this-page": Math.min(
-                      p.items.length,
+                      page.items.length,
                       DESKTOP_CARDS_PER_PAGE,
                     ),
                   }}
                 >
-                  {p.items.map((it) => (
-                    <Card key={it.id} {...it} />
+                  {page.items.map((item) => (
+                    <PlanCard key={item.id} {...item} />
                   ))}
                 </div>
               </div>

@@ -1,0 +1,238 @@
+/* =========================
+   WHY WORK HALL
+   Sticky / pinned intro section that hosts the stacked card reveal.
+   - The section pins for ~2x viewport height.
+   - Two panels rise from below and stack over the intro.
+   - Desktop/tablet: full pinned stacking interaction.
+   - Mobile: panels flow naturally with a soft fade-up on enter.
+   ========================= */
+
+.wwh-section {
+  background: #fff;
+  position: relative;
+  z-index: 5;
+  /* Pull the section UP over the Community pin-spacer (100vh) so that
+     while the grid is pinned, this section rises into view as the rows
+     fade out. Pin on this section then starts exactly when the
+     Community pin releases. */
+  margin-top: -100vh;
+}
+
+.wwh-stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 720px;
+  overflow: hidden;
+  background: #fff;
+  box-sizing: border-box;
+  padding: clamp(40px, 6vh, 80px) clamp(16px, 3vw, 44px);
+}
+
+/* ---------- Intro (centered inside the pinned stage) ---------- */
+.wwh-intro {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  justify-items: center;
+  gap: clamp(18px, 2.6vh, 34px);
+  padding: clamp(40px, 6vh, 80px) clamp(16px, 3vw, 44px);
+  text-align: center;
+  z-index: 1;
+}
+
+.wwh-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #131313;
+  letter-spacing: 0.01em;
+}
+
+.wwh-eyebrowDot {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: #b5b5b5;
+  display: inline-block;
+}
+
+.wwh-title {
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  color: #080808;
+  font-size: clamp(34px, 5.4vw, 74px);
+  max-width: 22ch;
+}
+
+/* ---------- Stacked panels ---------- */
+.wwh-panel {
+  position: absolute;
+  left: clamp(16px, 3vw, 44px);
+  right: clamp(16px, 3vw, 44px);
+  top: clamp(28px, 5vh, 70px);
+  bottom: clamp(28px, 5vh, 70px);
+  background: #bdbdbd;
+  border-radius: clamp(20px, 2vw, 32px);
+  padding: clamp(22px, 3.2vw, 52px);
+  box-shadow: 0 -28px 60px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  will-change: transform;
+}
+
+/* Stacking order: panel 2 rises last and sits on top of panel 1. */
+.wwh-panel--one {
+  z-index: 2;
+}
+
+/* Panel 2 sits lower on the stage than panel 1 so, when both panels are
+   settled, panel 1's top edge is visible ABOVE panel 2 as a "previous
+   card" peek — giving the clean stacked-with-gap look. */
+.wwh-panel--two {
+  z-index: 3;
+  top: clamp(96px, 14vh, 150px);
+  box-shadow: 0 -24px 48px rgba(0, 0, 0, 0.22);
+}
+
+.wwh-panelInner {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: clamp(24px, 4vw, 72px);
+  align-items: center;
+}
+
+.wwh-panelInner--wide {
+  grid-template-columns: 1.45fr 1fr;
+}
+
+.wwh-panelLeft,
+.wwh-panelRight {
+  min-width: 0;
+}
+
+.wwh-featuresGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: clamp(20px, 3vw, 44px);
+  row-gap: clamp(14px, 2vh, 24px);
+}
+
+.wwh-featuresList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(18px, 2.6vh, 30px);
+}
+
+.wwh-featureItem {
+  display: grid;
+  grid-template-columns: clamp(40px, 4vw, 56px) 1fr;
+  gap: clamp(12px, 1.2vw, 18px);
+  align-items: center;
+}
+
+.wwh-featureTile {
+  width: clamp(40px, 4vw, 56px);
+  height: clamp(40px, 4vw, 56px);
+  background: #dedede;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: block;
+}
+
+.wwh-featureLabel {
+  font-weight: 900;
+  font-size: clamp(12px, 0.95vw, 15px);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: #0f0f0f;
+}
+
+.wwh-panelTitle {
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  color: #0a0a0a;
+  font-size: clamp(28px, 3.2vw, 52px);
+}
+
+/* ---------- Responsive: disable pin & let panels flow ---------- */
+@media (max-width: 859px) {
+  .wwh-section {
+    margin-top: 0;
+    padding: clamp(56px, 10vh, 96px) 0 clamp(48px, 8vh, 80px);
+  }
+
+  .wwh-stage {
+    position: static;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: 0 16px;
+    display: grid;
+    gap: clamp(28px, 4vh, 48px);
+  }
+
+  .wwh-intro {
+    position: static;
+    inset: auto;
+    padding: 0;
+    gap: 18px;
+  }
+
+  .wwh-title {
+    font-size: clamp(28px, 7vw, 44px);
+    max-width: 18ch;
+  }
+
+  .wwh-title br {
+    display: none;
+  }
+
+  .wwh-panel {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    padding: clamp(22px, 5vw, 32px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+  }
+
+  .wwh-panelInner,
+  .wwh-panelInner--wide {
+    grid-template-columns: 1fr;
+    gap: clamp(22px, 4vh, 34px);
+  }
+
+  .wwh-featuresGrid {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 18px;
+    row-gap: 14px;
+  }
+
+  .wwh-panelTitle {
+    font-size: clamp(26px, 7vw, 38px);
+  }
+}
+
+@media (max-width: 520px) {
+  .wwh-featuresGrid {
+    grid-template-columns: 1fr;
+  }
+}
