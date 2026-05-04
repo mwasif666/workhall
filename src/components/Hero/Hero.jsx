@@ -8,18 +8,95 @@ import {
   HiXMark,
 } from "react-icons/hi2";
 import { workhallLocations } from "@/data/workhallLocations";
+import Stack from "@/components/Stack/Stack";
 import "./Hero.css";
 
 const HERO_STATS = [
-  { value: "06", label: "Locations" },
-  { value: "24/7", label: "Access" },
+  { num: 6, suffix: "", padded: true, label: "Location", color: "#3f967b" },
+  { num: 7, suffix: "+", padded: true, label: "Years", color: "#d96842" },
+  { num: 800, suffix: "+", padded: false, label: "Seats", color: "#3159ad" },
+  { num: 40, suffix: "k+", padded: false, label: "Sq.ft area", color: "#928b68" },
+];
+
+function HeroStat({ item, index }) {
+  const [count, setCount] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const [done, setDone] = useState(false);
+  const ref = useRef(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || started.current) return;
+        started.current = true;
+        setTimeout(() => {
+          setVisible(true);
+          const duration = 1400;
+          const startTime = performance.now();
+          const tick = (now) => {
+            const p = Math.min((now - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            setCount(Math.round(eased * item.num));
+            if (p < 1) {
+              requestAnimationFrame(tick);
+            } else {
+              setCount(item.num);
+              setDone(true);
+            }
+          };
+          requestAnimationFrame(tick);
+        }, 300 + index * 160);
+      },
+      { threshold: 0.3 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [item.num, index]);
+
+  const display = item.padded
+    ? String(count).padStart(2, "0") + item.suffix
+    : `${count}${item.suffix}`;
+
+  const color = done ? "#000000" : item.color;
+
+  return (
+    <div
+      ref={ref}
+      className="heroStat"
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(14px)",
+        transition: "opacity 0.5s ease, transform 0.5s ease",
+      }}
+    >
+      <div
+        className="heroStat__value"
+        style={{ color, transition: done ? "color 0.5s ease" : "none" }}
+      >
+        {display}
+      </div>
+      <div
+        className="heroStat__label"
+        style={{ color, transition: done ? "color 0.5s ease" : "none" }}
+      >
+        {item.label}
+      </div>
+    </div>
+  );
+}
+
+const HERO_STACK_IMAGES = [
+  "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=700&h=960&q=85",
+  "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=700&h=960&q=85",
+  "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=700&h=960&q=85",
+  "https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=700&h=960&fit=crop",
 ];
 
 export default function Hero() {
-  const locations = useMemo(
-    () => workhallLocations,
-    [],
-  );
+  const locations = useMemo(() => workhallLocations, []);
 
   const [friends, setFriends] = useState(3);
   const [locOpen, setLocOpen] = useState(false);
@@ -27,7 +104,6 @@ export default function Hero() {
   const [locSearch, setLocSearch] = useState("");
 
   const locRef = useRef(null);
-  const videoRef = useRef(null);
   const closeLoc = () => {
     setLocOpen(false);
     setLocSearch("");
@@ -46,6 +122,20 @@ export default function Hero() {
       ),
     );
   }, [locSearch, locations]);
+
+  const stackCards = useMemo(
+    () =>
+      HERO_STACK_IMAGES.map((src, index) => (
+        <img
+          key={src}
+          src={src}
+          alt={`Workspace preview ${index + 1}`}
+          className="hero__stackImage"
+          draggable="false"
+        />
+      )),
+    [],
+  );
 
   useEffect(() => {
     const onDown = (e) => {
@@ -66,60 +156,11 @@ export default function Hero() {
     };
   }, []);
 
-  useEffect(() => {
-    const videoEl = videoRef.current;
-    if (!videoEl) return undefined;
-
-    let cancelled = false;
-
-    const tryPlay = () => {
-      if (cancelled) return;
-
-      videoEl.muted = true;
-      videoEl.defaultMuted = true;
-      videoEl.playsInline = true;
-      videoEl.setAttribute("muted", "");
-      videoEl.setAttribute("playsinline", "");
-      videoEl.setAttribute("webkit-playsinline", "true");
-
-      const playPromise = videoEl.play();
-      if (playPromise?.catch) {
-        playPromise.catch(() => {});
-      }
-    };
-
-    tryPlay();
-    videoEl.addEventListener("canplay", tryPlay);
-    videoEl.addEventListener("loadeddata", tryPlay);
-
-    return () => {
-      cancelled = true;
-      videoEl.removeEventListener("canplay", tryPlay);
-      videoEl.removeEventListener("loadeddata", tryPlay);
-    };
-  }, []);
-
   return (
     <div className="hero">
       <div className="hero__container">
-        <div className="hero__media" aria-hidden="true">
-          <video
-            ref={videoRef}
-            className="hero__video"
-            autoPlay
-            muted
-            defaultMuted
-            loop
-            playsInline
-            preload="auto"
-            disablePictureInPicture
-            disableRemotePlayback
-            poster="https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=1920"
-          >
-            <source src="/hero-office.mp4" type="video/mp4" />
-          </video>
-          <div className="hero__mediaScrim" />
-        </div>
+        <div className="row g-2 align-items-stretch">
+        <div className="col-8">
         <div className="hero__box">
           <div className="hero__copy">
             <h1 className="hero__title">
@@ -130,7 +171,7 @@ export default function Hero() {
             </h1>
 
             <p className="hero__lede">
-              with Pakistan&apos;s most flexible coworking spaces, open 24/7,
+              With Pakistan&apos;s most flexible coworking spaces, open 24/7,
               across 6 locations.
               <br />
               All built for the way you actually work, not the way an office
@@ -144,7 +185,9 @@ export default function Hero() {
 
               <div className="hPill__txt">
                 <div className="hPill__label">How Many Friends?</div>
-                <div className="hPill__sub">Select number of desks you need</div>
+                <div className="hPill__sub">
+                  Select number of desks you need
+                </div>
               </div>
 
               <div className="hCounter">
@@ -299,14 +342,34 @@ export default function Hero() {
             </a>
           </div>
 
-          <div className="hero__stats" aria-label="Workspace highlights summary">
-            {HERO_STATS.map((item) => (
-              <div key={item.label} className="heroStat">
-                <div className="heroStat__value">{item.value}</div>
-                <div className="heroStat__label">{item.label}</div>
-              </div>
+          <div
+            className="hero__stats"
+            aria-label="Workspace highlights summary"
+          >
+            {HERO_STATS.map((item, index) => (
+              <HeroStat key={item.label} item={item} index={index} />
             ))}
           </div>
+        </div>
+        </div>
+
+        <div className="col-4">
+        <div className="hero__media" aria-label="Workspace photo stack">
+          <div className="hero__stackFrame">
+            <Stack
+              randomRotation={false}
+              sensitivity={180}
+              sendToBackOnClick={true}
+              autoplay={true}
+              autoplayDelay={3600}
+              pauseOnHover={true}
+              mobileClickOnly={true}
+              cards={stackCards}
+            />
+          </div>
+        </div>
+        </div>
+
         </div>
       </div>
     </div>

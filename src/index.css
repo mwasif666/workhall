@@ -87,6 +87,9 @@ textarea,
 select {
   font-family: "Archivo", sans-serif;
 }
+body {
+  background-color: #f8f0e3;
+}
 
 @media (max-width: 980px) {
   :root {

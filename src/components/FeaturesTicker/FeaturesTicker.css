@@ -1,0 +1,100 @@
+/* =========================
+   SECTION
+   ========================= */
+.ft-section {
+  width: 100%;
+  padding: 56px 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* =========================
+   ROW
+   ========================= */
+.ft-row {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* =========================
+   TRACK
+   ========================= */
+.ft-track {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  will-change: transform;
+}
+
+/* =========================
+   PILL
+   ========================= */
+.ft-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px 10px 10px;
+  border-radius: 12px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* =========================
+   ICON BOX
+   ========================= */
+.ft-iconBox {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+  flex: 0 0 auto;
+  color: #fff;
+  font-size: 20px;
+}
+
+/* =========================
+   LABEL
+   ========================= */
+.ft-label {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+  line-height: 1.2;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 640px) {
+  .ft-section {
+    padding: 40px 0;
+    gap: 10px;
+  }
+
+  .ft-pill {
+    padding: 8px 16px 8px 8px;
+    border-radius: 10px;
+    gap: 10px;
+  }
+
+  .ft-iconBox {
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+    border-radius: 7px;
+  }
+
+  .ft-label {
+    font-size: 13px;
+  }
+
+  .ft-track {
+    gap: 10px;
+  }
+}

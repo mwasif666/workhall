@@ -1,7 +1,12 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { HiMiniArrowUpRight } from "react-icons/hi2";
 import "./CommunitySection.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -10,40 +15,50 @@ const GRID_ROWS = 5;
 const GRID_COLS = 9;
 const TOTAL_CELLS = GRID_ROWS * GRID_COLS;
 
-const PEOPLE = [
-  "photo-1522071820081-009f0129c71c",
-  "photo-1600880292203-757bb62b4baf",
-  "photo-1494790108377-be9c29b29330",
-  "photo-1507003211169-0a1dd7228f2d",
-  "photo-1539571696357-5a69c17a67c6",
-  "photo-1438761681033-6461ffad8d80",
-  "photo-1500648767791-00dcc994a43e",
-  "photo-1573496359142-b8d87734a5a2",
-  "photo-1472099645785-5658abf4ff4e",
-  "photo-1580489944761-15a19d654956",
-  "photo-1531123897727-8f129e1688ce",
-  "photo-1487412720507-e7ab37603c6f",
-  "photo-1544005313-94ddf0286df2",
-  "photo-1524504388940-b1c1722653e1",
-  "photo-1488426862026-3ee34a7d66df",
+const ROTATOR_WORDS = ["Startups", "Teams", "Founders", "Brands"];
+
+const LOGO_IMAGES = [
+  "photo-1614680376593-902f74cf0d41",
+  "photo-1611162617474-5b21e879e113",
+  "photo-1611162618071-b39a2ec055fb",
+  "photo-1611162616305-c69b3037f9bb",
+  "photo-1611224923853-80b023f02d71",
+  "photo-1633409361618-c73427e4e206",
+  "photo-1634942537034-2531766767d1",
+  "photo-1642132652860-471b4228023e",
+  "photo-1614680376408-81e91ffe3db7",
+  "photo-1611162616475-46b635cb6868",
+  "photo-1614680376739-414d95ff43df",
+  "photo-1614680376573-df3480f0c6ff",
+  "photo-1626785774625-0b1c2c4c6c94",
+  "photo-1626785774573-4b799315345d",
+  "photo-1633356122544-f134324a6cee",
 ];
 
-const buildCells = () => {
-  const cells = [];
-  for (let i = 0; i < TOTAL_CELLS; i += 1) {
-    const id = PEOPLE[i % PEOPLE.length];
-    cells.push(
-      `https://images.unsplash.com/${id}?auto=format&fit=crop&w=320&h=320&q=70`,
-    );
-  }
-  return cells;
-};
+const CARD_BACKGROUNDS = [
+  "#ffffff",
+  "#f7f2e9",
+  "#f3f5f2",
+  "#f5f1ec",
+  "#edf3f8",
+  "#f8f1ee",
+  "#f2f2f2",
+];
 
-const ROTATOR_WORDS = ["Startups", "Founders", "Creators", "Teams"];
+const buildLogoCells = () =>
+  Array.from({ length: TOTAL_CELLS }, (_, index) => {
+    const imageId = LOGO_IMAGES[index % LOGO_IMAGES.length];
+
+    return {
+      src: `https://images.unsplash.com/${imageId}?auto=format&fit=crop&w=500&h=500&q=80`,
+      bg: CARD_BACKGROUNDS[index % CARD_BACKGROUNDS.length],
+    };
+  });
 
 export default function CommunitySection() {
-  const cells = useMemo(buildCells, []);
+  const logoCells = useMemo(buildLogoCells, []);
   const [activeWordIndex, setActiveWordIndex] = useState(0);
+
   const maxWordLength = useMemo(
     () =>
       ROTATOR_WORDS.reduce(
@@ -54,13 +69,13 @@ export default function CommunitySection() {
   );
 
   const sectionRef = useRef(null);
-  const frameRef = useRef(null);
+  const gridFrameRef = useRef(null);
   const gridRef = useRef(null);
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
-      setActiveWordIndex((currentIndex) =>
-        (currentIndex + 1) % ROTATOR_WORDS.length,
+      setActiveWordIndex(
+        (currentIndex) => (currentIndex + 1) % ROTATOR_WORDS.length,
       );
     }, 2200);
 
@@ -68,53 +83,74 @@ export default function CommunitySection() {
   }, []);
 
   useLayoutEffect(() => {
-    const frame = frameRef.current;
+    const section = sectionRef.current;
+    const gridFrame = gridFrameRef.current;
     const grid = gridRef.current;
-    if (!frame || !grid) return undefined;
+
+    if (!section || !gridFrame || !grid) return undefined;
 
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 860px)", () => {
-      const rowEls = Array.from(grid.querySelectorAll(".cc-row"));
-      // Reset any previous per-row state (from the older staggered fade).
-      gsap.set(rowEls, { clearProps: "opacity,transform" });
-      gsap.set(grid, { opacity: 1 });
+      const ctx = gsap.context(() => {
+        const logoCards = Array.from(grid.querySelectorAll(".cc-logoCard"));
 
-      // Pin distance = one viewport. During this pin the whole grid fades
-      // uniformly from opacity 1 → ~0.18 (washed-out look from the
-      // reference) while the next section (WhyWorkHall) rises up to
-      // cover it via its negative top margin + higher z-index.
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: frame,
-          start: "top top",
-          end: () => `+=${window.innerHeight}`,
-          pin: true,
-          pinSpacing: true,
-          scrub: 0.6,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      });
+        gsap.set(grid, {
+          y: 0,
+          opacity: 1,
+          clearProps: "filter",
+        });
 
-      tl.to(grid, {
-        opacity: 0.18,
-        ease: "power1.inOut",
-        duration: 1,
-      });
+        gsap.set(logoCards, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          filter: "blur(0px)",
+        });
 
-      return () => {
-        tl.scrollTrigger?.kill();
-        tl.kill();
-        gsap.set(grid, { clearProps: "opacity" });
-        gsap.set(rowEls, { clearProps: "opacity,transform" });
-      };
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: gridFrame,
+            start: "top top",
+            end: () => `+=${Math.max(window.innerHeight * 1.1, 760)}`,
+            pin: true,
+            pinSpacing: true,
+            scrub: 0.75,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        tl.to(
+          grid,
+          {
+            y: -24,
+            ease: "none",
+            duration: 1,
+          },
+          0,
+        ).to(
+          logoCards,
+          {
+            opacity: 0,
+            y: -18,
+            scale: 0.92,
+            filter: "blur(10px)",
+            ease: "none",
+            duration: 0.76,
+            stagger: (index, target) =>
+              Number(target.dataset.fadeRank || 0) * 0.055,
+          },
+          0.05,
+        );
+      }, section);
+
+      return () => ctx.revert();
     });
 
     mm.add("(max-width: 859px)", () => {
-      const rowEls = grid.querySelectorAll(".cc-row");
-      gsap.set(rowEls, { clearProps: "opacity,transform" });
-      gsap.set(grid, { clearProps: "opacity" });
+      const logoCards = Array.from(grid.querySelectorAll(".cc-logoCard"));
+      gsap.set([grid, ...logoCards], { clearProps: "all" });
     });
 
     return () => mm.revert();
@@ -128,6 +164,7 @@ export default function CommunitySection() {
             <span className="cc-eyebrowDot" aria-hidden="true" />
             Our Community
           </div>
+
           <h2 className="cc-title">
             that&apos;s why Work Hall is where Pakistan&apos;s Top{" "}
             <span className="cc-chip" aria-hidden="true">
@@ -162,8 +199,7 @@ export default function CommunitySection() {
         </header>
       </div>
 
-      {/* Full-bleed sticky grid — only this pins. */}
-      <div ref={frameRef} className="cc-gridFrame">
+      <div ref={gridFrameRef} className="cc-gridFrame">
         <div className="cc-gridWrap">
           <div
             ref={gridRef}
@@ -177,31 +213,46 @@ export default function CommunitySection() {
               <div key={`row-${rowIndex}`} className="cc-row">
                 {Array.from({ length: GRID_COLS }).map((__, colIndex) => {
                   const cellIndex = rowIndex * GRID_COLS + colIndex;
-                  const src = cells[cellIndex];
+                  const logo = logoCells[cellIndex];
+
+                  const edgeRank = Math.min(colIndex, GRID_COLS - 1 - colIndex);
+
+                  const rowSoftness =
+                    Math.abs(rowIndex - (GRID_ROWS - 1) / 2) * 0.16;
+
+                  const fadeRank = edgeRank + rowSoftness;
+
+                  const responsiveClass = [
+                    cellIndex >= 32 ? "cc-tabletHide" : "",
+                    cellIndex >= 20 ? "cc-mobileHide" : "",
+                    cellIndex >= 12 ? "cc-phoneHide" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ");
+
                   return (
-                    <div key={`c-${cellIndex}`} className="cc-cell">
+                    <article
+                      key={`logo-${cellIndex}`}
+                      className={`cc-logoCard ${responsiveClass}`}
+                      data-fade-rank={fadeRank}
+                      style={{ "--cc-card-bg": logo.bg }}
+                    >
                       <img
-                        src={src}
+                        src={logo.src}
                         alt=""
-                        loading="lazy"
+                        loading={cellIndex < 12 ? "eager" : "lazy"}
                         draggable="false"
-                        className="cc-cellImg"
+                        className="cc-logoImg"
                       />
-                    </div>
+                    </article>
                   );
                 })}
               </div>
             ))}
           </div>
 
-          <div className="cc-bottomScrim" aria-hidden="true" />
-
-          <a className="cc-cta" href="#contact">
-            <span>Become Part Of The Community</span>
-            <span className="cc-ctaIcon" aria-hidden="true">
-              <HiMiniArrowUpRight />
-            </span>
-          </a>
+          <div className="cc-gridEdge cc-gridEdge--left" aria-hidden="true" />
+          <div className="cc-gridEdge cc-gridEdge--right" aria-hidden="true" />
         </div>
       </div>
     </section>

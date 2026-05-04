@@ -1,15 +1,18 @@
-/* =========================
-   COMMUNITY
-   ========================= */
 .cc-section {
   --cc-max: 1320px;
-  --cc-gutter: clamp(16px, 3vw, 44px);
-  --cc-edge-gutter: clamp(12px, 2vw, 28px);
-  --cc-cell-gap: clamp(8px, 0.9vw, 14px);
-  --cc-cell-radius: clamp(12px, 1.2vw, 18px);
-  background: #fff;
+  --cc-gutter: clamp(18px, 4vw, 72px);
+  --cc-edge-gutter: clamp(14px, 2.4vw, 42px);
+  --cc-cell-gap: clamp(10px, 1vw, 18px);
+  --cc-cell-radius: clamp(16px, 1.45vw, 26px);
+  --cc-bg: #f4ede1;
+  --cc-ink: #090909;
+  --cc-orange: #ff6b45;
+
   position: relative;
-  padding: clamp(40px, 6vh, 80px) 0 0;
+  background: linear-gradient(180deg, #f7efe4 0%, #fbf8f2 48%, #ffffff 100%);
+  color: var(--cc-ink);
+  overflow: clip;
+  padding: clamp(38px, 5vh, 70px) 0 0;
 }
 
 .cc-container {
@@ -19,95 +22,84 @@
   box-sizing: border-box;
 }
 
-/* Head — flows normally, scrolls up with the page. Not pinned. */
 .cc-head {
   display: grid;
-  gap: 14px;
-  margin-bottom: clamp(24px, 4vh, 48px);
-}
-
-/* Only this frame pins — full viewport width, edge-to-edge. */
-.cc-gridFrame {
-  width: 100%;
-  height: 100vh;
-  min-height: 620px;
-  display: flex;
-  align-items: stretch;
-  padding: 0 var(--cc-edge-gutter) clamp(16px, 3vh, 36px);
-  box-sizing: border-box;
-  background: #fff;
-  position: relative;
-  z-index: 1;
+  gap: clamp(12px, 1.6vw, 18px);
+  margin-bottom: clamp(30px, 5vh, 70px);
 }
 
 .cc-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
+  width: fit-content;
+  font-size: clamp(12px, 0.9vw, 14px);
   font-weight: 700;
-  font-size: 14px;
-  color: #131313;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.82);
 }
 
 .cc-eyebrowDot {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  background: #b5b5b5;
+  width: 15px;
+  height: 11px;
+  border-radius: 3px;
+  background: var(--cc-orange);
   display: inline-block;
 }
 
 .cc-title {
   margin: 0;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  font-size: clamp(32px, 4.4vw, 58px);
-  line-height: 1.02;
-  color: #080808;
-  max-width: 22ch;
+  max-width: 15.8ch;
+  font-size: clamp(42px, 6vw, 92px);
+  line-height: 0.98;
+  letter-spacing: -0.064em;
+  font-weight: 560;
+  color: #050505;
+  text-wrap: balance;
 }
 
-/* Inline rotating chip inside the heading */
 .cc-chip {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.18em;
   vertical-align: middle;
-  padding: 6px 16px 6px 6px;
-  background: #ebebeb;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 14px;
-  font-size: 0.78em;
-  font-weight: 900;
-  color: #0a0a0a;
-  letter-spacing: -0.02em;
-  margin: 0 0.12em;
+  margin: 0 0.08em;
+  padding: 0.12em 0.46em 0.13em 0.12em;
+  border-radius: 0.14em;
+  background: var(--cc-orange);
+  color: #0b0b0b;
   line-height: 1;
+  font-size: 0.48em;
+  font-weight: 520;
+  letter-spacing: -0.018em;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 18px 40px rgba(255, 107, 69, 0.18);
+  transform: translateY(-0.08em);
 }
 
 .cc-chipBox {
-  width: 0.9em;
-  height: 0.9em;
-  border-radius: 6px;
-  background: #bdbdbd;
+  width: 0.82em;
+  height: 0.82em;
+  border-radius: 0.08em;
+  background: #eef1f2;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
   flex: 0 0 auto;
 }
 
 .cc-chipRotator {
   display: inline-flex;
   position: relative;
-  height: 1em;
   width: var(--cc-chip-width, 8ch);
+  height: 1em;
   overflow: hidden;
   line-height: 1;
-  vertical-align: middle;
-  align-items: flex-start;
 }
 
 .cc-chipTrack {
   display: flex;
   flex-direction: column;
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
@@ -116,11 +108,11 @@
   height: 1em;
   line-height: 1;
   white-space: nowrap;
-  opacity: 0.18;
+  opacity: 0.2;
   transform: translateY(0.38em);
-  filter: blur(6px);
+  filter: blur(7px);
   transition:
-    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
     opacity 0.35s ease,
     filter 0.45s ease;
   will-change: transform, opacity, filter;
@@ -132,7 +124,20 @@
   filter: blur(0);
 }
 
-/* Grid + overlay wrapper */
+/* sticky sirf yahan se start hoga */
+.cc-gridFrame {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: stretch;
+  padding: 0 var(--cc-edge-gutter) clamp(18px, 3vh, 36px);
+  box-sizing: border-box;
+  background: #ffffff;
+  position: relative;
+  z-index: 1;
+}
+
 .cc-gridWrap {
   position: relative;
   width: 100%;
@@ -140,155 +145,196 @@
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  isolation: isolate;
 }
 
 .cc-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-rows: repeat(var(--cc-rows, 5), 1fr);
+  grid-template-rows: repeat(var(--cc-rows, 5), minmax(0, 1fr));
   gap: var(--cc-cell-gap);
   height: 100%;
   min-height: 0;
+  will-change: transform;
 }
 
 .cc-row {
   display: grid;
-  grid-template-columns: repeat(var(--cc-cols, 9), 1fr);
+  grid-template-columns: repeat(var(--cc-cols, 9), minmax(0, 1fr));
   gap: var(--cc-cell-gap);
-  will-change: opacity, transform;
+  min-height: 0;
 }
 
-.cc-cell {
+.cc-logoCard {
   position: relative;
+  min-width: 0;
+  min-height: 0;
   aspect-ratio: 1 / 1;
-  border-radius: var(--cc-cell-radius);
   overflow: hidden;
-  background: #dcdcdc;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+  border-radius: var(--cc-cell-radius);
+  background: var(--cc-card-bg, #ffffff);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.055),
+    0 16px 34px rgba(0, 0, 0, 0.055);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  box-sizing: border-box;
+  will-change: transform, opacity, filter;
 }
 
-.cc-cellImg {
+.cc-logoCard::after {
+  content: "";
   position: absolute;
   inset: 0;
+  background:
+    radial-gradient(
+      circle at 20% 15%,
+      rgba(255, 255, 255, 0.45),
+      transparent 34%
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.06));
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cc-logoImg {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
   user-select: none;
   pointer-events: none;
+  transform: scale(1.02);
 }
 
-/* Black gradient scrim at the bottom so the CTA is readable. */
-.cc-bottomScrim {
+.cc-logoCard:hover .cc-logoImg {
+  transform: scale(1.06);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cc-gridEdge {
   position: absolute;
-  left: 0;
-  right: 0;
+  top: 0;
   bottom: 0;
-  height: 40%;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.35) 45%,
-    rgba(0, 0, 0, 0.72) 100%
-  );
-  border-radius: 0 0 var(--cc-cell-radius) var(--cc-cell-radius);
-  pointer-events: none;
   z-index: 2;
+  width: clamp(70px, 10vw, 180px);
+  pointer-events: none;
 }
 
-/* Centered CTA chip */
-.cc-cta {
-  position: absolute;
-  left: 50%;
-  bottom: clamp(18px, 4vh, 44px);
-  transform: translateX(-50%);
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 10px 10px 18px;
-  background: rgba(255, 255, 255, 0.98);
-  color: #0a0a0a;
-  text-decoration: none;
-  font-weight: 900;
-  font-size: 14px;
-  border-radius: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
-  transition: transform 0.2s ease;
-  white-space: nowrap;
+.cc-gridEdge--left {
+  left: 0;
+  background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
 }
 
-.cc-cta:hover {
-  transform: translateX(-50%) translateY(-1px);
+.cc-gridEdge--right {
+  right: 0;
+  background: linear-gradient(270deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
 }
 
-.cc-ctaIcon {
-  width: 30px;
-  height: 30px;
-  border-radius: 9px;
-  background: #ededed;
-  display: grid;
-  place-items: center;
-  font-size: 16px;
-  color: #0a0a0a;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-/* =========================
-   RESPONSIVE
-   ========================= */
-@media (max-width: 1100px) {
+@media (max-width: 1180px) {
   .cc-section {
-    --cc-max: 1024px;
+    --cc-max: 1080px;
+    --cc-cell-gap: clamp(8px, 0.9vw, 14px);
   }
+
   .cc-title {
-    font-size: clamp(28px, 4vw, 44px);
+    font-size: clamp(38px, 5.6vw, 70px);
   }
 }
 
-@media (max-width: 860px) {
-  .cc-gridFrame {
-    height: auto;
-    min-height: 0;
-    padding-bottom: 24px;
+@media (max-width: 859px) {
+  .cc-section {
+    padding-top: 42px;
   }
 
-  .cc-row {
-    grid-template-columns: repeat(5, 1fr);
+  .cc-head {
+    margin-bottom: 28px;
   }
 
-  .cc-cell:nth-child(n + 6) {
-    display: none;
-  }
-
-  .cc-cta {
-    font-size: 13px;
-    padding: 9px 9px 9px 14px;
-  }
-}
-
-@media (max-width: 520px) {
-  .cc-row {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .cc-cell:nth-child(n + 5) {
-    display: none;
-  }
   .cc-title {
-    font-size: clamp(26px, 7vw, 38px);
+    max-width: 12.8ch;
+    font-size: clamp(40px, 11vw, 66px);
+    line-height: 0.98;
   }
+
   .cc-chip {
-    font-size: 0.72em;
-    padding: 4px 10px 4px 4px;
+    font-size: 0.52em;
+  }
+
+  .cc-gridFrame {
+    min-height: auto;
+    padding: 0 var(--cc-gutter) 34px;
+  }
+
+  .cc-gridWrap {
+    display: block;
+  }
+
+  .cc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    height: auto;
+  }
+
+  .cc-row {
+    display: contents;
+  }
+
+  .cc-logoCard {
+    aspect-ratio: 1 / 1;
+    border-radius: 18px;
+  }
+
+  .cc-mobileHide {
+    display: none;
+  }
+
+  .cc-gridEdge {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .cc-container,
+  .cc-gridFrame {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .cc-title {
+    font-size: clamp(34px, 12vw, 52px);
+    letter-spacing: -0.058em;
+  }
+
+  .cc-chip {
+    border-radius: 0.18em;
+    padding: 0.14em 0.42em 0.15em 0.14em;
+  }
+
+  .cc-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .cc-phoneHide {
+    display: none;
+  }
+
+  .cc-logoCard {
+    border-radius: 16px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cc-chipTrack,
-  .cc-chipWord {
+  .cc-chipWord,
+  .cc-logoImg {
     transition: none;
   }
+
   .cc-chipWord:first-child {
     opacity: 1;
     transform: translateY(0);

@@ -7,6 +7,7 @@ import PurposeHalls from "./components/PurposeHalls/PurposeHalls";
 import CommunitySection from "./components/Community/CommunitySection";
 import WhyWorkHall from "./components/WhyWorkHall/WhyWorkHall";
 import WorkhallLocationsMap from "./components/WorkhallLocations/WorkhallLocationsMap";
+import FeaturesTicker from "./components/FeaturesTicker/FeaturesTicker";
 import WorkspaceJourney from "./components/WorkspaceJourney/WorkspaceJourney";
 
 import "./App.css";
@@ -16,6 +17,7 @@ export default function App() {
     <main className="app">
       <Navbar />
       <Hero />
+      <FeaturesTicker />
       <PlansIntro />
       <PricingSection />
       <PurposeHalls />

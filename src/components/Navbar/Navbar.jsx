@@ -7,42 +7,12 @@ import {
   HiMiniXMark,
 } from "react-icons/hi2";
 import { GoArrowDown, GoArrowUp } from "react-icons/go";
-import {
-  LuCarFront,
-  LuClock3,
-  LuHandHelping,
-  LuLayoutGrid,
-  LuSquareParking,
-} from "react-icons/lu";
 import "./Navbar.css";
 
 const getSeededCardImage = (menuKey, title) =>
   `https://picsum.photos/seed/${encodeURIComponent(
     `workhall-${menuKey}-${title}`,
   )}/900/560`;
-
-const TOP_FEATURES = [
-  {
-    label: "Free Gated Parking At All Locations",
-    Icon: LuSquareParking,
-  },
-  {
-    label: "Open 24/7, 365 Days With Full Access",
-    Icon: LuClock3,
-  },
-  {
-    label: "Custom Office Layouts",
-    Icon: LuLayoutGrid,
-  },
-  {
-    label: "Staff Service at Your Desk",
-    Icon: LuHandHelping,
-  },
-  {
-    label: "Car & Bike Cleaning On-Site",
-    Icon: LuCarFront,
-  },
-];
 
 export default function Navbar() {
   const NAV = useMemo(
@@ -102,17 +72,13 @@ export default function Navbar() {
           { title: "Support", href: "#" },
         ],
       },
-      // {
-      //   key: "members",
-      //   label: "Members Lounge",
-      //   hoverLabel: "Members Lounge →",
-      //   cards: [
-      //     { title: "Login", href: "#" },
-      //     { title: "Benefits", href: "#" },
-      //     { title: "Bookings", href: "#" },
-      //     { title: "Community Board", href: "#" },
-      //   ],
-      // },
+      {
+        key: "members",
+        label: "Member's Lounge",
+        hoverLabel: "Member's Lounge ->",
+        href: "#",
+        cards: [],
+      },
       {
         key: "virtual",
         label: "Virtual Tour",
@@ -214,6 +180,7 @@ export default function Navbar() {
 
       if (window.innerWidth <= 980) {
         setCompactHeader(true);
+        setOpenKey(null);
         return;
       }
 
@@ -223,7 +190,15 @@ export default function Navbar() {
       const availableWidth = headerEl.clientWidth - paddingLeft - paddingRight;
       const requiredWidth = Math.ceil(measureEl.scrollWidth);
 
-      setCompactHeader(requiredWidth > availableWidth);
+      const nextCompactHeader = requiredWidth > availableWidth;
+      setCompactHeader(nextCompactHeader);
+
+      if (nextCompactHeader) {
+        setOpenKey(null);
+      } else {
+        setMobileOpen(false);
+        setMobileKey(null);
+      }
     };
 
     evaluateHeaderMode();
@@ -242,17 +217,6 @@ export default function Navbar() {
       window.removeEventListener("resize", evaluateHeaderMode);
     };
   }, [navItems]);
-
-  useEffect(() => {
-    if (!compactHeader) return;
-    setOpenKey(null);
-  }, [compactHeader]);
-
-  useEffect(() => {
-    if (compactHeader) return;
-    setMobileOpen(false);
-    setMobileKey(null);
-  }, [compactHeader]);
 
   const positionMega = (key, anchorEl) => {
     const rootEl = rootRef.current;
@@ -298,32 +262,6 @@ export default function Navbar() {
 
   return (
     <div ref={rootRef}>
-      <div className="cs-topStripShell" aria-label="Workspace highlights">
-        <div className="cs-topStripWrap">
-          <div className="cs-topStrip">
-            {[0, 1].map((groupIndex) => (
-              <div
-                key={groupIndex}
-                className="cs-topStripGroup"
-                aria-hidden={groupIndex === 1}
-              >
-                {TOP_FEATURES.map(({ label, Icon }) => (
-                  <div
-                    key={`${groupIndex}-${label}`}
-                    className="cs-topStripItem"
-                  >
-                    <span className="cs-topStripIcon" aria-hidden="true">
-                      <Icon />
-                    </span>
-                    <span className="cs-topStripText">{label}</span>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       <header
         ref={headerRef}
         className={`cs-header ${compactHeader ? "isCompact" : ""}`}
@@ -450,7 +388,7 @@ export default function Navbar() {
                     <span className="cs-pillTextSwap">
                       <span className="cs-pillTextSwap__a">{item.label}</span>
                       <span className="cs-pillTextSwap__b">
-                        {item.hoverLabel || `${item.label} →`}
+                        {item.hoverLabel || `${item.label} ->`}
                       </span>
                     </span>
 

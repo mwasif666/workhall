@@ -9,7 +9,6 @@
   --ps-page-width: 100%;
   width: 100%;
   padding: 72px 0;
-  background: #fff;
   overflow: hidden;
   position: relative;
 }
@@ -29,7 +28,6 @@
   position: sticky;
   top: 10px;
   z-index: 5;
-  background: #fff;
 }
 
 .ps-headSplitTrack {
@@ -88,7 +86,6 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   border-radius: 24px;
-  background: #fff;
 }
 
 .ps-viewport::-webkit-scrollbar {
@@ -115,7 +112,6 @@
 .ps-page {
   scroll-snap-align: start;
   padding: clamp(12px, 2.2vw, 24px);
-  background: #fff;
   min-height: 560px;
   position: relative;
 }
@@ -143,7 +139,7 @@
   width: 20px;
   height: 20px;
   border-radius: 4px;
-  background: #b5b5b5;
+  background: #d69aef;
   display: inline-block;
   flex: 0 0 auto;
 }
@@ -193,15 +189,17 @@
 
 .ps-page.isFirst {
   padding-right: 9px;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .ps-page.isLast {
-  padding-left: 9px;
+  padding-left: 40px;
 }
 
 .ps-page.isMiddle {
-  padding-left: 9px;
-  padding-right: 9px;
+  padding-left: 40px;
+  padding-right: 40px;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 /* =========================
@@ -328,22 +326,23 @@
 }
 
 .ps-cardTitleRow {
-  display: grid;
-  grid-template-columns: auto minmax(24px, 1fr) auto;
-  gap: 10px;
+  display: flex;
   align-items: center;
+  gap: 10px;
 }
 
 .ps-cardTitle {
   margin: 0;
-  font-size: clamp(28px, 2.6vw, 42px);
+  font-size: clamp(28px, 2.6vw, 46px);
   line-height: 0.92;
-  letter-spacing: -0.05em;
-  font-weight: 900;
+  font-weight: 500;
   color: #080808;
+  flex: 0 0 auto;
 }
 
 .ps-cardDivider {
+  flex: 1 1 0;
+  min-width: 24px;
   height: 1px;
   background: rgba(8, 8, 8, 0.16);
   align-self: center;
@@ -453,10 +452,8 @@
     --ps-page-pad-x: clamp(12px, 2.2vw, 24px);
     --ps-page-edge-shift: 9px;
     --ps-page-width: calc(
-      (var(--ps-card-width) * 3) +
-        (var(--ps-card-gap) * 2) +
-        (var(--ps-page-pad-x) * 2) +
-        (var(--ps-page-edge-shift) * 2)
+      (var(--ps-card-width) * 3) + (var(--ps-card-gap) * 2) +
+        (var(--ps-page-pad-x) * 2) + (var(--ps-page-edge-shift) * 2)
     );
   }
 
@@ -493,12 +490,21 @@
     padding-left: calc(var(--ps-page-pad-x) + var(--ps-page-edge-shift));
   }
 
+  .ps-headSplit {
+    display: none;
+  }
+
   .ps-page {
-    padding-top: 8px;
+    padding-top: 32px;
   }
 
   .ps-pageHead {
-    display: none;
+    display: grid;
+    margin-bottom: 28px;
+  }
+
+  .ps-bigTitle {
+    font-size: clamp(52px, 7vw, 96px);
   }
 }
 

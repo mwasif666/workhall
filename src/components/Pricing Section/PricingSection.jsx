@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -143,7 +137,12 @@ const PLAN_GROUPS = [
         title: "HQ",
         learnMore: "#",
         desc: "A branded headquarters environment designed around your workflows with secure access, polished reception, and executive-ready meeting space.",
-        suitedFor: ["Corporate HQ", "Regional Offices", "Leadership Teams", "MNCs"],
+        suitedFor: [
+          "Corporate HQ",
+          "Regional Offices",
+          "Leadership Teams",
+          "MNCs",
+        ],
         images: OFFICE_IMAGES.enterprise,
       },
       {
@@ -334,14 +333,8 @@ export default function PricingSection() {
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 640px)", () => {
-      const getDistance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
-      const getHeadShift = (targetIndex) => {
-        const cols = Array.from(headTrack.children);
-        if (!cols.length || !cols[targetIndex]) return 0;
-
-        const firstOffset = cols[0].offsetLeft;
-        return -(cols[targetIndex].offsetLeft - firstOffset);
-      };
+      const getDistance = () =>
+        Math.max(0, track.scrollWidth - viewport.clientWidth);
       const segmentCount = Math.max(1, sliderPages.length - 1);
 
       if (getDistance() <= 0) {
@@ -363,18 +356,6 @@ export default function PricingSection() {
           invalidateOnRefresh: true,
         },
       });
-
-      for (let index = 1; index < sliderPages.length; index += 1) {
-        timeline.to(
-          headTrack,
-          {
-            x: () => getHeadShift(index),
-            ease: "none",
-            duration: 1,
-          },
-          index - 1,
-        );
-      }
 
       timeline.to(
         track,
@@ -466,12 +447,12 @@ export default function PricingSection() {
                   </div>
                   <h2 className="ps-bigTitle">{page.title}</h2>
 
-                  <div className="ps-pageFooterText">
+                  {/* <div className="ps-pageFooterText">
                     <p className="ps-pageDesc">{page.desc}</p>
                     <a className="ps-pageCta" href="#">
                       {page.cta} <span aria-hidden="true">&gt;</span>
                     </a>
-                  </div>
+                  </div> */}
                 </header>
 
                 <div

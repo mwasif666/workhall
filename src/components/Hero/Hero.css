@@ -3,8 +3,8 @@
    ========================= */
 .hero {
   width: 100%;
-  background: transparent;
-  padding: 10px var(--hero-shell-pad-x) 24px;
+  background: #f8efe4;
+  padding: 0 var(--hero-shell-pad-x) 30px;
 }
 
 .hero__container {
@@ -12,64 +12,28 @@
   margin: 0 auto;
   padding: 0 var(--hero-inner-pad-x);
   position: relative;
-  overflow: visible;
-  background: #2a2a2a;
-  border-radius: 30px;
-  min-height: clamp(640px, 88vh, 820px);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
-    0 16px 36px rgba(0, 0, 0, 0.08);
-  z-index: 2;
+  min-height: clamp(640px, 86vh, 880px);
 }
 
-/* Background video (coworking / open office) + readability scrim */
-.hero__media {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  overflow: hidden;
+.hero__container .row {
+  min-height: inherit;
 }
 
-.hero__video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 35%;
-  transform: scale(1.02);
-}
-
-.hero__mediaScrim {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background:
-    radial-gradient(
-      800px 320px at 22% 18%,
-      rgba(255, 255, 255, 0.12),
-      transparent 58%
-    ),
-    radial-gradient(
-      520px 220px at 86% 88%,
-      rgba(255, 255, 255, 0.07),
-      transparent 60%
-    ),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(20, 22, 28, 0.62) 100%);
-  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.25);
+.hero__container .col-8,
+.hero__container .col-4 {
+  display: flex;
+  flex-direction: column;
 }
 
 .hero__box {
-  position: relative;
-  z-index: 1;
-  max-width: 1600px;
-  margin: 0 auto;
+  flex: 1;
   min-height: inherit;
-  padding: clamp(194px, 24vh, 238px) var(--wh-hero-content-pad-r)
-    clamp(40px, 7vh, 58px) var(--wh-hero-content-pad-x);
+  border-radius: 30px;
+  background: #e8e2d6;
+  padding: clamp(58px, 8vh, 78px) clamp(34px, 4.6vw, 56px)
+    clamp(54px, 7.2vh, 70px);
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: flex-start;
   text-align: left;
 }
@@ -81,71 +45,117 @@
 .hero__title {
   margin: 0;
   display: grid;
-  gap: 4px;
-  line-height: 0.92;
-  letter-spacing: -0.045em;
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.97);
+  gap: 0;
+  line-height: 0.96;
+  letter-spacing: 0;
+  font-weight: 500;
+  color: #000000;
 }
 
 .hero__titleLine {
   display: block;
-  font-size: clamp(52px, 4.2vw, 90px);
+  font-size: clamp(54px, 5.35vw, 70px);
 }
 
 .hero__titleLine--large {
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
 }
 
 .hero__lede {
-  margin: 28px 0 0;
-  width: 100%;
-  color: rgba(255, 255, 255, 0.95);
-  font-size: clamp(18px, 1vw, 22px);
-  line-height: 1.32;
+  margin: 36px 0 0;
+  max-width: 760px;
+  color: #000000;
+  font-size: clamp(15px, 1.2vw, 16px);
+  line-height: 1.25;
   font-weight: 500;
   text-align: left;
 }
 
 .hero__controls {
-  margin-top: 42px;
+  margin-top: 34px;
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
-  gap: 14px;
+  gap: 8px;
   flex-wrap: nowrap;
-  width: min(100%, 1120px);
+  width: min(100%, 620px);
   position: relative;
   z-index: 8;
 }
 
 .hero__stats {
   margin-top: auto;
-  display: flex;
-  align-items: flex-end;
-  gap: 34px;
-  padding-top: 42px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(76px, 1fr));
+  align-items: end;
+  gap: clamp(22px, 3vw, 46px);
+  width: min(100%, 690px);
+  padding-top: 52px;
 }
 
 .heroStat {
   display: grid;
-  gap: 3px;
-  color: rgba(255, 255, 255, 0.96);
+  justify-items: center;
+  gap: 4px;
+  opacity: 0;
 }
 
 .heroStat__value {
-  font-size: clamp(24px, 1.9vw, 34px);
+  font-size: clamp(32px, 2.8vw, 40px);
   line-height: 0.9;
-  font-weight: 900;
-  letter-spacing: -0.04em;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 
 .heroStat__label {
-  font-size: 11px;
+  font-size: clamp(15px, 1.2vw, 16px);
   line-height: 1;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  opacity: 0.92;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+
+/* =========================
+   RIGHT STACK IMAGE
+   ========================= */
+.hero__media {
+  flex: 1 1 0;
+  position: relative;
+  min-height: clamp(640px, 86vh, 880px);
+}
+
+.hero__stackFrame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 30px;
+}
+
+.hero__stackImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero__mediaPin {
+  position: absolute;
+  left: 63%;
+  bottom: 31%;
+  z-index: 10;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #18ba5d;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 900;
+  border: 3px solid rgba(255, 255, 255, 0.72);
+  box-shadow: 0 12px 22px rgba(6, 34, 16, 0.24);
+  pointer-events: none;
 }
 
 /* =========================
@@ -154,29 +164,28 @@
 .hPill {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 14px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.34);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 18px 36px rgba(8, 18, 40, 0.12);
-  backdrop-filter: blur(12px);
+  gap: 9px;
+  min-height: 40px;
+  padding: 4px 5px;
+  border-radius: 5px;
+  background: #f8f5ee;
+  border: 1px solid #111111;
+  box-shadow: none;
+  color: #000000;
 }
 
 .hPill__icon {
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.88);
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 3px;
+  background: #000000;
+  border: 0;
 }
 
 .hPill__txt {
   display: grid;
-  gap: 5px;
+  gap: 1px;
   min-width: 0;
   flex: 1 1 auto;
   text-align: left;
@@ -185,18 +194,18 @@
 }
 
 .hPill__label {
-  color: rgba(255, 255, 255, 0.98);
-  font-weight: 900;
-  font-size: clamp(16px, 1.02vw, 19px);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  color: #000000;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
 .hPill__sub {
-  color: rgba(255, 255, 255, 0.84);
-  font-weight: 600;
-  font-size: clamp(11px, 0.68vw, 12px);
+  color: #000000;
+  font-weight: 500;
+  font-size: 5px;
   line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
@@ -204,14 +213,14 @@
 }
 
 .hPill--friends {
-  display: flex;
-  gap: 20px;
+  width: 230px;
 }
 
-.hPill--friends .hPill__sub {
-  max-width: none;
+.hPill--loc {
+  width: 194px;
 }
 
+.hPill--friends .hPill__sub,
 .hPill--loc .hPill__sub {
   max-width: none;
 }
@@ -222,7 +231,7 @@
   align-self: center;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   background: transparent;
   border: 0;
   border-radius: 0;
@@ -230,24 +239,31 @@
 }
 
 .hCounter__btn {
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
   border: 0;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.16);
-  color: rgba(255, 255, 255, 0.96);
+  background: #000000;
+  color: #ffffff;
   display: grid;
   place-items: center;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
-  font-size: 16px;
+  box-shadow: none;
+  font-size: 10px;
+  padding: 0;
+}
+
+.hCounter__btn svg {
+  width: 9px;
+  height: 9px;
 }
 
 .hCounter__val {
   text-align: center;
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.98);
-  font-size: 15px;
+  font-weight: 600;
+  color: #000000;
+  font-size: 10px;
+  min-width: 17px;
 }
 
 /* =========================
@@ -257,29 +273,26 @@
   position: relative;
   z-index: 5;
   display: flex;
-  gap: 20px;
 }
 
 .hDrop__trigger {
-  width: 100%;
   cursor: pointer;
   text-align: left;
-  background: rgba(255, 255, 255, 0.1);
 }
 
 .hPill__endIcon {
   margin-left: auto;
   flex: 0 0 auto;
   align-self: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.95);
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: #ffffff;
+  color: #111111;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  font-size: 15px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 10px;
 }
 
 .hPill__swapText {
@@ -292,13 +305,13 @@
 .hDrop__menu {
   position: absolute;
   left: 0;
-  top: calc(100% + 12px);
+  top: calc(100% + 10px);
   width: min(540px, calc(100vw - 32px));
   max-height: min(520px, 68vh);
   overflow: auto;
   background: rgba(255, 255, 255, 0.98);
   border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 20px;
+  border-radius: 18px;
   box-shadow: 0 26px 64px rgba(0, 0, 0, 0.2);
   padding: 18px;
   z-index: 120;
@@ -483,25 +496,26 @@
   align-items: center;
   gap: 8px;
   flex: 0 0 auto;
-  min-height: 42px;
-  padding: 14px;
-  border-radius: 9px;
+  min-height: 40px;
+  padding: 4px 5px 4px 10px;
+  border-radius: 5px;
   text-decoration: none;
-  background: rgba(255, 255, 255, 0.98);
-  color: #111111;
-  font-weight: 900;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  font-size: 14px;
+  background: #000000;
+  color: #ffffff;
+  font-weight: 600;
+  border: 1px solid #000000;
+  font-size: 12px;
 }
 
 .hCta__icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  background: rgba(0, 0, 0, 0.08);
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #000000;
   display: grid;
   place-items: center;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 /* =========================
@@ -511,8 +525,8 @@
 .hSwap {
   position: relative;
   display: inline-block;
-  height: 18px;
-  line-height: 18px;
+  height: 16px;
+  line-height: 16px;
   overflow: hidden;
 }
 
@@ -589,191 +603,161 @@
    ========================= */
 @media (max-width: 980px) {
   .hero {
-    padding: 12px 12px 16px;
+    padding: 0 12px 22px;
   }
 
   .hero__container {
-    border-radius: 24px;
-    min-height: 620px;
+    grid-template-columns: 1fr;
+    min-height: auto;
+    gap: 14px;
   }
 
   .hero__box {
-    padding: 120px var(--wh-hero-content-pad-r) 28px
-      var(--wh-hero-content-pad-x);
-    align-items: flex-start;
-    text-align: left;
-  }
-
-  .hero__copy {
-    max-width: 720px;
-    width: 100%;
-  }
-
-  .hero__title {
-    justify-items: start;
+    min-height: 560px;
+    border-radius: 24px;
+    padding: 44px var(--wh-hero-content-pad-r) 34px var(--wh-hero-content-pad-x);
   }
 
   .hero__titleLine {
-    font-size: clamp(46px, 8.8vw, 68px);
+    font-size: clamp(44px, 9.4vw, 66px);
   }
 
   .hero__lede {
-    margin-top: 22px;
-    font-size: 18px;
+    margin-top: 24px;
+    font-size: 16px;
     max-width: 640px;
   }
 
   .hero__controls {
     width: 100%;
-    max-width: 1120px;
-    margin-top: 36px;
-    justify-content: flex-start;
-    gap: 12px;
+    max-width: 620px;
+    margin-top: 28px;
+    gap: 10px;
     flex-wrap: wrap;
-  }
-
-  .hPill {
-    gap: 14px;
-    padding: 14px 16px;
-    min-height: 88px;
-    border-radius: 18px;
-  }
-
-  .hPill__icon {
-    width: 32px;
-    height: 32px;
-    flex-basis: 32px;
-    border-radius: 10px;
-  }
-
-  .hPill__label {
-    font-size: 16px;
-  }
-
-  .hPill__sub {
-    font-size: 11px;
-  }
-
-  .hCounter {
-    gap: 6px;
-  }
-
-  .hCounter__btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 999px;
-    font-size: 14px;
-  }
-
-  .hCounter__val {
-    min-width: 30px;
-    font-size: 22px;
-  }
-
-  .hPill__endIcon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    font-size: 14px;
-  }
-
-  .hDrop {
-    width: 100%;
-    flex-basis: 100%;
   }
 
   .hPill--friends,
   .hPill--loc {
+    width: calc(50% - 5px);
+    min-width: 230px;
+  }
+
+  .hPill {
+    min-height: 52px;
+    padding: 6px;
+    gap: 10px;
+  }
+
+  .hPill__icon {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+  }
+
+  .hPill__label {
+    font-size: 13px;
+  }
+
+  .hPill__sub {
+    font-size: 8px;
+  }
+
+  .hCounter__btn {
+    width: 22px;
+    height: 22px;
+  }
+
+  .hCounter__val {
+    font-size: 13px;
+  }
+
+  .hPill__endIcon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .hCta {
+    min-height: 52px;
+    padding: 6px 6px 6px 14px;
+  }
+
+  .hCta__icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .hero__stats {
+    width: 100%;
+    gap: 20px;
+    padding-top: 42px;
+  }
+
+  .hero__media {
+    min-height: clamp(360px, 56vw, 560px);
+  }
+
+  .hero__stackFrame {
+    min-height: inherit;
+    border-radius: 24px;
+  }
+}
+
+@media (max-width: 620px) {
+  .hero__box {
+    min-height: auto;
+    border-radius: 20px;
+    padding: 38px var(--wh-hero-content-pad-r) 28px var(--wh-hero-content-pad-x);
+  }
+
+  .hero__titleLine {
+    font-size: clamp(38px, 11.8vw, 52px);
+  }
+
+  .hero__lede {
+    margin-top: 18px;
+    font-size: 15px;
+  }
+
+  .hero__controls {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .hPill--friends,
+  .hPill--loc,
+  .hDrop,
+  .hCta {
     width: 100%;
     min-width: 0;
   }
 
   .hCta {
-    width: 100%;
-    min-height: 76px;
-    border-radius: 18px;
-    padding: 12px 12px 12px 18px;
-    font-size: 13px;
     justify-content: space-between;
   }
 
-  .hCta__icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    font-size: 16px;
-  }
-
-  .hDrop__menu {
-    width: 100%;
-    max-height: min(460px, 60vh);
-  }
-
-  .hDrop__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .hero__stats {
-    width: 100%;
-    justify-content: flex-start;
-    gap: 28px;
-    padding-top: 40px;
-  }
-}
-
-@media (max-width: 520px) {
-  .hero__container {
-    border-radius: 20px;
-    min-height: 560px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 24px;
+    padding-top: 34px;
   }
 
-  .hero__box {
-    padding: 108px var(--wh-hero-content-pad-r) 20px
-      var(--wh-hero-content-pad-x);
+  .heroStat__value {
+    font-size: 34px;
   }
 
-  .hero__titleLine {
-    font-size: clamp(40px, 10.4vw, 54px);
-  }
-
-  .hero__lede {
-    margin-top: 18px;
-    font-size: 16px;
-  }
-
-  .hPill,
-  .hCta {
-    min-height: 74px;
-    border-radius: 14px;
-  }
-
-  .hCounter__btn {
-    width: 28px;
-    height: 28px;
-  }
-
-  .hCounter__val {
-    min-width: 28px;
+  .heroStat__label {
+    font-size: 15px;
   }
 
   .hDrop__grid {
     grid-template-columns: 1fr;
   }
+}
 
-  .hDrop__menu {
-    left: 0;
-    width: min(100%, calc(100vw - 24px));
-  }
-
-  .hero__stats {
-    gap: 22px;
-  }
-
-  .heroStat__value {
-    font-size: 28px;
-  }
-
-  .heroStat__label {
-    font-size: 11px;
+@media (prefers-reduced-motion: reduce) {
+  .heroStat {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }
