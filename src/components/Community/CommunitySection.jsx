@@ -1,12 +1,11 @@
 import React, {
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,
 } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import RotatingText from "@/components/RotatingText/RotatingText";
 import "./CommunitySection.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -16,71 +15,46 @@ const GRID_COLS = 9;
 const TOTAL_CELLS = GRID_ROWS * GRID_COLS;
 
 const ROTATOR_WORDS = ["Startups", "Teams", "Founders", "Brands"];
+const si = (slug) => `https://cdn.simpleicons.org/${slug}/ffffff`;
 
-const LOGO_IMAGES = [
-  "photo-1614680376593-902f74cf0d41",
-  "photo-1611162617474-5b21e879e113",
-  "photo-1611162618071-b39a2ec055fb",
-  "photo-1611162616305-c69b3037f9bb",
-  "photo-1611224923853-80b023f02d71",
-  "photo-1633409361618-c73427e4e206",
-  "photo-1634942537034-2531766767d1",
-  "photo-1642132652860-471b4228023e",
-  "photo-1614680376408-81e91ffe3db7",
-  "photo-1611162616475-46b635cb6868",
-  "photo-1614680376739-414d95ff43df",
-  "photo-1614680376573-df3480f0c6ff",
-  "photo-1626785774625-0b1c2c4c6c94",
-  "photo-1626785774573-4b799315345d",
-  "photo-1633356122544-f134324a6cee",
-];
-
-const CARD_BACKGROUNDS = [
-  "#ffffff",
-  "#f7f2e9",
-  "#f3f5f2",
-  "#f5f1ec",
-  "#edf3f8",
-  "#f8f1ee",
-  "#f2f2f2",
+const BRAND_CELLS = [
+  { icon: si("spotify"),    bg: "#1DB954", name: "Spotify"     },
+  { icon: si("netflix"),    bg: "#E50914", name: "Netflix"     },
+  { icon: si("messenger"),  bg: "#0084FF", name: "Messenger"   },
+  { empty: true,            bg: "#f0ebe2"                      },
+  { icon: si("instagram"),  bg: "#C13584", name: "Instagram"   },
+  { icon: si("whatsapp"),   bg: "#25D366", name: "WhatsApp"    },
+  { icon: si("youtube"),    bg: "#FF0000", name: "YouTube"     },
+  { icon: si("discord"),    bg: "#5865F2", name: "Discord"     },
+  { icon: si("applemusic"), bg: "#FC3C44", name: "Apple Music" },
+  { empty: true,            bg: "#f0ebe2"                      },
+  { icon: si("slack"),      bg: "#4A154B", name: "Slack"       },
+  { icon: si("figma"),      bg: "#F24E1E", name: "Figma"       },
+  { icon: si("notion"),     bg: "#37352F", name: "Notion"      },
+  { icon: si("github"),     bg: "#24292F", name: "GitHub"      },
+  { icon: si("x"),          bg: "#14171A", name: "X"           },
+  { icon: si("tiktok"),     bg: "#EE1D52", name: "TikTok"      },
+  { icon: si("linkedin"),   bg: "#0077B5", name: "LinkedIn"    },
+  { empty: true,            bg: "#f0ebe2"                      },
 ];
 
 const buildLogoCells = () =>
   Array.from({ length: TOTAL_CELLS }, (_, index) => {
-    const imageId = LOGO_IMAGES[index % LOGO_IMAGES.length];
-
+    const cell = BRAND_CELLS[index % BRAND_CELLS.length];
     return {
-      src: `https://images.unsplash.com/${imageId}?auto=format&fit=crop&w=500&h=500&q=80`,
-      bg: CARD_BACKGROUNDS[index % CARD_BACKGROUNDS.length],
+      icon:  cell.icon  ?? null,
+      bg:    cell.bg,
+      name:  cell.name  ?? "",
+      empty: !!cell.empty,
     };
   });
 
 export default function CommunitySection() {
   const logoCells = useMemo(buildLogoCells, []);
-  const [activeWordIndex, setActiveWordIndex] = useState(0);
-
-  const maxWordLength = useMemo(
-    () =>
-      ROTATOR_WORDS.reduce(
-        (currentMax, word) => Math.max(currentMax, word.length),
-        0,
-      ),
-    [],
-  );
 
   const sectionRef = useRef(null);
   const gridFrameRef = useRef(null);
   const gridRef = useRef(null);
-
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      setActiveWordIndex(
-        (currentIndex) => (currentIndex + 1) % ROTATOR_WORDS.length,
-      );
-    }, 2200);
-
-    return () => window.clearInterval(intervalId);
-  }, []);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -138,7 +112,7 @@ export default function CommunitySection() {
             filter: "blur(10px)",
             ease: "none",
             duration: 0.76,
-            stagger: (index, target) =>
+            stagger: (_index, target) =>
               Number(target.dataset.fadeRank || 0) * 0.055,
           },
           0.05,
@@ -167,32 +141,20 @@ export default function CommunitySection() {
 
           <h2 className="cc-title">
             that&apos;s why Work Hall is where Pakistan&apos;s Top{" "}
-            <span className="cc-chip" aria-hidden="true">
-              <span className="cc-chipBox" />
-              <span
-                className="cc-chipRotator"
-                style={{
-                  "--cc-chip-width": `${maxWordLength + 0.8}ch`,
-                }}
-              >
-                <span
-                  className="cc-chipTrack"
-                  style={{
-                    transform: `translateY(-${activeWordIndex}em)`,
-                  }}
-                >
-                  {ROTATOR_WORDS.map((word, index) => (
-                    <span
-                      key={word}
-                      className={`cc-chipWord ${
-                        index === activeWordIndex ? "isActive" : ""
-                      }`}
-                    >
-                      {word}
-                    </span>
-                  ))}
-                </span>
-              </span>
+            <span className="cc-chip">
+              <span className="cc-chipBox" aria-hidden="true" />
+              <RotatingText
+                texts={ROTATOR_WORDS}
+                mainClassName="cc-chipRotatingText"
+                splitLevelClassName="cc-chipSplitLevel"
+                staggerFrom="last"
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: "-120%", opacity: 0 }}
+                staggerDuration={0.025}
+                transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                rotationInterval={2200}
+              />
             </span>{" "}
             come to work.
           </h2>
@@ -233,17 +195,22 @@ export default function CommunitySection() {
                   return (
                     <article
                       key={`logo-${cellIndex}`}
-                      className={`cc-logoCard ${responsiveClass}`}
+                      className={`cc-logoCard${logo.empty ? " cc-logoCard--empty" : ""} ${responsiveClass}`}
                       data-fade-rank={fadeRank}
                       style={{ "--cc-card-bg": logo.bg }}
                     >
-                      <img
-                        src={logo.src}
-                        alt=""
-                        loading={cellIndex < 12 ? "eager" : "lazy"}
-                        draggable="false"
-                        className="cc-logoImg"
-                      />
+                      {!logo.empty && (
+                        <>
+                          <img
+                            src={logo.icon}
+                            alt={logo.name}
+                            loading={cellIndex < 12 ? "eager" : "lazy"}
+                            draggable="false"
+                            className="cc-logoImg"
+                          />
+                          {/* <span className="cc-logoLabel">{logo.name}</span> */}
+                        </>
+                      )}
                     </article>
                   );
                 })}
