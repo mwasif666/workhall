@@ -132,7 +132,7 @@ export default function WhyWorkHall() {
           </h2>
         </div>
 
-        <div ref={panel1Ref} className="wwh-panel wwh-panel--one">
+        {/* <div ref={panel1Ref} className="wwh-panel wwh-panel--one">
           <div className="wwh-panelInner wwh-panelInner--wide">
             <div className="wwh-panelLeft">
               <ul className="wwh-featuresGrid">
@@ -178,7 +178,7 @@ export default function WhyWorkHall() {
               </h3>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

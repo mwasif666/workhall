@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -85,9 +85,27 @@ const ROW2 = [
   },
 ];
 
+const RANDOM_COLORS = [
+  "#c4522a", "#b24d8a", "#2a6647", "#3d5faa",
+  "#7b3fa0", "#1a7a6e", "#a04040", "#4a6e2a",
+  "#2a4a8a", "#8a4a1a",
+];
+
+function getRandomColor(exclude) {
+  const pool = RANDOM_COLORS.filter((c) => c !== exclude);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 function TickerPill({ label, icon: Icon, color }) {
+  const [bg, setBg] = useState(color);
+
   return (
-    <div className="ft-pill" style={{ backgroundColor: color }}>
+    <div
+      className="ft-pill"
+      style={{ backgroundColor: bg, transition: "background-color 0.3s ease" }}
+      onMouseEnter={() => setBg(getRandomColor(color))}
+      onMouseLeave={() => setBg(color)}
+    >
       <span className="ft-iconBox" aria-hidden="true">
         <Icon />
       </span>

@@ -1,0 +1,331 @@
+/* ── Section ── */
+.ts-section {
+  background: #f5f0e8;
+  padding: clamp(56px, 7vw, 96px) 0 clamp(56px, 7vw, 80px);
+}
+
+.ts-wrap {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 3vw, 48px);
+}
+
+/* ── Header ── */
+.ts-eyebrow {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.ts-heading {
+  margin: 0;
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: #111;
+}
+
+/* ── Nav Buttons ── */
+.ts-navBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid #d0c9bf;
+  background: transparent;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: #111;
+  font-size: 22px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.ts-navBtn:hover {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+
+/* ── Stat Card (left) ── */
+.ts-statCard {
+  height: 100%;
+  min-height: 460px;
+  border-radius: 18px;
+  padding: clamp(24px, 3vw, 36px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: space-between;
+  transition: background 0.5s ease;
+}
+
+.ts-stat {
+  font-size: clamp(52px, 6vw, 76px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #111;
+  line-height: 1;
+}
+
+.ts-statLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+.ts-quote {
+  font-size: clamp(14px, 1.5vw, 16px);
+  line-height: 1.55;
+  color: #333;
+  margin: 0;
+  flex: 1;
+}
+
+.ts-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ts-tag {
+  display: inline-block;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 100px;
+  padding: 5px 13px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #222;
+  letter-spacing: 0.01em;
+}
+
+.ts-person {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ts-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1;
+}
+
+.ts-role {
+  font-size: 13px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.ts-ball {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.18);
+  flex: 0 0 40px;
+}
+
+/* ── Main Image ── */
+.ts-mainImg {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  height: 240px;
+}
+
+.ts-mainImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ts-playBtn {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: #111;
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.ts-playBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.ts-playBtn:hover {
+  transform: scale(1.08);
+}
+
+.ts-avatarBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: 0.04em;
+}
+
+/* ── Side Image ── */
+.ts-sideImg {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  height: 190px;
+}
+
+.ts-sideImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ts-avatarBadge--center {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
+  width: 42px;
+  height: 42px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Metric Card ── */
+.ts-metricCard {
+  height: 190px;
+  border-radius: 14px;
+  background: #1a1a1a;
+  padding: 20px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  position: relative;
+}
+
+.ts-metricTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.ts-metricSub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.3;
+  max-width: 80px;
+}
+
+.ts-metricValue {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.ts-graph {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.ts-graph svg {
+  width: 100%;
+  height: auto;
+}
+
+.ts-graphLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ── Dots ── */
+.ts-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+.ts-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: #ccc;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.ts-dot--active {
+  background: #111;
+  transform: scale(1.25);
+}
+
+/* ── Responsive ── */
+@media (max-width: 992px) {
+  .ts-statCard {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .ts-mainImg {
+    height: 200px;
+  }
+
+  .ts-sideImg,
+  .ts-metricCard {
+    height: 160px;
+  }
+
+  .ts-stat {
+    font-size: 52px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ts-mainImg {
+    height: 170px;
+  }
+
+  .ts-sideImg,
+  .ts-metricCard {
+    height: 140px;
+  }
+
+  .ts-metricValue {
+    font-size: 26px;
+  }
+}

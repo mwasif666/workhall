@@ -1,8 +1,4 @@
-import React, {
-  useLayoutEffect,
-  useMemo,
-  useRef,
-} from "react";
+import React, { useLayoutEffect, useMemo, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import RotatingText from "@/components/RotatingText/RotatingText";
@@ -18,33 +14,34 @@ const ROTATOR_WORDS = ["Startups", "Teams", "Founders", "Brands"];
 const si = (slug) => `https://cdn.simpleicons.org/${slug}/ffffff`;
 
 const BRAND_CELLS = [
-  { icon: si("spotify"),    bg: "#1DB954", name: "Spotify"     },
-  { icon: si("netflix"),    bg: "#E50914", name: "Netflix"     },
-  { icon: si("messenger"),  bg: "#0084FF", name: "Messenger"   },
-  { empty: true,            bg: "#f0ebe2"                      },
-  { icon: si("instagram"),  bg: "#C13584", name: "Instagram"   },
-  { icon: si("whatsapp"),   bg: "#25D366", name: "WhatsApp"    },
-  { icon: si("youtube"),    bg: "#FF0000", name: "YouTube"     },
-  { icon: si("discord"),    bg: "#5865F2", name: "Discord"     },
+  { icon: si("spotify"), bg: "#1DB954", name: "Spotify" },
+  { icon: si("netflix"), bg: "#E50914", name: "Netflix" },
+  { icon: si("messenger"), bg: "#0084FF", name: "Messenger" },
+  { icon: si("paypal"), bg: "#003087", name: "PayPal" },
+  { icon: si("instagram"), bg: "#C13584", name: "Instagram" },
+  { icon: si("whatsapp"), bg: "#25D366", name: "WhatsApp" },
+  { icon: si("youtube"), bg: "#FF0000", name: "YouTube" },
+  { icon: si("discord"), bg: "#5865F2", name: "Discord" },
   { icon: si("applemusic"), bg: "#FC3C44", name: "Apple Music" },
-  { empty: true,            bg: "#f0ebe2"                      },
-  { icon: si("slack"),      bg: "#4A154B", name: "Slack"       },
-  { icon: si("figma"),      bg: "#F24E1E", name: "Figma"       },
-  { icon: si("notion"),     bg: "#37352F", name: "Notion"      },
-  { icon: si("github"),     bg: "#24292F", name: "GitHub"      },
-  { icon: si("x"),          bg: "#14171A", name: "X"           },
-  { icon: si("tiktok"),     bg: "#EE1D52", name: "TikTok"      },
-  { icon: si("linkedin"),   bg: "#0077B5", name: "LinkedIn"    },
-  { empty: true,            bg: "#f0ebe2"                      },
+  { icon: si("spotify"), bg: "#1DB954", name: "Spotify" },
+  { icon: si("netflix"), bg: "#E50914", name: "Netflix" },
+  { icon: si("figma"), bg: "#F24E1E", name: "Figma" },
+  { icon: si("notion"), bg: "#37352F", name: "Notion" },
+  { icon: si("github"), bg: "#24292F", name: "GitHub" },
+  { icon: si("x"), bg: "#14171A", name: "X" },
+  { icon: si("tiktok"), bg: "#EE1D52", name: "TikTok" },
+  { icon: si("uber"), bg: "#000000", name: "Uber" },
+  { icon: si("airbnb"), bg: "#FF5A5F", name: "Airbnb" },
 ];
 
 const buildLogoCells = () =>
   Array.from({ length: TOTAL_CELLS }, (_, index) => {
     const cell = BRAND_CELLS[index % BRAND_CELLS.length];
+
     return {
-      icon:  cell.icon  ?? null,
-      bg:    cell.bg,
-      name:  cell.name  ?? "",
+      icon: cell.icon ?? null,
+      bg: cell.bg,
+      name: cell.name ?? "",
       empty: !!cell.empty,
     };
   });
@@ -69,6 +66,15 @@ export default function CommunitySection() {
       const ctx = gsap.context(() => {
         const logoCards = Array.from(grid.querySelectorAll(".cc-logoCard"));
 
+        const sortedLogoCards = [...logoCards].sort((a, b) => {
+          const rankA = Number(a.dataset.fadeRank || 0);
+          const rankB = Number(b.dataset.fadeRank || 0);
+          const indexA = Number(a.dataset.cellIndex || 0);
+          const indexB = Number(b.dataset.cellIndex || 0);
+
+          return rankA - rankB || indexA - indexB;
+        });
+
         gsap.set(grid, {
           y: 0,
           opacity: 1,
@@ -77,19 +83,22 @@ export default function CommunitySection() {
 
         gsap.set(logoCards, {
           opacity: 1,
+          x: 0,
           y: 0,
           scale: 1,
+          rotate: 0,
           filter: "blur(0px)",
+          transformOrigin: "center center",
         });
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: gridFrame,
             start: "top top",
-            end: () => `+=${Math.max(window.innerHeight * 1.1, 760)}`,
+            end: () => `+=${Math.max(window.innerHeight * 1.18, 820)}`,
             pin: true,
             pinSpacing: true,
-            scrub: 0.75,
+            scrub: 0.8,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
@@ -98,24 +107,28 @@ export default function CommunitySection() {
         tl.to(
           grid,
           {
-            y: -24,
+            y: -22,
             ease: "none",
             duration: 1,
           },
           0,
         ).to(
-          logoCards,
+          sortedLogoCards,
           {
             opacity: 0,
-            y: -18,
-            scale: 0.92,
-            filter: "blur(10px)",
-            ease: "none",
-            duration: 0.76,
-            stagger: (_index, target) =>
-              Number(target.dataset.fadeRank || 0) * 0.055,
+            scale: 0.28,
+            x: (_index, target) => Number(target.dataset.exitX || 0),
+            y: (_index, target) => Number(target.dataset.exitY || 0),
+            rotate: (_index, target) => Number(target.dataset.exitRotate || 0),
+            filter: "blur(13px)",
+            ease: "power1.inOut",
+            duration: 0.18,
+            stagger: {
+              each: 0.026,
+              from: "start",
+            },
           },
-          0.05,
+          0.12,
         );
       }, section);
 
@@ -140,7 +153,7 @@ export default function CommunitySection() {
           </div>
 
           <h2 className="cc-title">
-            that&apos;s why Work Hall is where Pakistan&apos;s Top{" "}
+            that&apos;s why Work Hall is where Pakistan&apos;s Top <br />
             <span className="cc-chip">
               <span className="cc-chipBox" aria-hidden="true" />
               <RotatingText
@@ -177,12 +190,37 @@ export default function CommunitySection() {
                   const cellIndex = rowIndex * GRID_COLS + colIndex;
                   const logo = logoCells[cellIndex];
 
-                  const edgeRank = Math.min(colIndex, GRID_COLS - 1 - colIndex);
+                  const centerCol = (GRID_COLS - 1) / 2;
+                  const centerRow = (GRID_ROWS - 1) / 2;
 
-                  const rowSoftness =
-                    Math.abs(rowIndex - (GRID_ROWS - 1) / 2) * 0.16;
+                  const isLeft = colIndex < centerCol;
+                  const isRight = colIndex > centerCol;
 
-                  const fadeRank = edgeRank + rowSoftness;
+                  const sideDirection = isLeft
+                    ? -1
+                    : isRight
+                      ? 1
+                      : rowIndex % 2 === 0
+                        ? -1
+                        : 1;
+
+                  /*
+                    Row-wise bottom se top animation:
+                    - Sab se pehle bottom row jayegi
+                    - Phir us ke upar wali row
+                    - Har row ke icons left-to-right one by one jayenge
+                  */
+                  const rowFromBottom = GRID_ROWS - 1 - rowIndex;
+                  const fadeRank = rowFromBottom * GRID_COLS + colIndex;
+
+                  const edgeDistance = Math.min(
+                    colIndex,
+                    GRID_COLS - 1 - colIndex,
+                  );
+
+                  const exitX = sideDirection * (92 + edgeDistance * 14);
+                  const exitY = (rowIndex - centerRow) * 18 - 10;
+                  const exitRotate = sideDirection * (8 + edgeDistance * 2);
 
                   const responsiveClass = [
                     cellIndex >= 32 ? "cc-tabletHide" : "",
@@ -195,8 +233,16 @@ export default function CommunitySection() {
                   return (
                     <article
                       key={`logo-${cellIndex}`}
-                      className={`cc-logoCard${logo.empty ? " cc-logoCard--empty" : ""} ${responsiveClass}`}
+                      className={`cc-logoCard${
+                        logo.empty ? " cc-logoCard--empty" : ""
+                      } ${responsiveClass}`}
+                      data-cell-index={cellIndex}
+                      data-row-index={rowIndex}
+                      data-col-index={colIndex}
                       data-fade-rank={fadeRank}
+                      data-exit-x={exitX}
+                      data-exit-y={exitY}
+                      data-exit-rotate={exitRotate}
                       style={{ "--cc-card-bg": logo.bg }}
                     >
                       {!logo.empty && (

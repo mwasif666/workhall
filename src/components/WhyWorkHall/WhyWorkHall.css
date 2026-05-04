@@ -8,7 +8,8 @@
    ========================= */
 
 .wwh-section {
-  background: #fff;
+  background-image: url(../../assets/img1.png);
+  background-size: cover;
   position: relative;
   z-index: 5;
   /* Pull the section UP over the Community pin-spacer (100vh) so that
@@ -24,7 +25,7 @@
   height: 100vh;
   min-height: 720px;
   overflow: hidden;
-  background: #fff;
+  background-image: url(../../assets/img1.png);
   box-sizing: border-box;
   padding: clamp(40px, 6vh, 80px) clamp(16px, 3vw, 44px);
 }
@@ -49,7 +50,7 @@
   gap: 10px;
   font-weight: 700;
   font-size: 14px;
-  color: #131313;
+  color: white;
   letter-spacing: 0.01em;
 }
 
@@ -57,7 +58,7 @@
   width: 16px;
   height: 16px;
   border-radius: 4px;
-  background: #b5b5b5;
+  background: #f26b47;
   display: inline-block;
 }
 
@@ -66,7 +67,7 @@
   font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 1.02;
-  color: #080808;
+  color: white;
   font-size: clamp(34px, 5.4vw, 74px);
   max-width: 22ch;
 }

@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { HiMiniArrowUpRight } from "react-icons/hi2";
@@ -19,7 +13,7 @@ const HALLS = [
     desc: "Bookable by the hour or day. Free for members, available to everyone",
     color: "#ff7d7d",
     image:
-      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=85",
   },
   {
     id: "studios",
@@ -27,7 +21,7 @@ const HALLS = [
     desc: "Fully equipped spaces for production, presentations, and recordings",
     color: "#4a9677",
     image:
-      "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1600&q=85",
   },
   {
     id: "weekend-day-pass",
@@ -35,7 +29,7 @@ const HALLS = [
     desc: "Full access to our shared spaces and all amenities any day of the week.",
     color: "#b9dfdd",
     image:
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1600&q=85",
   },
   {
     id: "virtual-office",
@@ -43,119 +37,284 @@ const HALLS = [
     desc: "Real business address, mail handling, meeting room access without a full-time desk.",
     color: "#efd37b",
     image:
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=85",
   },
 ];
 
-const SCROLL_PX = 160;
+function preloadImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = src;
+
+    if (img.complete && img.naturalWidth > 0) {
+      resolve();
+      return;
+    }
+
+    img.onload = resolve;
+    img.onerror = resolve;
+  });
+}
 
 export default function PurposeHalls() {
   const items = useMemo(() => HALLS, []);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const sectionRef = useRef(null);
-  const stageRef  = useRef(null);   // only this part gets pinned
-  const listRef   = useRef(null);
-  const panelRef  = useRef(null);
-  const activeIndexRef = useRef(0);
+  const stageRef = useRef(null);
+  const listRef = useRef(null);
+  const cardRefs = useRef([]);
+  const activeIdxRef = useRef(0);
 
   useEffect(() => {
-    items.forEach((item) => {
-      const img = new Image();
-      img.src = item.image;
-    });
+    items.forEach((item) => preloadImage(item.image));
   }, [items]);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
-    const stage   = stageRef.current;
-    const list    = listRef.current;
-    const panel   = panelRef.current;
-    if (!section || !stage || !list || !panel) return;
+    const stage = stageRef.current;
+    const list = listRef.current;
 
-    const total      = items.length;
-    const activeMove = 54;
+    if (!section || !stage || !list) return;
 
+    const total = items.length;
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 861px)", () => {
-      const itemEls  = Array.from(list.querySelectorAll("[data-ph-item]"));
-      const textEls  = Array.from(list.querySelectorAll("[data-ph-text]"));
-      const slideEls = Array.from(panel.querySelectorAll("[data-ph-slide]"));
+      const ctx = gsap.context(() => {
+        const cards = cardRefs.current.filter(Boolean);
+        const itemEls = Array.from(list.querySelectorAll("[data-ph-item]"));
+        const textEls = Array.from(list.querySelectorAll("[data-ph-text]"));
 
-      if (
-        itemEls.length !== total ||
-        textEls.length !== total ||
-        slideEls.length !== total
-      )
-        return;
+        activeIdxRef.current = 0;
+        setActiveIndex(0);
 
-      // Position slides: first visible, rest hidden below
-      gsap.set(slideEls, { yPercent: (i) => (i === 0 ? 0 : 100) });
+        gsap.set(cards, {
+          yPercent: 0,
+          zIndex: (i) => i + 1,
+          force3D: true,
+        });
 
-      const setters = items.map((_, i) => ({
-        itemX:       gsap.quickSetter(itemEls[i], "x", "px"),
-        textOpacity: gsap.quickSetter(textEls[i], "opacity"),
-        slideY:      gsap.quickSetter(slideEls[i], "yPercent"),
-      }));
+        gsap.set(cards.slice(1), {
+          yPercent: 105,
+        });
 
-      const applyProgress = (p) => {
-        for (let i = 0; i < total; i++) {
-          const dist  = Math.abs(p - i);
-          const w     = Math.max(0, 1 - dist);
-          const eased = w * w * (3 - 2 * w);
+        gsap.set(itemEls, {
+          x: 0,
+        });
 
-          setters[i].itemX(eased * activeMove);
-          setters[i].textOpacity(0.42 + 0.58 * eased);
-          setters[i].slideY(gsap.utils.clamp(-100, 100, (i - p) * 100));
-        }
+        gsap.set(textEls, {
+          opacity: (i) => (i === 0 ? 1 : 0.28),
+        });
 
-        const rounded = gsap.utils.clamp(0, total - 1, Math.round(p));
-        if (rounded !== activeIndexRef.current) {
-          activeIndexRef.current = rounded;
-          setActiveIndex(rounded);
-        }
-      };
+        gsap.set(itemEls[0], {
+          x: 54,
+        });
 
-      applyProgress(0);
+        const updateList = (idx) => {
+          itemEls.forEach((el, i) => {
+            gsap.to(el, {
+              x: i === idx ? 54 : 0,
+              duration: 0.4,
+              ease: "power3.out",
+              overwrite: true,
+            });
 
-      const state = { p: 0 };
+            gsap.to(textEls[i], {
+              opacity: i === idx ? 1 : 0.28,
+              duration: 0.4,
+              ease: "power3.out",
+              overwrite: true,
+            });
+          });
+        };
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: stage,          // only the content stage, NOT the heading
-          pin:     true,           // pin the trigger element itself
-          start:   "top top",
-          end:     () => `+=${SCROLL_PX * (total - 1)}`,
-          scrub:   true,           // instant follow — no lag, no jump
+        const STEP = window.innerHeight;
+
+        let currentIdx = 0;
+        let isPinned = false;
+        let isAnimating = false;
+
+        const pinTrigger = ScrollTrigger.create({
+          trigger: stage,
+          start: "top top",
+          end: `+=${total * STEP}`,
+          pin: true,
+          pinSpacing: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          snap: {
-            snapTo:    1 / (total - 1),
-            duration:  { min: 0.12, max: 0.28 },
-            delay:     0,
-            ease:      "power2.out",
-            directional: true,     // any scroll forward = next image
+          onToggle: (self) => {
+            isPinned = self.isActive;
           },
-        },
-      });
+        });
 
-      tl.to(state, {
-        p:        total - 1,
-        ease:     "none",
-        duration: 1,
-        onUpdate: () => applyProgress(state.p),
-      });
+        const goTo = (nextIdx) => {
+          if (nextIdx === currentIdx || isAnimating) return;
 
-      return () => {
-        tl.scrollTrigger?.kill();
-        tl.kill();
-        gsap.set([...itemEls, ...textEls, ...slideEls], { clearProps: "all" });
-      };
+          isAnimating = true;
+
+          const dir = nextIdx > currentIdx ? 1 : -1;
+          const prevIdx = currentIdx;
+
+          currentIdx = nextIdx;
+          activeIdxRef.current = nextIdx;
+
+          setActiveIndex(nextIdx);
+          updateList(nextIdx);
+
+          if (dir > 0) {
+            gsap.set(cards[nextIdx], {
+              yPercent: 105,
+              zIndex: nextIdx + 20,
+            });
+
+            gsap.to(cards[nextIdx], {
+              yPercent: 0,
+              duration: 0.65,
+              ease: "power3.inOut",
+              overwrite: true,
+              onComplete: () => {
+                isAnimating = false;
+              },
+            });
+          } else {
+            gsap.set(cards[prevIdx], {
+              zIndex: prevIdx + 20,
+            });
+
+            gsap.to(cards[prevIdx], {
+              yPercent: 105,
+              duration: 0.65,
+              ease: "power3.inOut",
+              overwrite: true,
+              onComplete: () => {
+                isAnimating = false;
+              },
+            });
+          }
+
+          const targetScroll = pinTrigger.start + nextIdx * STEP;
+
+          window.scrollTo({
+            top: targetScroll,
+            behavior: "auto",
+          });
+        };
+
+        const handleWheel = (e) => {
+          if (!isPinned) return;
+
+          const dir = e.deltaY > 0 ? 1 : -1;
+          const nextIdx = currentIdx + dir;
+
+          if (isAnimating) {
+            e.preventDefault();
+            return;
+          }
+
+          if (nextIdx < 0) {
+            return;
+          }
+
+          if (nextIdx >= total) {
+            return;
+          }
+
+          e.preventDefault();
+          goTo(nextIdx);
+        };
+
+        const handleKeyDown = (e) => {
+          if (!isPinned) return;
+
+          const downKeys = ["ArrowDown", "PageDown", " "];
+          const upKeys = ["ArrowUp", "PageUp"];
+
+          let dir = 0;
+
+          if (downKeys.includes(e.key)) dir = 1;
+          if (upKeys.includes(e.key)) dir = -1;
+
+          if (!dir) return;
+
+          const nextIdx = currentIdx + dir;
+
+          if (isAnimating) {
+            e.preventDefault();
+            return;
+          }
+
+          if (nextIdx < 0 || nextIdx >= total) return;
+
+          e.preventDefault();
+          goTo(nextIdx);
+        };
+
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        const handleTouchStart = (e) => {
+          touchStartY = e.touches[0].clientY;
+        };
+
+        const handleTouchMove = (e) => {
+          if (!isPinned) return;
+          touchEndY = e.touches[0].clientY;
+        };
+
+        const handleTouchEnd = (e) => {
+          if (!isPinned) return;
+
+          const diff = touchStartY - touchEndY;
+
+          if (Math.abs(diff) < 40) return;
+
+          const dir = diff > 0 ? 1 : -1;
+          const nextIdx = currentIdx + dir;
+
+          if (isAnimating) {
+            e.preventDefault();
+            return;
+          }
+
+          if (nextIdx < 0 || nextIdx >= total) return;
+
+          e.preventDefault();
+          goTo(nextIdx);
+        };
+
+        window.addEventListener("wheel", handleWheel, { passive: false });
+        window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("touchstart", handleTouchStart, {
+          passive: true,
+        });
+        window.addEventListener("touchmove", handleTouchMove, {
+          passive: true,
+        });
+        window.addEventListener("touchend", handleTouchEnd, {
+          passive: false,
+        });
+
+        return () => {
+          window.removeEventListener("wheel", handleWheel);
+          window.removeEventListener("keydown", handleKeyDown);
+          window.removeEventListener("touchstart", handleTouchStart);
+          window.removeEventListener("touchmove", handleTouchMove);
+          window.removeEventListener("touchend", handleTouchEnd);
+
+          pinTrigger.kill();
+
+          gsap.set([...cards, ...itemEls, ...textEls], {
+            clearProps: "all",
+          });
+        };
+      }, section);
+
+      return () => ctx.revert();
     });
 
     mm.add("(max-width: 860px)", () => {
-      activeIndexRef.current = 0;
+      activeIdxRef.current = 0;
       setActiveIndex(0);
     });
 
@@ -164,13 +323,12 @@ export default function PurposeHalls() {
 
   return (
     <section ref={sectionRef} className={styles.section} id="purpose-halls">
-
-      {/* ── Heading: scrolls normally, never pinned ── */}
       <div className={styles.headArea}>
         <div className={styles.eyebrow}>
           <span className={styles.eyebrowDot} aria-hidden="true" />
           <span>Purpose Halls</span>
         </div>
+
         <h2 className={styles.title}>
           and because work isn&apos;t
           <br />
@@ -178,13 +336,12 @@ export default function PurposeHalls() {
         </h2>
       </div>
 
-      {/* ── Stage: this part gets pinned by GSAP ── */}
       <div ref={stageRef} className={styles.stage}>
         <div className={styles.stageInner}>
-
           <ul ref={listRef} className={styles.list} role="list">
             {items.map((hall, index) => {
               const isActive = index === activeIndex;
+
               return (
                 <li
                   key={hall.id}
@@ -197,6 +354,7 @@ export default function PurposeHalls() {
                     style={{ "--tile-color": hall.color }}
                     aria-hidden="true"
                   />
+
                   <div data-ph-text className={styles.itemText}>
                     <h3 className={styles.itemTitle}>{hall.title}</h3>
                     <p className={styles.itemDesc}>{hall.desc}</p>
@@ -206,21 +364,20 @@ export default function PurposeHalls() {
             })}
           </ul>
 
-          <div ref={panelRef} className={styles.panel} aria-live="polite">
+          <div className={styles.panel} aria-live="polite">
             <div className={styles.panelStack}>
               {items.map((hall, index) => (
                 <div
                   key={hall.id}
-                  data-ph-slide
-                  className={`${styles.panelSlide} ${
-                    index === activeIndex ? styles.activeSlide : ""
-                  }`}
-                  aria-hidden={index === activeIndex ? "false" : "true"}
+                  ref={(el) => {
+                    cardRefs.current[index] = el;
+                  }}
+                  className={styles.imageLayer}
                 >
                   <img
-                    className={styles.panelImage}
                     src={hall.image}
                     alt={hall.title}
+                    className={styles.panelImage}
                     decoding="async"
                     draggable="false"
                     fetchPriority={index === 0 ? "high" : "auto"}
@@ -247,7 +404,6 @@ export default function PurposeHalls() {
               </span>
             </a>
           </div>
-
         </div>
       </div>
     </section>

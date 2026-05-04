@@ -9,6 +9,7 @@ import WhyWorkHall from "./components/WhyWorkHall/WhyWorkHall";
 import WorkhallLocationsMap from "./components/WorkhallLocations/WorkhallLocationsMap";
 import FeaturesTicker from "./components/FeaturesTicker/FeaturesTicker";
 import WorkspaceJourney from "./components/WorkspaceJourney/WorkspaceJourney";
+import Testimonials from "./components/Testimonials/Testimonials";
 
 import "./App.css";
 
@@ -23,7 +24,8 @@ export default function App() {
       <PurposeHalls />
       <CommunitySection />
       <WhyWorkHall />
-      <WorkhallLocationsMap />
+      <Testimonials />
+      {/* <WorkhallLocationsMap /> */}
       {/* <WorkspaceJourney /> */}
     </main>
   );

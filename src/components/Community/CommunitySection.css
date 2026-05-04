@@ -40,9 +40,10 @@
 
 .cc-eyebrowDot {
   width: 15px;
-  height: 11px;
+  height: 15px;
   border-radius: 3px;
   display: inline-block;
+  background-color: #f26b47;
 }
 
 .cc-title {
@@ -65,7 +66,7 @@
   background: var(--cc-orange);
   color: #0b0b0b;
   line-height: 1;
-  font-size: 0.48em;
+  font-size: 3.5rem;
   font-weight: 520;
   letter-spacing: -0.018em;
   box-shadow:
@@ -103,7 +104,6 @@
   align-items: stretch;
   padding: 0 var(--cc-edge-gutter) clamp(18px, 3vh, 36px);
   box-sizing: border-box;
-
   position: relative;
   z-index: 1;
 }
@@ -152,6 +152,8 @@
   padding: 0;
   box-sizing: border-box;
   will-change: transform, opacity, filter;
+  transform-origin: center center;
+  backface-visibility: hidden;
 }
 
 .cc-logoCard::after {
@@ -186,11 +188,11 @@
   user-select: none;
   pointer-events: none;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.22));
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .cc-logoCard:not(.cc-logoCard--empty):hover .cc-logoImg {
   transform: scale(1.1);
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .cc-logoLabel {
@@ -222,6 +224,24 @@
   width: clamp(70px, 10vw, 180px);
   pointer-events: none;
 }
+
+/* .cc-gridEdge--left {
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(244, 237, 225, 0.9),
+    rgba(244, 237, 225, 0)
+  );
+}
+
+.cc-gridEdge--right {
+  right: 0;
+  background: linear-gradient(
+    270deg,
+    rgba(244, 237, 225, 0.9),
+    rgba(244, 237, 225, 0)
+  );
+} */
 
 @media (max-width: 1180px) {
   .cc-section {
