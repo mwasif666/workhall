@@ -24,10 +24,13 @@ import "./Lanyard.css";
 extend({ MeshLineGeometry, MeshLineMaterial });
 
 export default function Lanyard({
-  position = [0, 0, 18],
-  gravity = [0, -32, 0],
-  fov = 22,
+  position = [0, 0, 30],
+  gravity = [0, -40, 0],
+  fov = 20,
   transparent = true,
+  cardTexturePath = "/WH%20Card.png",
+  bandColor = "#ff7a1a",
+  lineWidth = 1,
 }) {
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== "undefined" && window.innerWidth < 768,
@@ -52,7 +55,12 @@ export default function Lanyard({
         <ambientLight intensity={Math.PI} />
         <Suspense fallback={null}>
           <Physics gravity={gravity} timeStep={isMobile ? 1 / 36 : 1 / 60}>
-            <Band isMobile={isMobile} />
+            <Band
+              isMobile={isMobile}
+              cardTexturePath={cardTexturePath}
+              bandColor={bandColor}
+              lineWidth={lineWidth}
+            />
           </Physics>
           <Environment blur={0.8}>
             <Lightformer
@@ -90,7 +98,14 @@ export default function Lanyard({
   );
 }
 
-function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
+function Band({
+  maxSpeed = 50,
+  minSpeed = 0,
+  isMobile = false,
+  cardTexturePath = "/WH%20Card.png",
+  bandColor = "#ff7a1a",
+  lineWidth = 1,
+}) {
   const band = useRef(null);
   const fixed = useRef(null);
   const j1 = useRef(null);
@@ -109,7 +124,8 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
     linearDamping: 4,
   };
   const { nodes, materials } = useGLTF(cardGLB);
-  const texture = useTexture(lanyardTexture);
+  const bandTexture = useTexture(lanyardTexture);
+  const cardTexture = useTexture(cardTexturePath);
   const [curve] = useState(
     () =>
       new THREE.CatmullRomCurve3([
@@ -121,6 +137,18 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
   );
   const [dragged, setDragged] = useState(false);
   const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    bandTexture.wrapS = THREE.RepeatWrapping;
+    bandTexture.wrapT = THREE.RepeatWrapping;
+    bandTexture.needsUpdate = true;
+  }, [bandTexture]);
+
+  useEffect(() => {
+    cardTexture.flipY = false;
+    cardTexture.colorSpace = THREE.SRGBColorSpace;
+    cardTexture.needsUpdate = true;
+  }, [cardTexture]);
 
   useRopeJoint(fixed, j1, [
     [0, 0, 0],
@@ -197,8 +225,6 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
   });
 
   curve.curveType = "chordal";
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
 
   return (
     <>
@@ -240,7 +266,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
           >
             <mesh geometry={nodes.card.geometry}>
               <meshPhysicalMaterial
-                map={materials.base.map}
+                map={cardTexture}
                 map-anisotropy={16}
                 clearcoat={isMobile ? 0 : 1}
                 clearcoatRoughness={0.15}
@@ -261,13 +287,13 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
       <mesh ref={band}>
         <meshLineGeometry />
         <meshLineMaterial
-          color="white"
+          color={bandColor}
           depthTest={false}
           resolution={isMobile ? [1000, 1600] : [1000, 1000]}
           useMap
-          map={texture}
+          map={bandTexture}
           repeat={[-4, 1]}
-          lineWidth={0.9}
+          lineWidth={lineWidth}
         />
       </mesh>
     </>
