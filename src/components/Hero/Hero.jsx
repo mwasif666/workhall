@@ -402,6 +402,12 @@ export default function Hero() {
                   effect="cards"
                   grabCursor={true}
                   modules={[EffectCards, Autoplay]}
+                  cardsEffect={{
+                    perSlideOffset: 7,
+                    perSlideRotate: 1.2,
+                    rotate: true,
+                    slideShadows: false,
+                  }}
                   autoplay={{ delay: 3000, disableOnInteraction: false }}
                   loop={true}
                   className="hero__swiper"

@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./Testimonials.css";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const TESTIMONIALS = [
   {
@@ -90,15 +94,77 @@ export default function Testimonials() {
   const total = TESTIMONIALS.length;
   const t = TESTIMONIALS[current];
 
+  const sectionRef = useRef(null);
+  const headerRef = useRef(null);
+  const statCardRef = useRef(null);
+  const mainImgRef = useRef(null);
+  const sideImgRef = useRef(null);
+  const metricCardRef = useRef(null);
+
   const prev = () => setCurrent((c) => (c - 1 + total) % total);
   const next = () => setCurrent((c) => (c + 1) % total);
 
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
+      /* Header row */
+      gsap.from(headerRef.current, {
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: headerRef.current,
+          start: "top 88%",
+          once: true,
+        },
+      });
+
+      /* Left stat card — slides from left */
+      gsap.from(statCardRef.current, {
+        x: -60,
+        opacity: 0,
+        duration: 0.85,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: statCardRef.current,
+          start: "top 85%",
+          once: true,
+        },
+      });
+
+      /* Right items — staggered from bottom */
+      const rightEls = [
+        mainImgRef.current,
+        sideImgRef.current,
+        metricCardRef.current,
+      ].filter(Boolean);
+
+      gsap.from(rightEls, {
+        y: 50,
+        opacity: 0,
+        duration: 0.75,
+        ease: "power3.out",
+        stagger: 0.13,
+        scrollTrigger: {
+          trigger: mainImgRef.current,
+          start: "top 85%",
+          once: true,
+        },
+      });
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="ts-section" id="testimonials">
+    <section className="ts-section" id="testimonials" ref={sectionRef}>
       <div className="ts-wrap">
 
         {/* ── Header ── */}
-        <div className="row align-items-end mb-4 g-0">
+        <div className="row align-items-end mb-4 g-0" ref={headerRef}>
           <div className="col">
             <p className="ts-eyebrow">TESTIMONIALS</p>
             <h2 className="ts-heading">Their words, not ours</h2>
@@ -117,7 +183,7 @@ export default function Testimonials() {
         <div className="row g-3">
 
           {/* Left stat card */}
-          <div className="col-lg-4 col-12">
+          <div className="col-lg-4 col-12" ref={statCardRef}>
             <div className="ts-statCard" style={{ background: t.cardBg }}>
               <div>
                 <div className="ts-stat">{t.stat}</div>
@@ -147,7 +213,7 @@ export default function Testimonials() {
             <div className="row g-3">
 
               {/* Main large image */}
-              <div className="col-12">
+              <div className="col-12" ref={mainImgRef}>
                 <div className="ts-mainImg">
                   <img src={t.mainImg} alt={t.name} />
                   <button className="ts-playBtn" aria-label="Watch video">
@@ -160,7 +226,7 @@ export default function Testimonials() {
               </div>
 
               {/* Side image */}
-              <div className="col-6">
+              <div className="col-6" ref={sideImgRef}>
                 <div className="ts-sideImg">
                   <img src={t.sideImg} alt="" />
                   <span className="ts-avatarBadge ts-avatarBadge--center">{t.avatar}</span>
@@ -168,7 +234,7 @@ export default function Testimonials() {
               </div>
 
               {/* Metric / graph card */}
-              <div className="col-6">
+              <div className="col-6" ref={metricCardRef}>
                 <div className="ts-metricCard">
                   <div className="ts-metricTop">
                     <span className="ts-metricSub">{t.metricSub}</span>
@@ -196,18 +262,6 @@ export default function Testimonials() {
 
             </div>
           </div>
-        </div>
-
-        {/* ── Dots ── */}
-        <div className="ts-dots">
-          {TESTIMONIALS.map((_, i) => (
-            <button
-              key={i}
-              className={`ts-dot ${i === current ? "ts-dot--active" : ""}`}
-              onClick={() => setCurrent(i)}
-              aria-label={`Testimonial ${i + 1}`}
-            />
-          ))}
         </div>
 
       </div>
