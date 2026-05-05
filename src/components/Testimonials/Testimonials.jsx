@@ -1,4 +1,5 @@
 import { useState, useRef, useLayoutEffect } from "react";
+import { flushSync } from "react-dom";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -91,6 +92,7 @@ const TESTIMONIALS = [
 
 export default function Testimonials() {
   const [current, setCurrent] = useState(0);
+  const [isSwitching, setIsSwitching] = useState(false);
   const total = TESTIMONIALS.length;
   const t = TESTIMONIALS[current];
 
@@ -100,9 +102,70 @@ export default function Testimonials() {
   const mainImgRef = useRef(null);
   const sideImgRef = useRef(null);
   const metricCardRef = useRef(null);
+  const navTimelineRef = useRef(null);
+  const isSwitchingRef = useRef(false);
 
-  const prev = () => setCurrent((c) => (c - 1 + total) % total);
-  const next = () => setCurrent((c) => (c + 1) % total);
+  const getAnimatedCards = () =>
+    [
+      statCardRef.current,
+      mainImgRef.current,
+      sideImgRef.current,
+      metricCardRef.current,
+    ].filter(Boolean);
+
+  const goTo = (nextIndex, direction) => {
+    if (isSwitchingRef.current || nextIndex === current) return;
+
+    const cards = getAnimatedCards();
+    if (!cards.length) {
+      setCurrent(nextIndex);
+      return;
+    }
+
+    navTimelineRef.current?.kill();
+    isSwitchingRef.current = true;
+    setIsSwitching(true);
+
+    const exitOffset = direction > 0 ? -26 : 26;
+    const enterOffset = direction > 0 ? 28 : -28;
+
+    navTimelineRef.current = gsap.timeline({
+      defaults: { ease: "power3.inOut" },
+      onComplete: () => {
+        isSwitchingRef.current = false;
+        setIsSwitching(false);
+      },
+    });
+
+    navTimelineRef.current
+      .to(cards, {
+        autoAlpha: 0,
+        y: exitOffset,
+        scale: 0.985,
+        duration: 0.18,
+        stagger: { each: 0.07, from: direction > 0 ? "start" : "end" },
+        overwrite: "auto",
+      })
+      .add(() => {
+        flushSync(() => setCurrent(nextIndex));
+        gsap.set(cards, {
+          y: enterOffset,
+          scale: 0.985,
+        });
+      })
+      .to(cards, {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.3,
+        stagger: { each: 0.09, from: "start" },
+        clearProps: "transform,opacity,visibility",
+        overwrite: "auto",
+      });
+  };
+
+  const prev = () => goTo((current - 1 + total) % total, -1);
+  const next = () => goTo((current + 1) % total, 1);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -159,10 +222,13 @@ export default function Testimonials() {
     return () => ctx.revert();
   }, []);
 
+  useLayoutEffect(() => {
+    return () => navTimelineRef.current?.kill();
+  }, []);
+
   return (
     <section className="ts-section" id="testimonials" ref={sectionRef}>
       <div className="ts-wrap">
-
         {/* ── Header ── */}
         <div className="row align-items-end mb-4 g-0" ref={headerRef}>
           <div className="col">
@@ -170,20 +236,29 @@ export default function Testimonials() {
             <h2 className="ts-heading">Their words, not ours</h2>
           </div>
           <div className="col-auto d-flex gap-2">
-            <button className="ts-navBtn" onClick={prev} aria-label="Previous testimonial">
+            <button
+              className="ts-navBtn"
+              onClick={prev}
+              aria-label="Previous testimonial"
+              disabled={isSwitching}
+            >
               <HiChevronLeft />
             </button>
-            <button className="ts-navBtn" onClick={next} aria-label="Next testimonial">
+            <button
+              className="ts-navBtn"
+              onClick={next}
+              aria-label="Next testimonial"
+              disabled={isSwitching}
+            >
               <HiChevronRight />
             </button>
           </div>
         </div>
 
         {/* ── Main Grid ── */}
-        <div className="row g-3">
-
+        <div className="ts-grid">
           {/* Left stat card */}
-          <div className="col-lg-4 col-12" ref={statCardRef}>
+          <div className="ts-gridItem ts-gridItem--stat" ref={statCardRef}>
             <div className="ts-statCard" style={{ background: t.cardBg }}>
               <div>
                 <div className="ts-stat">{t.stat}</div>
@@ -194,7 +269,9 @@ export default function Testimonials() {
 
               <div className="ts-tags">
                 {t.tags.map((tag) => (
-                  <span key={tag} className="ts-tag">{tag}</span>
+                  <span key={tag} className="ts-tag">
+                    {tag}
+                  </span>
                 ))}
               </div>
 
@@ -208,62 +285,60 @@ export default function Testimonials() {
             </div>
           </div>
 
-          {/* Right photo + metric grid */}
-          <div className="col-lg-8 col-12">
-            <div className="row g-3">
+          {/* Main large image */}
+          <div className="ts-gridItem ts-gridItem--main" ref={mainImgRef}>
+            <div className="ts-mainImg">
+              <img src={t.mainImg} alt={t.name} />
+              <button className="ts-playBtn" aria-label="Watch video">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </button>
+              <span className="ts-avatarBadge">{t.avatar}</span>
+            </div>
+          </div>
 
-              {/* Main large image */}
-              <div className="col-12" ref={mainImgRef}>
-                <div className="ts-mainImg">
-                  <img src={t.mainImg} alt={t.name} />
-                  <button className="ts-playBtn" aria-label="Watch video">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </button>
-                  <span className="ts-avatarBadge">{t.avatar}</span>
-                </div>
+          {/* Side image */}
+          <div className="ts-gridItem ts-gridItem--side" ref={sideImgRef}>
+            <div className="ts-sideImg">
+              <img src={t.sideImg} alt="" />
+              <span className="ts-avatarBadge ts-avatarBadge--center">
+                {t.avatar}
+              </span>
+            </div>
+          </div>
+
+          {/* Metric / graph card */}
+          <div className="ts-gridItem ts-gridItem--metric" ref={metricCardRef}>
+            <div className="ts-metricCard">
+              <div className="ts-metricTop">
+                <span className="ts-metricSub">{t.metricSub}</span>
+                <span className="ts-metricValue">{t.metricValue}</span>
               </div>
 
-              {/* Side image */}
-              <div className="col-6" ref={sideImgRef}>
-                <div className="ts-sideImg">
-                  <img src={t.sideImg} alt="" />
-                  <span className="ts-avatarBadge ts-avatarBadge--center">{t.avatar}</span>
-                </div>
+              <div className="ts-graph" aria-hidden="true">
+                <svg
+                  viewBox="0 0 200 90"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M8 78 C40 72 70 60 100 45 C130 30 160 18 192 10"
+                    stroke="rgba(255,255,255,0.7)"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  />
+                  <circle cx="192" cy="10" r="5" fill="#fff" />
+                </svg>
               </div>
 
-              {/* Metric / graph card */}
-              <div className="col-6" ref={metricCardRef}>
-                <div className="ts-metricCard">
-                  <div className="ts-metricTop">
-                    <span className="ts-metricSub">{t.metricSub}</span>
-                    <span className="ts-metricValue">{t.metricValue}</span>
-                  </div>
-
-                  <div className="ts-graph" aria-hidden="true">
-                    <svg viewBox="0 0 200 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M8 78 C40 72 70 60 100 45 C130 30 160 18 192 10"
-                        stroke="rgba(255,255,255,0.7)"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                      />
-                      <circle cx="192" cy="10" r="5" fill="#fff" />
-                    </svg>
-                  </div>
-
-                  <div className="ts-graphLabels">
-                    <span>{t.metricFrom}</span>
-                    <span>{t.metricTo}</span>
-                  </div>
-                </div>
+              <div className="ts-graphLabels">
+                <span>{t.metricFrom}</span>
+                <span>{t.metricTo}</span>
               </div>
-
             </div>
           </div>
         </div>
-
       </div>
     </section>
   );

@@ -1,0 +1,343 @@
+.whf-shell {
+  padding: 28px 16px 18px;
+}
+
+.whf-frame {
+  width: min(1600px, 100%);
+  margin: 0 auto;
+  padding: clamp(28px, 3vw, 44px);
+  border-radius: 38px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.7), transparent 32%),
+    linear-gradient(180deg, #f6ecdf 0%, #f3e7d9 100%);
+  border: 1px solid rgba(77, 43, 25, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 24px 54px rgba(92, 59, 35, 0.1);
+  overflow: hidden;
+}
+
+.whf-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(170px, 0.78fr) minmax(170px, 0.78fr) minmax(320px, 1.08fr);
+  gap: clamp(24px, 2vw, 34px);
+  align-items: start;
+}
+
+.whf-intro {
+  display: grid;
+  gap: 22px;
+  align-content: start;
+  min-height: 100%;
+}
+
+.whf-kicker,
+.whf-colTitle {
+  color: #b8a89d;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.whf-title {
+  margin: 0;
+  max-width: 14ch;
+  color: #281109;
+  font-size: clamp(2.6rem, 4.8vw, 4.9rem);
+  line-height: 0.94;
+  letter-spacing: -0.055em;
+  font-weight: 900;
+}
+
+.whf-copy,
+.whf-note {
+  margin: 0;
+  color: #8d7d73;
+  font-size: clamp(1rem, 1.25vw, 1.28rem);
+  line-height: 1.6;
+  font-weight: 700;
+}
+
+.whf-note {
+  margin-top: auto;
+  max-width: 18ch;
+}
+
+.whf-col {
+  display: grid;
+  gap: 22px;
+  align-content: start;
+  min-height: 100%;
+}
+
+.whf-links {
+  display: grid;
+  gap: 18px;
+}
+
+.whf-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  color: #2d1610;
+  font-size: clamp(1.12rem, 1.3vw, 1.38rem);
+  font-weight: 800;
+  line-height: 1.25;
+  text-decoration: none;
+  transition:
+    transform 180ms ease,
+    color 180ms ease,
+    opacity 180ms ease;
+}
+
+.whf-link svg {
+  width: 20px;
+  height: 20px;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.whf-link:hover {
+  color: #ff845c;
+  transform: translateX(4px);
+}
+
+.whf-link:hover svg {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.whf-contactLink {
+  margin-top: auto;
+  width: fit-content;
+  color: #2d1610;
+  font-size: 1.18rem;
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.28em;
+}
+
+.whf-contactLink:hover {
+  color: #ff845c;
+}
+
+.whf-visualCol {
+  display: grid;
+  gap: 22px;
+  align-content: start;
+}
+
+.whf-cta {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px 10px 24px;
+  min-height: 88px;
+  border-radius: 28px;
+  background: #ff875d;
+  color: #fffdf9;
+  text-decoration: none;
+  font-size: clamp(1.08rem, 1.3vw, 1.35rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 16px 28px rgba(255, 135, 93, 0.24);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+.whf-cta:hover {
+  transform: translateY(-3px);
+  background: #ff7a4c;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 20px 36px rgba(255, 122, 76, 0.28);
+}
+
+.whf-ctaIcon {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.whf-ctaIcon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.whf-lanyardCard {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 30px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 251, 245, 0.62)),
+    rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(77, 43, 25, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 18px 34px rgba(80, 52, 31, 0.08);
+}
+
+.whf-lanyardMeta p {
+  margin: 10px 0 0;
+  max-width: 28ch;
+  color: #7b6a61;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+.whf-lanyardStage {
+  position: relative;
+  min-height: clamp(280px, 28vw, 420px);
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(56, 32, 19, 0.08);
+  background:
+    radial-gradient(circle at top, rgba(255, 200, 175, 0.35), transparent 40%),
+    linear-gradient(180deg, #fff7ef 0%, #f6e5d3 100%);
+}
+
+.whf-lanyardGlow {
+  position: absolute;
+  inset: auto auto -18% -10%;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 156, 120, 0.28), transparent 68%);
+  pointer-events: none;
+  filter: blur(10px);
+}
+
+.whf-lanyardFallback {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 136, 93, 0.26), transparent 18%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.08));
+}
+
+.whf-bottom {
+  margin-top: clamp(34px, 5vw, 72px);
+  padding-top: 24px;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 16px 24px;
+  align-items: center;
+  border-top: 1px solid rgba(77, 43, 25, 0.08);
+  color: #b8a89d;
+  font-size: clamp(1rem, 1.1vw, 1.16rem);
+  font-weight: 800;
+}
+
+.whf-bottom a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.whf-bottom a:hover {
+  color: #2d1610;
+}
+
+@media (max-width: 1240px) {
+  .whf-grid {
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.9fr) minmax(280px, 1fr);
+  }
+
+  .whf-intro {
+    grid-column: 1 / span 3;
+    max-width: 60rem;
+  }
+
+  .whf-visualCol {
+    grid-column: 3;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 920px) {
+  .whf-shell {
+    padding-inline: 12px;
+  }
+
+  .whf-frame {
+    border-radius: 30px;
+    padding: 22px;
+  }
+
+  .whf-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .whf-intro,
+  .whf-col,
+  .whf-visualCol {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .whf-title {
+    max-width: 12ch;
+  }
+
+  .whf-cta {
+    justify-self: stretch;
+    justify-content: space-between;
+  }
+
+  .whf-bottom {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .whf-title {
+    font-size: clamp(2.15rem, 10vw, 3.2rem);
+  }
+
+  .whf-copy,
+  .whf-note {
+    font-size: 0.98rem;
+  }
+
+  .whf-link {
+    font-size: 1.05rem;
+  }
+
+  .whf-cta {
+    min-height: 76px;
+    padding: 8px 10px 8px 18px;
+    font-size: 1.02rem;
+  }
+
+  .whf-ctaIcon {
+    width: 56px;
+    height: 56px;
+    flex-basis: 56px;
+    border-radius: 18px;
+  }
+
+  .whf-lanyardCard {
+    padding: 14px;
+  }
+}

@@ -8,8 +8,8 @@ import CommunitySection from "./components/Community/CommunitySection";
 import WhyWorkHall from "./components/WhyWorkHall/WhyWorkHall";
 import WorkhallLocationsMap from "./components/WorkhallLocations/WorkhallLocationsMap";
 import FeaturesTicker from "./components/FeaturesTicker/FeaturesTicker";
-import WorkspaceJourney from "./components/WorkspaceJourney/WorkspaceJourney";
 import Testimonials from "./components/Testimonials/Testimonials";
+import Footer from "./components/Footer/Footer";
 
 import "./App.css";
 
@@ -25,8 +25,8 @@ export default function App() {
       <CommunitySection />
       <WhyWorkHall />
       <Testimonials />
-      {/* <WorkhallLocationsMap /> */}
-      {/* <WorkspaceJourney /> */}
+      <WorkhallLocationsMap />
+      <Footer />
     </main>
   );
 }
