@@ -1,33 +1,15 @@
-import {
-  useEffect,
-  useMemo,
-  type ReactElement,
-} from "react";
-import Lanyard from "./Footer/Lanyard";
-
-interface WorkHallFooterProps {
-  onFoundersVideoClick?: () => void;
-  phone?: string;
-  email?: string;
-  address?: string;
-}
-
-interface FooterLinkItem {
-  label: string;
-  href: string;
-}
-
-interface IconLinkItem extends FooterLinkItem {
-  title: string;
-  icon: () => ReactElement;
-}
+import { useEffect, useMemo } from "react";
+import Lanyard from "./Lanyard/Lanyard";
 
 const FOOTER_STYLES = `
 .whf2-root {
+  position: relative;
+  z-index: 2147480000;
   width: 100%;
   background: var(--wh-bg, #f8f0e3);
   color: var(--wh-text-primary, #111111);
   font-family: inherit;
+  overflow: visible;
 }
 
 .whf2-partnerBar {
@@ -85,15 +67,21 @@ const FOOTER_STYLES = `
 }
 
 .whf2-main {
+  position: relative;
+  z-index: 1;
   padding: 72px 80px 0;
   background: var(--wh-bg, #f8f0e3);
+  overflow: visible;
 }
 
 .whf2-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 280px 1fr 320px;
   column-gap: 80px;
   align-items: start;
+  overflow: visible;
 }
 
 .whf2-brandWordmark {
@@ -231,6 +219,8 @@ const FOOTER_STYLES = `
 }
 
 .whf2-navColumn {
+  position: relative;
+  z-index: 1;
   min-width: 0;
 }
 
@@ -263,6 +253,8 @@ const FOOTER_STYLES = `
 }
 
 .whf2-contactRow {
+  position: relative;
+  z-index: 1;
   margin-top: 48px;
   padding-top: 28px;
   display: flex;
@@ -322,18 +314,37 @@ const FOOTER_STYLES = `
 
 .whf2-lanyardColumn {
   position: relative;
-  height: 520px;
-  display: flex;
-  align-items: flex-end;
+  z-index: 2147481000;
+  height: 360px;
+  overflow: visible;
+  grid-column: 3;
+  grid-row: 1;
 }
 
 .whf2-lanyardStage {
-  position: relative;
+  position: absolute;
+  top: 0;
+  right: -80px;
+  width: 380px;
+  height: 600px;
+  z-index: 2147481001;
+  overflow: visible;
+  pointer-events: auto;
+}
+
+.whf2-lanyardStage .lanyard-wrapper {
+  z-index: 2147481002;
   width: 100%;
   height: 100%;
-  min-height: 520px;
-  border-radius: 18px;
-  overflow: hidden;
+  min-height: 100%;
+}
+
+.whf2-lanyardStage .lanyard-wrapper canvas {
+  position: relative;
+  z-index: 2147481002;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0;
 }
 
 .whf2-bottomBar {
@@ -445,7 +456,7 @@ const FOOTER_STYLES = `
 }
 `;
 
-const WORK_HALL_LINKS: FooterLinkItem[] = [
+const WORK_HALL_LINKS = [
   { label: "Plans", href: "#plans" },
   { label: "Locations", href: "#locations" },
   { label: "Community", href: "#community" },
@@ -455,7 +466,7 @@ const WORK_HALL_LINKS: FooterLinkItem[] = [
   { label: "Member's Lounge", href: "#locations" },
 ];
 
-const PLAN_LINKS: FooterLinkItem[] = [
+const PLAN_LINKS = [
   { label: "Air", href: "#plans" },
   { label: "X", href: "#plans" },
   { label: "Nox", href: "#plans" },
@@ -466,7 +477,7 @@ const PLAN_LINKS: FooterLinkItem[] = [
   { label: "HQ", href: "#plans" },
 ];
 
-const LOCATION_LINKS: FooterLinkItem[] = [
+const LOCATION_LINKS = [
   { label: "Tipu Sultan", href: "#locations" },
   { label: "PECHS", href: "#locations" },
   { label: "Gulshan", href: "#locations" },
@@ -475,15 +486,40 @@ const LOCATION_LINKS: FooterLinkItem[] = [
   { label: "Metropole", href: "#locations" },
 ];
 
-const AI_LINKS: IconLinkItem[] = [
-  { title: "Ask ChatGPT", href: "https://chat.openai.com", label: "ChatGPT", icon: ChatGptIcon },
-  { title: "Ask Gemini", href: "https://gemini.google.com", label: "Gemini", icon: GeminiIcon },
-  { title: "Ask Perplexity", href: "https://www.perplexity.ai", label: "Perplexity", icon: PerplexityIcon },
-  { title: "Ask Claude", href: "https://claude.ai", label: "Claude", icon: ClaudeIcon },
-  { title: "Ask Copilot", href: "https://copilot.microsoft.com", label: "Copilot", icon: CopilotIcon },
+const AI_LINKS = [
+  {
+    title: "Ask ChatGPT",
+    href: "https://chat.openai.com",
+    label: "ChatGPT",
+    icon: ChatGptIcon,
+  },
+  {
+    title: "Ask Gemini",
+    href: "https://gemini.google.com",
+    label: "Gemini",
+    icon: GeminiIcon,
+  },
+  {
+    title: "Ask Perplexity",
+    href: "https://www.perplexity.ai",
+    label: "Perplexity",
+    icon: PerplexityIcon,
+  },
+  {
+    title: "Ask Claude",
+    href: "https://claude.ai",
+    label: "Claude",
+    icon: ClaudeIcon,
+  },
+  {
+    title: "Ask Copilot",
+    href: "https://copilot.microsoft.com",
+    label: "Copilot",
+    icon: CopilotIcon,
+  },
 ];
 
-const SOCIAL_LINKS: IconLinkItem[] = [
+const SOCIAL_LINKS = [
   {
     title: "Instagram",
     href: "https://instagram.com/workhall.co",
@@ -509,59 +545,48 @@ const QR_MATRIX = buildPseudoQrMatrix("https://workhall.co");
 function useInjectedFooterStyles() {
   useEffect(() => {
     if (typeof document === "undefined") return;
-
-    let styleTag = document.getElementById(
-      "wh-footer-styles",
-    ) as HTMLStyleElement | null;
-
+    let styleTag = document.getElementById("wh-footer-styles");
     if (!styleTag) {
       styleTag = document.createElement("style");
       styleTag.id = "wh-footer-styles";
       document.head.appendChild(styleTag);
     }
-
     if (styleTag.textContent !== FOOTER_STYLES) {
       styleTag.textContent = FOOTER_STYLES;
     }
   }, []);
 }
 
-function hashSeed(input: string) {
+function hashSeed(input) {
   return Array.from(input).reduce(
-    (seed, character) => ((seed * 31 + character.charCodeAt(0)) >>> 0),
+    (seed, character) => (seed * 31 + character.charCodeAt(0)) >>> 0,
     7,
   );
 }
 
-function buildPseudoQrMatrix(value: string) {
+function buildPseudoQrMatrix(value) {
   const size = 21;
-  const matrix = Array.from({ length: size }, () => Array<boolean>(size).fill(false));
-  const reserved = Array.from({ length: size }, () => Array<boolean>(size).fill(false));
+  const matrix = Array.from({ length: size }, () => Array(size).fill(false));
+  const reserved = Array.from({ length: size }, () => Array(size).fill(false));
 
-  const placeFinder = (startRow: number, startColumn: number) => {
+  const placeFinder = (startRow, startColumn) => {
     for (let row = -1; row <= 7; row += 1) {
       for (let column = -1; column <= 7; column += 1) {
         const actualRow = startRow + row;
         const actualColumn = startColumn + column;
-
         if (
           actualRow < 0 ||
           actualColumn < 0 ||
           actualRow >= size ||
           actualColumn >= size
-        ) {
+        )
           continue;
-        }
-
         reserved[actualRow][actualColumn] = true;
-
         if (row < 0 || row > 6 || column < 0 || column > 6) {
           matrix[actualRow][actualColumn] = false;
           continue;
         }
-
-        const isBorder =
-          row === 0 || row === 6 || column === 0 || column === 6;
+        const isBorder = row === 0 || row === 6 || column === 0 || column === 6;
         const isCenter = row >= 2 && row <= 4 && column >= 2 && column <= 4;
         matrix[actualRow][actualColumn] = isBorder || isCenter;
       }
@@ -602,24 +627,15 @@ function buildPseudoQrMatrix(value: string) {
   let upward = true;
 
   while (column > 0) {
-    if (column === 6) {
-      column -= 1;
-    }
-
+    if (column === 6) column -= 1;
     for (let rowOffset = 0; rowOffset < size; rowOffset += 1) {
       const row = upward ? size - 1 - rowOffset : rowOffset;
-
       for (let step = 0; step < 2; step += 1) {
         const currentColumn = column - step;
-
-        if (reserved[row][currentColumn]) {
-          continue;
-        }
-
+        if (reserved[row][currentColumn]) continue;
         matrix[row][currentColumn] = nextBit();
       }
     }
-
     upward = !upward;
     column -= 2;
   }
@@ -627,17 +643,16 @@ function buildPseudoQrMatrix(value: string) {
   return matrix;
 }
 
-function PartnerBar({ email }: { email: string }) {
+function PartnerBar({ email }) {
   return (
     <div className="whf2-partnerBar">
       <div className="whf2-partnerCopy">
         <span className="whf2-label">Partner With Us</span>
         <p className="whf2-partnerText">
-          Looking to collaborate, sponsor, or grow alongside Karachi&apos;s
-          most active coworking community?
+          Looking to collaborate, sponsor, or grow alongside Karachi&apos;s most
+          active coworking community?
         </p>
       </div>
-
       <a className="whf2-partnerButton" href={`mailto:${email}`}>
         Get in Touch →
       </a>
@@ -645,9 +660,7 @@ function PartnerBar({ email }: { email: string }) {
   );
 }
 
-function BrandColumn({
-  onFoundersVideoClick,
-}: Pick<WorkHallFooterProps, "onFoundersVideoClick">) {
+function BrandColumn({ onFoundersVideoClick }) {
   return (
     <div>
       <h2 className="whf2-brandWordmark">Work Hall</h2>
@@ -673,7 +686,6 @@ function BrandColumn({
             <path d="M4 2.5L13 8L4 13.5V2.5Z" />
           </svg>
         </span>
-
         <span>
           <span className="whf2-foundersTitle">Hear from our Founders</span>
           <span className="whf2-foundersMeta">Play video</span>
@@ -684,7 +696,6 @@ function BrandColumn({
         <div className="whf2-qrBox" aria-hidden="true">
           <QrCodeArt />
         </div>
-
         <div>
           <span className="whf2-qrMetaLabel">Scan to visit</span>
           <span className="whf2-qrMetaSite">workhall.co</span>
@@ -695,7 +706,6 @@ function BrandColumn({
         <p className="whf2-aiCopy">
           Ask any AI about coworking in Karachi. The answer is us.
         </p>
-
         <div className="whf2-aiIcons">
           {AI_LINKS.map((item) => (
             <a
@@ -746,11 +756,7 @@ function QrCodeArt() {
   );
 }
 
-function NavigationColumn({
-  phone,
-  email,
-  address,
-}: Required<Pick<WorkHallFooterProps, "phone" | "email" | "address">>) {
+function NavigationColumn({ phone, email, address }) {
   return (
     <div className="whf2-navColumn">
       <div className="whf2-navGrid">
@@ -767,7 +773,6 @@ function NavigationColumn({
           <span className="whf2-separator">·</span>
           <span>{address}</span>
         </div>
-
         <div className="whf2-socials">
           {SOCIAL_LINKS.map((item) => (
             <a
@@ -788,13 +793,7 @@ function NavigationColumn({
   );
 }
 
-function FooterNavSection({
-  label,
-  links,
-}: {
-  label: string;
-  links: FooterLinkItem[];
-}) {
+function FooterNavSection({ label, links }) {
   return (
     <div>
       <div className="whf2-sectionLabel">{label}</div>
@@ -812,13 +811,10 @@ function LanyardColumn() {
     <div className="whf2-lanyardColumn">
       <div className="whf2-lanyardStage">
         <Lanyard
-          position={[0, 0, 24]}
+          position={[0, 1, 20]}
           gravity={[0, -40, 0]}
-          fov={20}
-          cardTexturePath="/WH%20Card.png"
-          bandColor="#ff7a1a"
-          lineWidth={0.28}
-          useBandTexture={false}
+          fov={25}
+          cardTexturePath="/lanyard2.png"
         />
       </div>
     </div>
@@ -835,7 +831,6 @@ function BottomBar() {
         <span className="whf2-separator">·</span>
         <a href="/terms">Terms of Service</a>
       </div>
-
       <div className="whf2-bottomRight">
         Made with care, by our own community — right here at Work Hall.
       </div>
@@ -927,7 +922,7 @@ export default function WorkHallFooter({
   phone = "[PHONE]",
   email = "hello@workhall.co",
   address = "[ADDRESS]",
-}: WorkHallFooterProps) {
+}) {
   useInjectedFooterStyles();
   const stableVideoClick = useMemo(
     () => onFoundersVideoClick ?? (() => undefined),
