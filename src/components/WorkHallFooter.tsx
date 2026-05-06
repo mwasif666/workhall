@@ -1,13 +1,9 @@
 import {
-  useCallback,
   useEffect,
   useMemo,
-  useRef,
-  useState,
-  type MouseEvent as ReactMouseEvent,
   type ReactElement,
-  type TouchEvent as ReactTouchEvent,
 } from "react";
+import Lanyard from "./Footer/Lanyard";
 
 interface WorkHallFooterProps {
   onFoundersVideoClick?: () => void;
@@ -24,11 +20,6 @@ interface FooterLinkItem {
 interface IconLinkItem extends FooterLinkItem {
   title: string;
   icon: () => ReactElement;
-}
-
-interface Point {
-  x: number;
-  y: number;
 }
 
 const FOOTER_STYLES = `
@@ -332,116 +323,17 @@ const FOOTER_STYLES = `
 .whf2-lanyardColumn {
   position: relative;
   height: 520px;
-  overflow: hidden;
-  cursor: default;
-}
-
-.whf2-lanyardCopy {
-  margin-bottom: 18px;
-}
-
-.whf2-lanyardTitle {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--wh-text-primary, #111111);
-}
-
-.whf2-lanyardText {
-  margin: 8px 0 0;
-  font-size: 0.8rem;
-  line-height: 1.6;
-  color: var(--wh-text-secondary, #6c655f);
+  display: flex;
+  align-items: flex-end;
 }
 
 .whf2-lanyardStage {
   position: relative;
-  height: calc(100% - 88px);
-}
-
-.whf2-lanyardSvg {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  overflow: visible;
-}
-
-.whf2-lanyardClip {
-  position: absolute;
-  top: 12px;
-  left: 50%;
-  width: 8px;
-  height: 16px;
-  margin-left: -4px;
-  border-radius: 999px;
-  background: var(--wh-text-primary, #111111);
-  z-index: 1;
-}
-
-.whf2-lanyardBadge {
-  position: absolute;
-  width: 120px;
-  height: 160px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 18px 14px 16px;
-  border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
-  user-select: none;
-  touch-action: none;
-  z-index: 1;
-  cursor: grab;
-}
-
-.whf2-lanyardBadge.is-grabbing {
-  cursor: grabbing;
-}
-
-.whf2-lanyardHole {
-  width: 14px;
-  height: 14px;
-  margin-bottom: 12px;
-  border: 2px solid rgba(17, 17, 17, 0.12);
-  border-radius: 999px;
-}
-
-.whf2-lanyardWordmark {
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #111111;
-}
-
-.whf2-lanyardRule {
-  width: calc(100% - 32px);
-  margin: 10px 16px;
-  border-top: 1px solid #eeeeee;
-}
-
-.whf2-lanyardMeta {
-  font-size: 0.5rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #999999;
-}
-
-.whf2-barcode {
-  margin-top: auto;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 2px;
-}
-
-.whf2-barcodeBar {
-  height: 28px;
-  background: #111111;
+  min-height: 520px;
+  border-radius: 18px;
+  overflow: hidden;
 }
 
 .whf2-bottomBar {
@@ -523,6 +415,10 @@ const FOOTER_STYLES = `
   .whf2-grid {
     grid-template-columns: 1fr;
     row-gap: 42px;
+  }
+
+  .whf2-navColumn {
+    order: 3;
   }
 
   .whf2-navGrid {
@@ -608,18 +504,6 @@ const SOCIAL_LINKS: IconLinkItem[] = [
   },
 ];
 
-const BARCODE_WIDTHS: number[] = [
-  2, 1, 2, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 2, 2, 1, 1, 2, 2, 1, 2, 1,
-];
-
-const STIFFNESS = 0.06;
-const DAMPING = 0.78;
-const GRAVITY = 0.12;
-const BADGE_W = 120;
-const BADGE_H = 160;
-const LANYARD_MIN_X = 16;
-const LANYARD_MIN_Y = 56;
-const LANYARD_TOP_Y = 28;
 const QR_MATRIX = buildPseudoQrMatrix("https://workhall.co");
 
 function useInjectedFooterStyles() {
@@ -640,10 +524,6 @@ function useInjectedFooterStyles() {
       styleTag.textContent = FOOTER_STYLES;
     }
   }, []);
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
 }
 
 function hashSeed(input: string) {
@@ -928,329 +808,18 @@ function FooterNavSection({
 }
 
 function LanyardColumn() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const posRef = useRef<Point>({ x: 0, y: 0 });
-  const velRef = useRef<Point>({ x: 0, y: 0 });
-  const targetRef = useRef<Point>({ x: 0, y: 0 });
-  const restRef = useRef<Point>({ x: 0, y: 0 });
-  const dragOffsetRef = useRef<Point>({ x: 0, y: 0 });
-  const lastMouseRef = useRef<Point>({ x: 0, y: 0 });
-  const grabbedRef = useRef(false);
-  const idleActiveRef = useRef(false);
-  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const rafRef = useRef<number | null>(null);
-  const [, setTick] = useState(0);
-
-  const syncRestPosition = useCallback((snapToRest: boolean) => {
-    const element = containerRef.current;
-    if (!element) return;
-
-    const bounds = element.getBoundingClientRect();
-    const maxX = Math.max(LANYARD_MIN_X, bounds.width - BADGE_W - LANYARD_MIN_X);
-    const maxY = Math.max(LANYARD_MIN_Y, bounds.height - BADGE_H - 16);
-    const restX = clamp((bounds.width - BADGE_W) / 2, LANYARD_MIN_X, maxX);
-    const restY = clamp(bounds.height * 0.55, 136, maxY);
-
-    restRef.current = { x: restX, y: restY };
-
-    if (snapToRest) {
-      posRef.current = { x: restX + 10, y: restY - 16 };
-      targetRef.current = { x: restX, y: restY };
-      velRef.current = { x: 0.45, y: 0 };
-      return;
-    }
-
-    posRef.current = {
-      x: clamp(posRef.current.x, LANYARD_MIN_X, maxX),
-      y: clamp(posRef.current.y, LANYARD_MIN_Y, maxY),
-    };
-
-    targetRef.current = {
-      x: clamp(targetRef.current.x || restX, LANYARD_MIN_X, maxX),
-      y: restY,
-    };
-  }, []);
-
-  const resetIdleTimer = useCallback(() => {
-    if (idleTimerRef.current) {
-      clearTimeout(idleTimerRef.current);
-    }
-
-    idleActiveRef.current = false;
-    idleTimerRef.current = setTimeout(() => {
-      idleActiveRef.current = true;
-    }, 3000);
-  }, []);
-
-  const updatePointer = useCallback(
-    (nextPoint: Point, grabbed: boolean) => {
-      const element = containerRef.current;
-      if (!element) return;
-
-      const maxX = Math.max(
-        LANYARD_MIN_X,
-        element.clientWidth - BADGE_W - LANYARD_MIN_X,
-      );
-      const maxY = Math.max(LANYARD_MIN_Y, element.clientHeight - BADGE_H - 16);
-
-      if (grabbed) {
-        targetRef.current = {
-          x: clamp(nextPoint.x - dragOffsetRef.current.x, LANYARD_MIN_X, maxX),
-          y: clamp(nextPoint.y - dragOffsetRef.current.y, LANYARD_MIN_Y, maxY),
-        };
-      } else {
-        targetRef.current = {
-          x: clamp(nextPoint.x - BADGE_W / 2, LANYARD_MIN_X, maxX),
-          y: restRef.current.y,
-        };
-      }
-
-      lastMouseRef.current = nextPoint;
-    },
-    [],
-  );
-
-  const releaseGrab = useCallback(() => {
-    if (!grabbedRef.current) return;
-    grabbedRef.current = false;
-    resetIdleTimer();
-  }, [resetIdleTimer]);
-
-  useEffect(() => {
-    syncRestPosition(true);
-    resetIdleTimer();
-
-    const animate = () => {
-      const element = containerRef.current;
-
-      if (element) {
-        const maxX = Math.max(
-          LANYARD_MIN_X,
-          element.clientWidth - BADGE_W - LANYARD_MIN_X,
-        );
-        const maxY = Math.max(LANYARD_MIN_Y, element.clientHeight - BADGE_H - 16);
-
-        if (grabbedRef.current) {
-          const nextX = clamp(targetRef.current.x, LANYARD_MIN_X, maxX);
-          const nextY = clamp(targetRef.current.y, LANYARD_MIN_Y, maxY);
-
-          velRef.current = {
-            x: nextX - posRef.current.x,
-            y: nextY - posRef.current.y,
-          };
-          posRef.current = { x: nextX, y: nextY };
-        } else {
-          const restX = restRef.current.x;
-          const restY = restRef.current.y;
-
-          if (idleActiveRef.current) {
-            targetRef.current = {
-              x: clamp(
-                restX + Math.sin(Date.now() * 0.0008) * 18,
-                LANYARD_MIN_X,
-                maxX,
-              ),
-              y: restY,
-            };
-          } else {
-            targetRef.current.y = restY;
-          }
-
-          const springX = (targetRef.current.x - posRef.current.x) * STIFFNESS;
-          const springY = (targetRef.current.y - posRef.current.y) * STIFFNESS;
-          const gravityForce = (restY - posRef.current.y) * GRAVITY;
-
-          velRef.current.x = (velRef.current.x + springX) * DAMPING;
-          velRef.current.y =
-            (velRef.current.y + springY + gravityForce) * DAMPING;
-
-          posRef.current = {
-            x: clamp(posRef.current.x + velRef.current.x, LANYARD_MIN_X, maxX),
-            y: clamp(posRef.current.y + velRef.current.y, LANYARD_MIN_Y, maxY),
-          };
-        }
-
-        setTick((value) => (value + 1) % 1000000);
-      }
-
-      rafRef.current = window.requestAnimationFrame(animate);
-    };
-
-    rafRef.current = window.requestAnimationFrame(animate);
-
-    return () => {
-      if (rafRef.current !== null) {
-        window.cancelAnimationFrame(rafRef.current);
-      }
-
-      if (idleTimerRef.current) {
-        clearTimeout(idleTimerRef.current);
-      }
-    };
-  }, [resetIdleTimer, syncRestPosition]);
-
-  useEffect(() => {
-    const handleResize = () => syncRestPosition(false);
-    const handleRelease = () => releaseGrab();
-
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("mouseup", handleRelease);
-    window.addEventListener("touchend", handleRelease);
-    window.addEventListener("touchcancel", handleRelease);
-    window.addEventListener("mouseleave", handleRelease);
-    window.addEventListener("blur", handleRelease);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mouseup", handleRelease);
-      window.removeEventListener("touchend", handleRelease);
-      window.removeEventListener("touchcancel", handleRelease);
-      window.removeEventListener("mouseleave", handleRelease);
-      window.removeEventListener("blur", handleRelease);
-    };
-  }, [releaseGrab, syncRestPosition]);
-
-  const handleMouseMove = useCallback(
-    (event: ReactMouseEvent<HTMLDivElement>) => {
-      const element = containerRef.current;
-      if (!element) return;
-
-      const bounds = element.getBoundingClientRect();
-      const nextPoint = {
-        x: event.clientX - bounds.left,
-        y: event.clientY - bounds.top,
-      };
-
-      updatePointer(nextPoint, grabbedRef.current);
-      resetIdleTimer();
-    },
-    [resetIdleTimer, updatePointer],
-  );
-
-  const handleTouchMove = useCallback(
-    (event: ReactTouchEvent<HTMLDivElement>) => {
-      const element = containerRef.current;
-      const touch = event.touches[0];
-      if (!element || !touch) return;
-
-      const bounds = element.getBoundingClientRect();
-      const nextPoint = {
-        x: touch.clientX - bounds.left,
-        y: touch.clientY - bounds.top,
-      };
-
-      updatePointer(nextPoint, grabbedRef.current);
-      resetIdleTimer();
-    },
-    [resetIdleTimer, updatePointer],
-  );
-
-  const handleBadgeMouseDown = useCallback(
-    (event: ReactMouseEvent<HTMLDivElement>) => {
-      const element = containerRef.current;
-      if (!element) return;
-
-      const bounds = element.getBoundingClientRect();
-      const nextPoint = {
-        x: event.clientX - bounds.left,
-        y: event.clientY - bounds.top,
-      };
-
-      grabbedRef.current = true;
-      idleActiveRef.current = false;
-      if (idleTimerRef.current) {
-        clearTimeout(idleTimerRef.current);
-      }
-
-      dragOffsetRef.current = {
-        x: nextPoint.x - posRef.current.x,
-        y: nextPoint.y - posRef.current.y,
-      };
-      lastMouseRef.current = nextPoint;
-    },
-    [],
-  );
-
-  const handleBadgeTouchStart = useCallback(
-    (event: ReactTouchEvent<HTMLDivElement>) => {
-      const element = containerRef.current;
-      const touch = event.touches[0];
-      if (!element || !touch) return;
-
-      const bounds = element.getBoundingClientRect();
-      const nextPoint = {
-        x: touch.clientX - bounds.left,
-        y: touch.clientY - bounds.top,
-      };
-
-      grabbedRef.current = true;
-      idleActiveRef.current = false;
-      if (idleTimerRef.current) {
-        clearTimeout(idleTimerRef.current);
-      }
-
-      dragOffsetRef.current = {
-        x: nextPoint.x - posRef.current.x,
-        y: nextPoint.y - posRef.current.y,
-      };
-      lastMouseRef.current = nextPoint;
-    },
-    [],
-  );
-
-  const badgePosition = posRef.current;
-  const rotation = clamp(velRef.current.x * 1.45, -14, 14);
-  const columnWidth = containerRef.current?.clientWidth ?? 320;
-  const badgeCenterX = badgePosition.x + BADGE_W / 2;
-  const cordLength = Math.max(96, badgePosition.y - LANYARD_TOP_Y);
-  const cordPath = `M ${columnWidth / 2} ${LANYARD_TOP_Y} C ${columnWidth / 2} ${
-    LANYARD_TOP_Y + cordLength * 0.4
-  }, ${badgeCenterX} ${badgePosition.y - cordLength * 0.4}, ${badgeCenterX} ${
-    badgePosition.y
-  }`;
-
   return (
     <div className="whf2-lanyardColumn">
-      {/* <div className="whf2-lanyardCopy">
-        <span className="whf2-label">Member Pass</span>
-        <h3 className="whf2-lanyardTitle">Built to move with the room.</h3>
-        <p className="whf2-lanyardText">
-          A playful desk-side detail inspired by ReactBits, reworked here as a
-          pure React interaction.
-        </p>
-      </div> */}
-
-      <div
-        ref={containerRef}
-        className="whf2-lanyardStage"
-        onMouseMove={handleMouseMove}
-        onTouchMove={handleTouchMove}
-      >
-        <div className="whf2-lanyardClip" aria-hidden="true" />
-
-        <svg className="whf2-lanyardSvg" viewBox={`0 0 ${columnWidth} 432`}>
-          <path
-            d={cordPath}
-            stroke="var(--wh-text-muted, #978d84)"
-            strokeWidth="1.5"
-            fill="none"
-          />
-        </svg>
-
-        <div
-          className={`whf2-lanyardBadge${grabbedRef.current ? " is-grabbing" : ""}`}
-          onMouseDown={handleBadgeMouseDown}
-          onTouchStart={handleBadgeTouchStart}
-          style={{
-            left: badgePosition.x,
-            top: badgePosition.y,
-            transform: `rotate(${rotation}deg)`,
-          }}
-        >
-          <div className="whf2-lanyardHole" aria-hidden="true" />
-          
-
-        </div>
+      <div className="whf2-lanyardStage">
+        <Lanyard
+          position={[0, 0, 24]}
+          gravity={[0, -40, 0]}
+          fov={20}
+          cardTexturePath="/WH%20Card.png"
+          bandColor="#ff7a1a"
+          lineWidth={0.28}
+          useBandTexture={false}
+        />
       </div>
     </div>
   );

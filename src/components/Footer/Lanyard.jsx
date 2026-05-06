@@ -31,10 +31,13 @@ export default function Lanyard({
   cardTexturePath = "/WH%20Card.png",
   bandColor = "#ff7a1a",
   lineWidth = 1,
+  useBandTexture = true,
 }) {
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== "undefined" && window.innerWidth < 768,
   );
+  const [pointerActive, setPointerActive] = useState(false);
+  const pointerRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -42,11 +45,27 @@ export default function Lanyard({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const updatePointer = (event) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+    const y = -(((event.clientY - bounds.top) / bounds.height) * 2 - 1);
+    pointerRef.current = { x, y };
+    if (!pointerActive) setPointerActive(true);
+  };
+
   return (
-    <div className="lanyard-wrapper">
+    <div
+      className="lanyard-wrapper"
+      onPointerMove={updatePointer}
+      onPointerEnter={updatePointer}
+      onPointerLeave={() => {
+        pointerRef.current = { x: 0, y: 0 };
+        setPointerActive(false);
+      }}
+    >
       <Canvas
         camera={{ position, fov }}
-        dpr={[1, isMobile ? 1.35 : 2]}
+        dpr={[1, isMobile ? 1.5 : 2]}
         gl={{ alpha: transparent, antialias: true }}
         onCreated={({ gl }) =>
           gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)
@@ -54,12 +73,15 @@ export default function Lanyard({
       >
         <ambientLight intensity={Math.PI} />
         <Suspense fallback={null}>
-          <Physics gravity={gravity} timeStep={isMobile ? 1 / 36 : 1 / 60}>
+          <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
             <Band
               isMobile={isMobile}
               cardTexturePath={cardTexturePath}
               bandColor={bandColor}
               lineWidth={lineWidth}
+              useBandTexture={useBandTexture}
+              pointerActive={pointerActive}
+              pointerRef={pointerRef}
             />
           </Physics>
           <Environment blur={0.8}>
@@ -105,6 +127,9 @@ function Band({
   cardTexturePath = "/WH%20Card.png",
   bandColor = "#ff7a1a",
   lineWidth = 1,
+  useBandTexture = true,
+  pointerActive = false,
+  pointerRef,
 }) {
   const band = useRef(null);
   const fixed = useRef(null);
@@ -118,7 +143,7 @@ function Band({
   const dir = new THREE.Vector3();
   const segmentProps = {
     type: "dynamic",
-    canSleep: true,
+    canSleep: false,
     colliders: false,
     angularDamping: 4,
     linearDamping: 4,
@@ -147,6 +172,9 @@ function Band({
   useEffect(() => {
     cardTexture.flipY = false;
     cardTexture.colorSpace = THREE.SRGBColorSpace;
+    cardTexture.minFilter = THREE.LinearMipmapLinearFilter;
+    cardTexture.magFilter = THREE.LinearFilter;
+    cardTexture.anisotropy = 16;
     cardTexture.needsUpdate = true;
   }, [cardTexture]);
 
@@ -179,6 +207,23 @@ function Band({
   }, [dragged, hovered]);
 
   useFrame((state, delta) => {
+    if (fixed.current) {
+      const fixedPosition = fixed.current.translation();
+      const pointerX = pointerActive ? pointerRef.current.x : 0;
+      const targetX = pointerX * (isMobile ? 0.9 : 1.5);
+      const nextX = THREE.MathUtils.lerp(
+        fixedPosition.x,
+        targetX,
+        pointerActive ? delta * 8 : delta * 4,
+      );
+
+      fixed.current.setNextKinematicTranslation({
+        x: nextX,
+        y: 4,
+        z: 0,
+      });
+    }
+
     if (dragged) {
       vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
       dir.copy(vec).sub(state.camera.position).normalize();
@@ -228,8 +273,8 @@ function Band({
 
   return (
     <>
-      <group position={[0, 4.1, 0]}>
-        <RigidBody ref={fixed} {...segmentProps} type="fixed" />
+      <group position={[0, 4, 0]}>
+        <RigidBody ref={fixed} {...segmentProps} type="kinematicPosition" />
         <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
@@ -247,8 +292,8 @@ function Band({
         >
           <CuboidCollider args={[0.8, 1.125, 0.01]} />
           <group
-            scale={isMobile ? 1.95 : 2.08}
-            position={[0, -1.18, -0.05]}
+            scale={2.25}
+            position={[0, -1.2, -0.05]}
             onPointerOver={() => setHovered(true)}
             onPointerOut={() => setHovered(false)}
             onPointerUp={(event) => {
@@ -257,6 +302,7 @@ function Band({
             }}
             onPointerDown={(event) => {
               event.target.setPointerCapture(event.pointerId);
+              [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
               setDragged(
                 new THREE.Vector3()
                   .copy(event.point)
@@ -290,8 +336,8 @@ function Band({
           color={bandColor}
           depthTest={false}
           resolution={isMobile ? [1000, 1600] : [1000, 1000]}
-          useMap
-          map={bandTexture}
+          useMap={useBandTexture}
+          map={useBandTexture ? bandTexture : null}
           repeat={[-4, 1]}
           lineWidth={lineWidth}
         />
