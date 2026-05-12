@@ -349,7 +349,7 @@ export default function PricingSection() {
         scrollTrigger: {
           trigger: section,
           pin: container,
-          start: "top top+=10",
+          start: "top top",
           end: () => `+=${getDistance() * scrollStretchRef.current}`,
           scrub: 0.9,
           anticipatePin: 1,

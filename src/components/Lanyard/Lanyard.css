@@ -8,7 +8,7 @@
   justify-content: center;
   align-items: center;
   overflow: visible;
-  pointer-events: auto;
+  pointer-events: none;
   transform: scale(1);
   transform-origin: center;
 }
@@ -16,13 +16,12 @@
 .lanyard-wrapper canvas {
   position: relative;
   z-index: 2147481002;
-  width: 140% !important;
-  height: 125% !important;
-  margin-left: -20%;
-  margin-top: -12%;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0;
   display: block;
   touch-action: none;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 @media (max-width: 767px) {

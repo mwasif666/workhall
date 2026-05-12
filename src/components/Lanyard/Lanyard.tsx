@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unknown-property */
 "use client";
-import { Suspense, useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { Canvas, extend, useFrame } from "@react-three/fiber";
 import type { ThreeElement } from "@react-three/fiber";
 import {
@@ -44,6 +44,10 @@ interface LanyardProps {
   bandColor?: string;
   lineWidth?: number;
   useBandTexture?: boolean;
+  eventSource?: React.RefObject<HTMLElement>;
+  groupX?: number;
+  ropeSegmentLength?: number;
+  ropeSegmentSpacing?: number;
 }
 
 export default function Lanyard({
@@ -55,6 +59,10 @@ export default function Lanyard({
   bandColor = "white",
   lineWidth = 1,
   useBandTexture = true,
+  eventSource,
+  groupX = 0,
+  ropeSegmentLength = 0.62,
+  ropeSegmentSpacing = 0.5,
 }: LanyardProps) {
   const [isMobile, setIsMobile] = useState<boolean>(
     () => typeof window !== "undefined" && window.innerWidth < 768,
@@ -75,6 +83,9 @@ export default function Lanyard({
         onCreated={({ gl }) =>
           gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)
         }
+        eventSource={eventSource as React.RefObject<HTMLElement> | undefined}
+        eventPrefix={eventSource ? "client" : undefined}
+        style={{ pointerEvents: "none" }}
       >
         <ambientLight intensity={Math.PI} />
         <Suspense fallback={null}>
@@ -85,6 +96,9 @@ export default function Lanyard({
               bandColor={bandColor}
               lineWidth={lineWidth}
               useBandTexture={useBandTexture}
+              groupX={groupX}
+              ropeSegmentLength={ropeSegmentLength}
+              ropeSegmentSpacing={ropeSegmentSpacing}
             />
           </Physics>
           <Environment blur={0.75}>
@@ -131,6 +145,9 @@ interface BandProps {
   bandColor?: string;
   lineWidth?: number;
   useBandTexture?: boolean;
+  groupX?: number;
+  ropeSegmentLength?: number;
+  ropeSegmentSpacing?: number;
 }
 
 function Band({
@@ -141,6 +158,9 @@ function Band({
   bandColor = "white",
   lineWidth = 1,
   useBandTexture = true,
+  groupX = 0,
+  ropeSegmentLength = 0.62,
+  ropeSegmentSpacing = 0.5,
 }: BandProps) {
   const band = useRef<any>(null);
   const fixed = useRef<any>(null);
@@ -200,9 +220,9 @@ function Band({
     cardTex.needsUpdate = true;
   }, [cardTex]);
 
-  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
-  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
-  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]);
+  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], ropeSegmentLength]);
+  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], ropeSegmentLength]);
+  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], ropeSegmentLength]);
   useSphericalJoint(j3, card, [
     [0, 0, 0],
     [0, 1.45, 0],
@@ -261,23 +281,23 @@ function Band({
 
   return (
     <>
-      <group position={[0, 4, 0]}>
+      <group position={[groupX, 4, 0]}>
         <RigidBody
           ref={fixed}
           {...segmentProps}
           type={"fixed" as RigidBodyProps["type"]}
         />
-        <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
+        <RigidBody position={[ropeSegmentSpacing, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps}>
+        <RigidBody position={[ropeSegmentSpacing * 2, 0, 0]} ref={j2} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps}>
+        <RigidBody position={[ropeSegmentSpacing * 3, 0, 0]} ref={j3} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
         <RigidBody
-          position={[2, 0, 0]}
+          position={[ropeSegmentSpacing * 4, 0, 0]}
           ref={card}
           {...segmentProps}
           type={

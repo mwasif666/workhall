@@ -79,12 +79,12 @@
   width: 100%;
   height: 100%;
   border: 0;
-  pointer-events: none;
   filter: saturate(0.42) contrast(0.92) brightness(1.04);
   transform: scale(1.08);
 }
 
 .wl-mapShade {
+  pointer-events: none;
   background:
     radial-gradient(
       circle at 18% 16%,
@@ -128,6 +128,7 @@
   position: absolute;
   inset: 0;
   z-index: 1;
+  pointer-events: none;
 }
 
 .wl-mapPin {
@@ -396,48 +397,49 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .wl-highlight {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  min-height: 0;
-  border-radius: 18px;
-  padding: 12px 14px;
-  text-align: left;
-  font-size: 13px;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.45;
-  color: rgba(24, 11, 6, 0.58);
-  background: rgba(233, 224, 207, 0.76);
-  border: 1px solid rgba(27, 18, 13, 0.06);
+  color: rgba(24, 11, 6, 0.64);
+  background: none;
+  border: none;
+  border-radius: 0;
 }
 
 .wl-highlightIcon {
-  width: 20px;
-  height: 20px;
-  flex: 0 0 20px;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.82);
+  background: color-mix(in srgb, var(--wl-accent) 18%, #fff);
   color: var(--wl-accent);
 }
 
 .wl-highlightIcon svg {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
 }
 
 .wl-highlight.is-active {
   color: #1b120d;
-  background: color-mix(in srgb, var(--wl-accent) 16%, #fff6ec);
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--wl-accent) 18%, transparent);
+  font-weight: 700;
+}
+
+.wl-highlight.is-active .wl-highlightIcon {
+  background: color-mix(in srgb, var(--wl-accent) 28%, #fff);
 }
 
 .wl-actions {
@@ -516,8 +518,7 @@
 }
 
 .wl-btn--ghost {
-  background: white;
-
+  background: white !important;
   color: #111111;
 }
 
@@ -612,10 +613,6 @@
   .wl-carouselNav {
     right: 10px;
     bottom: 10px;
-  }
-
-  .wl-highlights {
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .wl-actions {

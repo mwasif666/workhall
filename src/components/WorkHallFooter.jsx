@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import Lanyard from "./Lanyard/Lanyard";
 
 const FOOTER_STYLES = `
@@ -313,23 +313,22 @@ const FOOTER_STYLES = `
 }
 
 .whf2-lanyardColumn {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 2147481000;
-  height: 360px;
   overflow: visible;
-  grid-column: 3;
-  grid-row: 1;
+  pointer-events: none;
 }
 
 .whf2-lanyardStage {
   position: absolute;
-  top: 0;
-  right: -80px;
-  width: 380px;
-  height: 600px;
+  inset: 0;
   z-index: 2147481001;
   overflow: visible;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .whf2-lanyardStage .lanyard-wrapper {
@@ -337,6 +336,7 @@ const FOOTER_STYLES = `
   width: 100%;
   height: 100%;
   min-height: 100%;
+  pointer-events: none;
 }
 
 .whf2-lanyardStage .lanyard-wrapper canvas {
@@ -345,6 +345,7 @@ const FOOTER_STYLES = `
   width: 100% !important;
   height: 100% !important;
   margin: 0;
+  pointer-events: none;
 }
 
 .whf2-bottomBar {
@@ -806,7 +807,7 @@ function FooterNavSection({ label, links }) {
   );
 }
 
-function LanyardColumn() {
+function LanyardColumn({ footerRef }) {
   return (
     <div className="whf2-lanyardColumn">
       <div className="whf2-lanyardStage">
@@ -815,6 +816,10 @@ function LanyardColumn() {
           gravity={[0, -40, 0]}
           fov={25}
           cardTexturePath="/lanyard2.png"
+          eventSource={footerRef}
+          groupX={8}
+          ropeSegmentLength={0.36}
+          ropeSegmentSpacing={0.26}
         />
       </div>
     </div>
@@ -924,6 +929,7 @@ export default function WorkHallFooter({
   address = "[ADDRESS]",
 }) {
   useInjectedFooterStyles();
+  const footerRef = useRef(null);
   const stableVideoClick = useMemo(
     () => onFoundersVideoClick ?? (() => undefined),
     [onFoundersVideoClick],
@@ -933,12 +939,13 @@ export default function WorkHallFooter({
     <div className="whf2-root">
       <PartnerBar email={email} />
 
-      <footer className="whf2-main">
+      <footer className="whf2-main" ref={footerRef}>
         <div className="whf2-grid">
           <BrandColumn onFoundersVideoClick={stableVideoClick} />
           <NavigationColumn phone={phone} email={email} address={address} />
-          <LanyardColumn />
         </div>
+
+        <LanyardColumn footerRef={footerRef} />
 
         <BottomBar />
       </footer>
