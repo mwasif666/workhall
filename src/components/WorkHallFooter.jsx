@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Lanyard from "./Lanyard/Lanyard";
 
 const FOOTER_STYLES = `
@@ -397,10 +397,6 @@ const FOOTER_STYLES = `
   .whf2-grid {
     grid-template-columns: 280px 1fr;
   }
-
-  .whf2-lanyardColumn {
-    display: none;
-  }
 }
 
 @media (max-width: 768px) {
@@ -431,6 +427,10 @@ const FOOTER_STYLES = `
 
   .whf2-navColumn {
     order: 3;
+  }
+
+  .whf2-lanyardColumn {
+    display: none;
   }
 
   .whf2-navGrid {
@@ -808,18 +808,35 @@ function FooterNavSection({ label, links }) {
 }
 
 function LanyardColumn({ footerRef }) {
+  const [groupX, setGroupX] = useState(4.15);
+
+  useEffect(() => {
+    const compute = () => {
+      if (!footerRef?.current) return;
+      const { width, height } = footerRef.current.getBoundingClientRect();
+      if (!height) return;
+      const aspect = width / height;
+      const halfWidth = Math.tan((12.5 * Math.PI) / 180) * 20 * aspect;
+      setGroupX(halfWidth * 0.6);
+    };
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, [footerRef]);
+
   return (
     <div className="whf2-lanyardColumn">
       <div className="whf2-lanyardStage">
         <Lanyard
           position={[0, 1, 20]}
-          gravity={[0, -40, 0]}
+          gravity={[0, -25, 0]}
           fov={25}
           cardTexturePath="/lanyard2.png"
           eventSource={footerRef}
-          groupX={8}
-          ropeSegmentLength={0.36}
-          ropeSegmentSpacing={0.26}
+          groupX={groupX}
+          ropeSegmentLength={0.8}
+          ropeSegmentSpacing={0.1}
+          cardScale={2.85}
         />
       </div>
     </div>

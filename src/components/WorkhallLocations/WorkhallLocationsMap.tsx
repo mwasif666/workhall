@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpRight,
   CalendarDays,
@@ -10,9 +10,84 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { workhallLocations } from "@/data/workhallLocations";
+import { workhallLocations, type WorkhallLocation } from "@/data/workhallLocations";
 
 import "./WorkhallLocationsMap.css";
+
+// Web Mercator projection (matches Google Maps embed at zoom=11)
+const WORLD_SIZE = 256 * Math.pow(2, 11); // 524288 px at zoom 11
+const MAP_CSS_SCALE = 1.08; // matches .wl-mapFrame { transform: scale(1.08) }
+
+function lngToWorldX(lng: number) {
+  return ((lng + 180) / 360) * WORLD_SIZE;
+}
+
+function latToMercatorY(lat: number) {
+  const sinLat = Math.sin((lat * Math.PI) / 180);
+  return (0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI)) * WORLD_SIZE;
+}
+
+interface MapVisualProps {
+  locations: WorkhallLocation[];
+  activeId: string;
+  centerLat: number;
+  centerLng: number;
+  mapEmbedUrl: string;
+  locationName: string;
+}
+
+function MapVisual({ locations, activeId, centerLat, centerLng, mapEmbedUrl, locationName }: MapVisualProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState({ width: 1, height: 1 });
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      if (width > 0 && height > 0) setSize({ width, height });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const cx = lngToWorldX(centerLng);
+  const cy = latToMercatorY(centerLat);
+
+  const pinPos = (lat: number, lng: number) => ({
+    left: `${50 + ((lngToWorldX(lng) - cx) * MAP_CSS_SCALE / size.width) * 100}%`,
+    top: `${50 + ((latToMercatorY(lat) - cy) * MAP_CSS_SCALE / size.height) * 100}%`,
+  });
+
+  return (
+    <div className="wl-visual" aria-hidden="true" ref={containerRef}>
+      <iframe
+        src={mapEmbedUrl}
+        title={`${locationName} map background`}
+        className="wl-mapFrame"
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        tabIndex={-1}
+      />
+      <div className="wl-mapShade" />
+      <div className="wl-mapPins">
+        {locations.map((loc) => {
+          const isActive = loc.id === activeId;
+          return (
+            <span
+              key={loc.id}
+              className={`wl-mapPin${isActive ? " is-active" : ""}`}
+              style={pinPos(loc.latitude, loc.longitude)}
+            >
+              <MapPin />
+              {isActive && <span className="wl-mapPinLabel">{loc.area}</span>}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function WorkhallLocationsMap() {
   const locations = useMemo(() => workhallLocations, []);
@@ -23,20 +98,11 @@ export default function WorkhallLocationsMap() {
   );
 
   const bounds = useMemo(() => {
-    const latitudes = locations.map((location) => location.latitude);
-    const longitudes = locations.map((location) => location.longitude);
-
+    const latitudes = locations.map((l) => l.latitude);
+    const longitudes = locations.map((l) => l.longitude);
     return {
-      latMin: Math.min(...latitudes),
-      latMax: Math.max(...latitudes),
-      lngMin: Math.min(...longitudes),
-      lngMax: Math.max(...longitudes),
-      centerLat:
-        latitudes.reduce((total, latitude) => total + latitude, 0) /
-        latitudes.length,
-      centerLng:
-        longitudes.reduce((total, longitude) => total + longitude, 0) /
-        longitudes.length,
+      centerLat: latitudes.reduce((s, v) => s + v, 0) / latitudes.length,
+      centerLng: longitudes.reduce((s, v) => s + v, 0) / longitudes.length,
     };
   }, [locations]);
 
@@ -45,21 +111,6 @@ export default function WorkhallLocationsMap() {
       `https://maps.google.com/maps?q=${bounds.centerLat},${bounds.centerLng}&t=&z=11&ie=UTF8&iwloc=&output=embed`,
     [bounds.centerLat, bounds.centerLng],
   );
-
-  const getPinStyle = (latitude: number, longitude: number) => {
-    const xProgress =
-      (longitude - bounds.lngMin) /
-      Math.max(bounds.lngMax - bounds.lngMin, 0.001);
-    const yProgress =
-      1 -
-      (latitude - bounds.latMin) /
-        Math.max(bounds.latMax - bounds.latMin, 0.001);
-
-    return {
-      left: `${12 + xProgress * 74}%`,
-      top: `${16 + yProgress * 60}%`,
-    };
-  };
 
   const moveSlide = (
     locationId: string,
@@ -101,43 +152,14 @@ export default function WorkhallLocationsMap() {
                 className={`wl-card${isReversed ? " wl-card--reverse" : ""}`}
                 style={cardStyle}
               >
-                <div className="wl-visual" aria-hidden="true">
-                  <iframe
-                    src={mapEmbedUrl}
-                    title={`${location.name} map background`}
-                    className="wl-mapFrame"
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    tabIndex={-1}
-                  />
-                  <div className="wl-mapShade" />
-                  <div className="wl-mapPins">
-                    {locations.map((pinLocation) => {
-                      const isActivePin = pinLocation.id === location.id;
-                      const pinStyle = getPinStyle(
-                        pinLocation.latitude,
-                        pinLocation.longitude,
-                      );
-
-                      return (
-                        <span
-                          key={`${location.id}-${pinLocation.id}`}
-                          className={`wl-mapPin${
-                            isActivePin ? " is-active" : ""
-                          }`}
-                          style={pinStyle}
-                        >
-                          <MapPin />
-                          {isActivePin && (
-                            <span className="wl-mapPinLabel">
-                              {pinLocation.area}
-                            </span>
-                          )}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
+                <MapVisual
+                  locations={locations}
+                  activeId={location.id}
+                  centerLat={bounds.centerLat}
+                  centerLng={bounds.centerLng}
+                  mapEmbedUrl={mapEmbedUrl}
+                  locationName={location.name}
+                />
 
                 <div className="wl-content">
                   <div

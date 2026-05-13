@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unknown-property */
 "use client";
 import React, { Suspense, useEffect, useRef, useState } from "react";
-import { Canvas, extend, useFrame } from "@react-three/fiber";
+import { Canvas, events, extend, useFrame, useThree } from "@react-three/fiber";
 import type { ThreeElement } from "@react-three/fiber";
 import {
   useGLTF,
@@ -28,6 +28,22 @@ import "./Lanyard.css";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
+const createLanyardEvents = (store: Parameters<typeof events>[0]) => {
+  const defaultEvents = events(store);
+
+  return {
+    ...defaultEvents,
+    compute(event: PointerEvent, state: Parameters<typeof defaultEvents.compute>[1]) {
+      const bounds = state.gl.domElement.getBoundingClientRect();
+      state.pointer.set(
+        ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
+        -((event.clientY - bounds.top) / bounds.height) * 2 + 1,
+      );
+      state.raycaster.setFromCamera(state.pointer, state.camera);
+    },
+  };
+};
+
 declare module "@react-three/fiber" {
   interface ThreeElements {
     meshLineGeometry: ThreeElement<typeof MeshLineGeometry>;
@@ -48,6 +64,7 @@ interface LanyardProps {
   groupX?: number;
   ropeSegmentLength?: number;
   ropeSegmentSpacing?: number;
+  cardScale?: number;
 }
 
 export default function Lanyard({
@@ -63,6 +80,7 @@ export default function Lanyard({
   groupX = 0,
   ropeSegmentLength = 0.62,
   ropeSegmentSpacing = 0.5,
+  cardScale = 2.25,
 }: LanyardProps) {
   const [isMobile, setIsMobile] = useState<boolean>(
     () => typeof window !== "undefined" && window.innerWidth < 768,
@@ -84,8 +102,8 @@ export default function Lanyard({
           gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)
         }
         eventSource={eventSource as React.RefObject<HTMLElement> | undefined}
-        eventPrefix={eventSource ? "client" : undefined}
-        style={{ pointerEvents: "none" }}
+        events={eventSource ? createLanyardEvents : undefined}
+        style={{ pointerEvents: eventSource ? "none" : "auto" }}
       >
         <ambientLight intensity={Math.PI} />
         <Suspense fallback={null}>
@@ -99,6 +117,7 @@ export default function Lanyard({
               groupX={groupX}
               ropeSegmentLength={ropeSegmentLength}
               ropeSegmentSpacing={ropeSegmentSpacing}
+              cardScale={cardScale}
             />
           </Physics>
           <Environment blur={0.75}>
@@ -148,6 +167,7 @@ interface BandProps {
   groupX?: number;
   ropeSegmentLength?: number;
   ropeSegmentSpacing?: number;
+  cardScale?: number;
 }
 
 function Band({
@@ -161,7 +181,9 @@ function Band({
   groupX = 0,
   ropeSegmentLength = 0.62,
   ropeSegmentSpacing = 0.5,
+  cardScale = 2.25,
 }: BandProps) {
+  const { size } = useThree();
   const band = useRef<any>(null);
   const fixed = useRef<any>(null);
   const j1 = useRef<any>(null);
@@ -188,6 +210,8 @@ function Band({
   const cardWidth = 0.7164179086685181;
   const cardHeight = 1.0000001192092896;
   const cardCenterY = 0.522905170917511;
+  const cardColliderHalfWidth = (cardWidth * cardScale) / 2;
+  const cardColliderHalfHeight = (cardHeight * cardScale) / 2;
 
   const [curve] = useState(
     () =>
@@ -223,16 +247,21 @@ function Band({
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], ropeSegmentLength]);
   useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], ropeSegmentLength]);
   useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], ropeSegmentLength]);
+  // anchor Y scales with cardScale so clip stays attached to card top at any scale
+  // derived: clipModelY = (1.45 + 1.2) / 2.25 = 1.178 (calibrated at default scale 2.25)
+  const sphericalAnchorY = 1.178 * cardScale - 1.2;
   useSphericalJoint(j3, card, [
     [0, 0, 0],
-    [0, 1.45, 0],
+    [0, sphericalAnchorY, 0],
   ]);
 
   useEffect(() => {
     if (!hovered) return undefined;
     document.body.style.cursor = dragged ? "grabbing" : "grab";
+    if (dragged) document.body.style.userSelect = "none";
     return () => {
       document.body.style.cursor = "auto";
+      document.body.style.userSelect = "";
     };
   }, [hovered, dragged]);
 
@@ -287,13 +316,25 @@ function Band({
           {...segmentProps}
           type={"fixed" as RigidBodyProps["type"]}
         />
-        <RigidBody position={[ropeSegmentSpacing, 0, 0]} ref={j1} {...segmentProps}>
+        <RigidBody
+          position={[ropeSegmentSpacing, 0, 0]}
+          ref={j1}
+          {...segmentProps}
+        >
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[ropeSegmentSpacing * 2, 0, 0]} ref={j2} {...segmentProps}>
+        <RigidBody
+          position={[ropeSegmentSpacing * 2, 0, 0]}
+          ref={j2}
+          {...segmentProps}
+        >
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[ropeSegmentSpacing * 3, 0, 0]} ref={j3} {...segmentProps}>
+        <RigidBody
+          position={[ropeSegmentSpacing * 3, 0, 0]}
+          ref={j3}
+          {...segmentProps}
+        >
           <BallCollider args={[0.1]} />
         </RigidBody>
         <RigidBody
@@ -306,17 +347,23 @@ function Band({
               : ("dynamic" as RigidBodyProps["type"])
           }
         >
-          <CuboidCollider args={[0.8, 1.125, 0.01]} />
+          <CuboidCollider
+            args={[cardColliderHalfWidth, cardColliderHalfHeight, 0.01]}
+          />
           <group
-            scale={2.25}
+            scale={cardScale}
             position={[0, -1.2, -0.05]}
             onPointerOver={() => setHovered(true)}
             onPointerOut={() => setHovered(false)}
             onPointerUp={(e: any) => {
+              e.stopPropagation();
+              e.sourceEvent?.preventDefault?.();
               e.target.releasePointerCapture(e.pointerId);
               setDragged(false);
             }}
             onPointerDown={(e: any) => {
+              e.stopPropagation();
+              e.sourceEvent?.preventDefault?.();
               e.target.setPointerCapture(e.pointerId);
               [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
               setDragged(
@@ -362,7 +409,7 @@ function Band({
         <meshLineMaterial
           color={bandColor}
           depthTest={false}
-          resolution={isMobile ? [1000, 2000] : [1000, 1000]}
+          resolution={[size.width, size.height]}
           useMap={useBandTexture ? 1 : 0}
           map={useBandTexture ? bandTex : null}
           repeat={[-4, 1]}

@@ -176,6 +176,7 @@
   padding: clamp(22px, 2.8vw, 34px);
   display: flex;
   align-items: stretch;
+  pointer-events: none;
 }
 
 .wl-panelTrack {
@@ -191,6 +192,7 @@
 
 .wl-panel {
   flex: 1 1 auto;
+  pointer-events: auto;
   background: rgba(247, 241, 232, 0.93);
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 30px;
