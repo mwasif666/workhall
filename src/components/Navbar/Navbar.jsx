@@ -7,7 +7,11 @@ import {
   HiMiniXMark,
 } from "react-icons/hi2";
 import { GoArrowDown, GoArrowUp } from "react-icons/go";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./Navbar.css";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const getSeededCardImage = (menuKey, title) =>
   `https://picsum.photos/seed/${encodeURIComponent(
@@ -126,12 +130,14 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileKey, setMobileKey] = useState(null);
   const [compactHeader, setCompactHeader] = useState(false);
+  const [scrollCompact, setScrollCompact] = useState(false);
   const [megaLeft, setMegaLeft] = useState(18);
   const closeTimer = useRef(null);
   const rootRef = useRef(null);
   const headerRef = useRef(null);
   const wrapRef = useRef(null);
   const measureRef = useRef(null);
+  const scrollCompactRef = useRef(false);
   const navItemRefs = useRef(new Map());
 
   const setNavItemRef = (key, el) => {
@@ -218,6 +224,41 @@ export default function Navbar() {
     };
   }, [navItems]);
 
+  useEffect(() => {
+    const setHeaderMode = (nextCompact) => {
+      if (scrollCompactRef.current === nextCompact) return;
+      scrollCompactRef.current = nextCompact;
+      setScrollCompact(nextCompact);
+      if (nextCompact) setOpenKey(null);
+    };
+
+    const trigger = ScrollTrigger.create({
+      start: 0,
+      end: "max",
+      onUpdate: (self) => {
+        const scrollY = self.scroll();
+
+        if (scrollY <= 8) {
+          setHeaderMode(false);
+          return;
+        }
+
+        if (self.direction === 1 && scrollY > 12) {
+          setHeaderMode(true);
+          return;
+        }
+
+        if (self.direction === -1) {
+          setHeaderMode(false);
+        }
+      },
+    });
+
+    setHeaderMode(window.scrollY > 12);
+
+    return () => trigger.kill();
+  }, []);
+
   const positionMega = (key, anchorEl) => {
     const rootEl = rootRef.current;
     const wrapEl = wrapRef.current;
@@ -261,17 +302,21 @@ export default function Navbar() {
   }, [openKey]);
 
   return (
-    <div ref={rootRef}>
+    <div ref={rootRef} className="cs-navRoot">
       <header
         ref={headerRef}
-        className={`cs-header ${compactHeader ? "isCompact" : ""}`}
+        className={`cs-header ${compactHeader ? "isCompact" : ""} ${
+          scrollCompact ? "isScrollCompact" : ""
+        }`}
       >
         <div className="cs-measureRow" ref={measureRef} aria-hidden="true">
           <span className="cs-brand cs-brand--measure">
-            <span className="cs-brandTile" />
-            <span className="cs-brandText">
-              Workhall<span className="cs-tm">â„¢</span>
-            </span>
+            <img
+              src="/workhall-logo.png"
+              alt=""
+              className="cs-brandTile"
+              style={{ objectFit: "contain" }}
+            />
           </span>
 
           <div className="cs-nav cs-nav--measure">
@@ -342,10 +387,13 @@ export default function Navbar() {
 
         <div className="cs-wrap" ref={wrapRef}>
           <a className="cs-brand" href="#">
-            <span className="cs-brandTile" aria-hidden="true" />
-            <span className="cs-brandText">
-              Workhall<span className="cs-tm">™</span>
-            </span>
+            <img
+              src="/workhall-logo.png"
+              alt="Workhall"
+              className="cs-brandTile"
+              style={{ objectFit: "contain" }}
+            />
+  
           </a>
 
           {/* Desktop Nav */}

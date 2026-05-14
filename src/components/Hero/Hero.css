@@ -233,6 +233,7 @@
   display: flex;
   align-items: center;
   gap: 9px;
+  width: fit-content;
   min-height: 40px;
   padding: 4px 5px;
   border-radius: 5px;
@@ -264,7 +265,7 @@
 .hPill__label {
   color: #000000;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1;
   letter-spacing: 0;
   white-space: nowrap;
@@ -273,7 +274,7 @@
 .hPill__sub {
   color: #000000;
   font-weight: 500;
-  font-size: 5px;
+  font-size: 8px;
   line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
@@ -281,11 +282,11 @@
 }
 
 .hPill--friends {
-  width: 230px;
+  flex: 0 0 auto;
 }
 
 .hPill--loc {
-  width: 194px;
+  flex: 0 0 auto;
 }
 
 .hPill--friends .hPill__sub,
@@ -342,6 +343,7 @@
   position: relative;
   z-index: 5;
   display: flex;
+  flex: 0 0 auto;
 }
 
 .hDrop__trigger {
@@ -567,6 +569,7 @@
   align-items: center;
   gap: 8px;
   flex: 0 0 auto;
+  width: fit-content;
   min-height: 40px;
   padding: 4px 5px 4px 10px;
   border-radius: 5px;
@@ -576,6 +579,7 @@
   font-weight: 600;
   border: 1px solid #000000;
   font-size: 12px;
+  white-space: nowrap;
 }
 
 .hCta__icon {

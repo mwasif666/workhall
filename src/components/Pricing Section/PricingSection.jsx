@@ -11,6 +11,7 @@ import "./PricingSection.css";
 gsap.registerPlugin(ScrollTrigger);
 
 const DESKTOP_CARDS_PER_PAGE = 3;
+const PIN_TOP_OFFSET = 120;
 
 const OFFICE_IMAGES = {
   individuals: [
@@ -349,7 +350,7 @@ export default function PricingSection() {
         scrollTrigger: {
           trigger: section,
           pin: container,
-          start: "top top",
+          start: `top ${PIN_TOP_OFFSET}px`,
           end: () => `+=${getDistance() * scrollStretchRef.current}`,
           scrub: 0.9,
           anticipatePin: 1,

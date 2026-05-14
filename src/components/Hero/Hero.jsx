@@ -1,17 +1,14 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   HiChevronDown,
   HiMiniArrowUpRight,
   HiPlus,
   HiMinus,
-  HiMagnifyingGlass,
-  HiXMark,
 } from "react-icons/hi2";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCards, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-cards";
-import { workhallLocations } from "@/data/workhallLocations";
 import "./Hero.css";
 
 const HERO_STATS = [
@@ -141,53 +138,7 @@ const HERO_SWIPER_IMAGES = [
 ];
 
 export default function Hero() {
-  const locations = useMemo(() => workhallLocations, []);
-
   const [friends, setFriends] = useState(3);
-  const [locOpen, setLocOpen] = useState(false);
-  const [locationId, setLocationId] = useState("");
-  const [locSearch, setLocSearch] = useState("");
-
-  const locRef = useRef(null);
-
-  const closeLoc = () => {
-    setLocOpen(false);
-    setLocSearch("");
-  };
-
-  const activeLocation =
-    locations.find((item) => item.id === locationId) ?? null;
-
-  const filteredLocations = useMemo(() => {
-    const query = locSearch.trim().toLowerCase();
-
-    if (!query) return locations;
-
-    return locations.filter((item) =>
-      [item.name, item.area, item.address].some((value) =>
-        value.toLowerCase().includes(query),
-      ),
-    );
-  }, [locSearch, locations]);
-
-  useEffect(() => {
-    const onDown = (e) => {
-      if (!locRef.current) return;
-      if (!locRef.current.contains(e.target)) closeLoc();
-    };
-
-    const onEsc = (e) => {
-      if (e.key === "Escape") closeLoc();
-    };
-
-    window.addEventListener("mousedown", onDown);
-    window.addEventListener("keydown", onEsc);
-
-    return () => {
-      window.removeEventListener("mousedown", onDown);
-      window.removeEventListener("keydown", onEsc);
-    };
-  }, []);
 
   return (
     <section className="hero">
@@ -217,7 +168,7 @@ export default function Hero() {
                   <div className="hPill__icon" />
 
                   <div className="hPill__txt">
-                    <div className="hPill__label">How Many Friends?</div>
+                    <div className="hPill__label">How Many Seats?</div>
                     <div className="hPill__sub">
                       Select number of desks you need
                     </div>
@@ -248,129 +199,25 @@ export default function Hero() {
                   </div>
                 </div>
 
-                <div
-                  id="loc"
-                  className={`hDrop ${locOpen ? "open" : ""}`}
-                  ref={locRef}
-                >
-                  <button
-                    className="hPill hPill--loc hDrop__trigger"
-                    type="button"
-                    aria-expanded={locOpen}
-                    onClick={() => setLocOpen((v) => !v)}
-                  >
+                <div className="hDrop">
+                  <div className="hPill hPill--loc">
                     <div className="hPill__icon" />
-
                     <div className="hPill__txt">
                       <div className="hPill__label">Choose a Location</div>
                       <div className="hPill__sub">
-                        {!activeLocation
-                          ? "All locations feature all our plans and passes"
-                          : activeLocation.name}
+                        All locations feature all our plans and passes
                       </div>
                     </div>
-
-                    <span
-                      className="cs-iconSwap hPill__endIcon"
-                      aria-hidden="true"
-                    >
-                      <span className="cs-iconSwap__a">
-                        <HiChevronDown />
-                      </span>
-                      <span className="cs-iconSwap__b">
-                        <HiChevronDown />
-                      </span>
+                    <span className="hPill__endIcon" aria-hidden="true">
+                      <HiChevronDown />
                     </span>
-
-                    <span className="hPill__swapText" aria-hidden="true">
-                      <span className="hSwap__a">Browse</span>
-                      <span className="hSwap__b">Browse -&gt;</span>
-                    </span>
-                  </button>
-
-                  {locOpen && (
-                    <div className="hDrop__menu">
-                      <div className="hDrop__top">
-                        <div className="hDrop__searchWrap">
-                          <HiMagnifyingGlass className="hDrop__searchIcon" />
-                          <input
-                            className="hDrop__search"
-                            type="text"
-                            placeholder="Search location"
-                            value={locSearch}
-                            onChange={(e) => setLocSearch(e.target.value)}
-                          />
-                        </div>
-
-                        <button
-                          type="button"
-                          className="hDrop__close"
-                          onClick={closeLoc}
-                          aria-label="Close locations"
-                        >
-                          <HiXMark />
-                        </button>
-                      </div>
-
-                      <div className="hDrop__label">Work Hall Locations</div>
-
-                      <div className="hDrop__grid">
-                        {filteredLocations.map((locationItem) => (
-                          <button
-                            key={locationItem.id}
-                            type="button"
-                            className={`hDropOption ${
-                              locationItem.id === locationId ? "isActive" : ""
-                            }`}
-                            onClick={() => {
-                              setLocationId(locationItem.id);
-                              closeLoc();
-                            }}
-                          >
-                            <span
-                              className="hDropOption__thumb"
-                              aria-hidden="true"
-                            >
-                              <img
-                                src={locationItem.image}
-                                alt=""
-                                loading="lazy"
-                                draggable="false"
-                              />
-                            </span>
-
-                            <span className="hDropOption__txt">
-                              <span className="hDropOption__title">
-                                {locationItem.name}
-                              </span>
-                              <span className="hDropOption__desc">
-                                {locationItem.area}
-                              </span>
-                            </span>
-
-                            <span
-                              className="hDropOption__icon"
-                              aria-hidden="true"
-                            >
-                              <HiMiniArrowUpRight />
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-
-                      {filteredLocations.length === 0 && (
-                        <div className="hDrop__empty">
-                          No Work Hall location matched your search.
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  </div>
                 </div>
 
                 <a className="hCta" href="#">
                   <span className="hCta__swap">
-                    <span className="hSwap__a">Make Enquiry</span>
-                    <span className="hSwap__b">Make Enquiry -&gt;</span>
+                    <span className="hSwap__a">Book a Tour</span>
+                    <span className="hSwap__b">Book a Tour -&gt;</span>
                   </span>
 
                   <span className="hCta__icon cs-iconSwap" aria-hidden="true">
@@ -408,7 +255,12 @@ export default function Hero() {
                     rotate: true,
                     slideShadows: false,
                   }}
-                  autoplay={{ delay: 3000, disableOnInteraction: false }}
+                  speed={700}
+                  autoplay={{
+                    delay: 3000,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: true,
+                  }}
                   loop={true}
                   className="hero__swiper"
                 >
